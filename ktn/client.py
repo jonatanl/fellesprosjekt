@@ -17,10 +17,10 @@ class Client(object):
         self.connection.close()
 
     def message_received(self, message, connection):
-        pass
+        print message
 
     def connection_closed(self, connection):
-        pass
+        self.connection.close()
 
     def send(self, data):
         self.connection.sendall(data)
@@ -31,4 +31,7 @@ class Client(object):
 
 if __name__ == "__main__":
     client = Client()
-    client.start('localhost', 9999)
+    ip = raw_input('IP-adress: ')
+    if not ip:
+        ip = 'localhost'
+    client.start(ip, 9999)
