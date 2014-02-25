@@ -16,12 +16,18 @@ class MessageTranslator:
     def  __init__(self, chatServer):
         self.server = chatServer
     
+    def getSocketUsername(self, socket):
+        if self.loggedInSockets.has_key(socket):
+            return self.loggedInSockets[socket]
+        else:
+            return ""
+    
     def addSocket(self, socket, username):
         self.loggedInSockets[socket] = username
         
     # Called if client requests to disconnect, or if client disconnects without warning.
     def removeSocket(self, socket):
-        if self.DEBUG: print "translator: removing socket and username"
+        if self.DEBUG: print "MessageTranslator.removeSocket"
         if self.loggedInSockets.has_key(socket):
             username = self.loggedInSockets[socket]
             self.loggedInSockets.pop(socket)
@@ -29,12 +35,12 @@ class MessageTranslator:
             # If socket is removed because the client abruptly disconnected,
             # the chat server needs to be informed that the username is not longer in use.
             self.server.removeUsername(username)
-            if self.DEBUG: print "translator: socket, and username removed"
+            if self.DEBUG: print "MessageTranslator.removeSocket: Socket and username removed"
         else:
-            if self.DEBUG: print "translator: socket does not exist."
+            if self.DEBUG: print "MessageTranslator.removeSocket: Socket does not exist."
     
     def parseJSON(self, jsonString, socket):
-        if self.DEBUG: print "translator: parsing JSON"
+        if self.DEBUG: print "MessageTranslator.parseJSON"
         data = json.loads(jsonString)
         
         
@@ -44,28 +50,24 @@ class MessageTranslator:
                 if not response.has_key("error"):
                     #login was accepted. Add username to dictionary
                     self.addSocket(socket, response["username"])
-                jsonResponse = json.dumps(response)
-                socket.sendMessage(jsonResponse)
+                socket.sendMessage(json.dumps(response))
             
             elif data["request"] == "logout":
-                response = self.server.requestLogout(data["username"])
+                username = self.getSocketUsername(socket)
+                response = self.server.requestLogout(username)
                 if not response.has_key("error"):
                     #Logout was accepted. Remove socket and username from dictionary.
                     self.removeSocket(socket)
-                jsonResponse = json.dumps(response)
-                socket.sendMessage(jsonResponse)
+                socket.sendMessage(json.dumps(response))
             
             elif data["request"] == "message":
-                username = ""
-                if self.loggedInSockets.has_key(socket):
-                    username = self.loggedInSockets[socket]
+                username = self.getSocketUsername(socket)
                 response = self.server.broadcastMessage(data["message"], username)
                 if response.has_key("error"):
                     #Message was not accepted. Inform client.
-                    jsonResponse = json.dumps(response)
-                    socket.sendMessage(jsonResponse)
+                    socket.sendMessage(json.dumps(response))
         except Exception as e:
-            if self.DEBUG: print "Translator: error: " + e.message
+            if self.DEBUG: print "Translator.ParseJson: error: " + e.message
 
     
     def sendMessageToAll(self, message):
@@ -74,4 +76,4 @@ class MessageTranslator:
             for socket in self.loggedInSockets.iterkeys():
                 socket.sendMessage(jsonMessage)
         except Exception as e:
-            if self.DEBUG: print "Translator: Error: " + e.message    
+            if self.DEBUG: print "MessageTranslator.sendMessageToAll: Error: " + e.message    

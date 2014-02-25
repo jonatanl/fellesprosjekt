@@ -8,7 +8,6 @@ from ThreadedTCPServer import ThreadedTCPServer
 from clientHandler import ClientHandler
 from MessageTranslator import MessageTranslator
 import threading
-import sys
 from datetime import datetime
 
 # Main Class that manages requests, usernames and the message log.
@@ -44,17 +43,32 @@ class ChatServer():
     def addUsername(self, username):
         self.usernames.append(username)
         print "Added user: " + username
-        
+    
+    # Creates a message in dictionary format. Use 'None' if keys are not to be included in the message.
+    def createMsgDic(response, error, username, message, messages):
+        dic = {}
+        if not response == None:
+            dic["response"] = response
+        if not error == None:
+            dic["error"] = error
+        if not username == None:
+            dic["username"] = username
+        if not message == None:
+            dic["message"] = message
+        if not messages == None:
+            dic["messages"] = messages
+        return dic
+    
     # Handles login requests, and sends response back to the message translator.
     def requestLogin(self, username):
         response = {}
         copy = username
         if not copy.replace("_", "X").isalnum():
-            response = {"response":"login", "error":"Invalid username!", "username":username}
+            response = self.createMsgDic("login", "Invalid username!", username, None, None)
         elif username in self.usernames:
-            response = {"response":"login", "error":"Name already taken!", "username":username}
+            response = self.createMsgDic("login", "Name already taken!", username, None, None)
         else:
-            response = {"response":"login", "username":username, "messages":self.messageLog}
+            response = self.createMsgDic("login", None, username, None, self.messageLog)
             self.addUsername(username)
             
         return response
@@ -63,9 +77,9 @@ class ChatServer():
     def requestLogout(self, username):
         response = {}
         if not username in self.usernames:
-            response = {"response":"logout", "error":"Not logged in!", "username":username}
+            response = self.createMsgDic("logout", "Not logged in!", username, None, None)
         else:
-            response = {"response":"logout", "username":username}
+            response = self.createMsgDic("logout", None, username, None, None)
             self.removeUsername(username)
         
         return response
@@ -77,10 +91,10 @@ class ChatServer():
         try:
             response = None
             if not username in self.usernames:
-                response = {"response":"message", "error":"You are not logged in!"}
+                response = self.createMsgDic("message", "Your are not logged in!", None, None, None)
             else:
                 loggedMessage = str(datetime.now().hour) + ":" + str(datetime.now().minute) + " " + username + ": " + message
-                response = {"response":"message","message":loggedMessage}
+                response = self.createMsgDic("message", None, None, loggedMessage, None)
                 self.messageLog.append(loggedMessage)
                 print loggedMessage
                 self.translator.sendMessageToAll(response)
