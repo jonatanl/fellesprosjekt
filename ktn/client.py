@@ -9,7 +9,6 @@ import sys
 
 class Client(object):
     DEBUG = False
-    listenerThread = None
 
     def __init__(self):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -20,6 +19,7 @@ class Client(object):
             self.connection.connect((host, port))
             print "Connected to server"
 
+            # Make sure user is logged in before proceeding. 
             self.login()
             
             if self.DEBUG: print "login completed"
@@ -28,10 +28,10 @@ class Client(object):
             threadedClientSocketListener = ThreadedClientSocketListener(self, self.connection)
             threadedClientSocketListenerThread = threading.Thread(target=threadedClientSocketListener.listenForever)
             threadedClientSocketListenerThread.daemon = True
-            self.listenerThread = threadedClientSocketListenerThread
             threadedClientSocketListenerThread.start()
             if self.DEBUG: print "listener thread running"
             
+            # Start chatting.
             self.chatAway()
             
             
@@ -39,7 +39,7 @@ class Client(object):
             if self.DEBUG: print "Client.__init__: Error: " + e.message
         
        
-    # Listens for and returns one message on the socket.
+    # Listens for and returns ONE message on the socket.
     def receiveMessage(self):
         return self.connection.recv(1024)
         
@@ -76,16 +76,22 @@ class Client(object):
     def forceDisconnect(self):
         self.connection.shutdown(socket.SHUT_RDWR)
 
+    # Allows user to attempt to log in to server with a username. Will execute indefinitely until succeeding. 
     def login(self):
         if self.DEBUG: print "Client.login"
         
         while True:
             nick = raw_input('Enter your username: ')
             loginData = {'request': 'login', 'username': nick}
+            
+            # Send login request. 
             self.send(json.dumps(loginData))
+            
+            #Receive response.
             response = json.loads(self.receiveMessage())
             if response["response"] == "login":
                 if response.has_key("error"):
+                    # Login not OK.
                     print response["error"]
                 else:
                     # Login OK
@@ -98,15 +104,18 @@ class Client(object):
                     print ""
                     break;
     
+    # Allows user to send chat messages to the server, or to logout. 
     def chatAway(self):
         print "Enter your chat messages or enter 'logout' to log out."
         while True:
             msg = raw_input("")
             if msg == "logout":
                 data = {"request":"logout"}
+                # Send logout request
                 self.send(json.dumps(data))
             else:
                 data = {"request":"message", "message":msg}
+                # Send message request. 
                 self.send(json.dumps(data))
     
 

@@ -12,16 +12,23 @@ from datetime import datetime
 
 # Main Class that manages requests, usernames and the message log.
 class ChatServer():
+    DEBUG = False
+    
+    # List of logged in usernames
     usernames = []
+    # List of all chat messages
     messageLog = []
+    # Reference to the message translator
     translator = None
     
     def __init__(self):
         print "Chat server starting."
         
+        # Set up object references.
         self.translator = MessageTranslator(self)        
         ClientHandler.translator = self.translator
         
+        # Start thread that always listens for incoming TCP connections.
         HOST = ''
         PORT = 9999
         threadedTCPServer = ThreadedTCPServer((HOST, PORT), ClientHandler)
@@ -69,22 +76,28 @@ class ChatServer():
             elif username in self.usernames:
                 response = self.createMsgDic("login", "Name already taken!", username, None, None)
             else:
+                # Login is accepted.
                 response = self.createMsgDic("login", None, username, None, self.messageLog)
                 self.addUsername(username)
                 
             return response
         except Exception as e:
-            print "chatServer.requestLogin: Error: " + e.message
+            if self.DEBUG: print "chatServer.requestLogin: Error: " + e.message
+                
     # Handles logout requests, and sends response back to the message translator.
     def requestLogout(self, username):
-        response = {}
-        if not username in self.usernames:
-            response = self.createMsgDic("logout", "Not logged in!", username, None, None)
-        else:
-            response = self.createMsgDic("logout", None, username, None, None)
-            self.removeUsername(username)
-        
-        return response
+        try:
+            response = {}
+            if not username in self.usernames:
+                response = self.createMsgDic("logout", "Not logged in!", username, None, None)
+            else:
+                # Logout is accepted.
+                response = self.createMsgDic("logout", None, username, None, None)
+                self.removeUsername(username)
+            
+            return response
+        except Exception as e:
+            if self.DEBUG: print "chatServer.requestLogout: Error: " + e.message
     
     # Handles requests to broadcast message. 
     # Sends response back to message translator if there is an error,
@@ -95,6 +108,7 @@ class ChatServer():
             if not username in self.usernames:
                 response = self.createMsgDic("message", "Your are not logged in!", None, None, None)
             else:
+                # message is accepted.
                 loggedMessage = str(datetime.now().hour) + ":" + str(datetime.now().minute) + " " + username + ": " + message
                 response = self.createMsgDic("message", None, None, loggedMessage, None)
                 self.messageLog.append(loggedMessage)
@@ -103,10 +117,11 @@ class ChatServer():
                     
             return response
         except Exception as e:
-            print "ChatServer: error: " + e.message
+            if self.DEBUG: print "ChatServer.broadcastMessage: error: " + e.message
 
 if __name__ == "__main__":
     chatServer = ChatServer()
+    # To keep the main thread alive.
     while True:
         pass
 

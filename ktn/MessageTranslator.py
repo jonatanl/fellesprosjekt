@@ -22,6 +22,7 @@ class MessageTranslator:
         else:
             return ""
     
+    # Adds a socket to the list of logged in sockets, along with its username.
     def addSocket(self, socket, username):
         self.loggedInSockets[socket] = username
         
@@ -39,16 +40,21 @@ class MessageTranslator:
         else:
             if self.DEBUG: print "MessageTranslator.removeSocket: Socket does not exist."
     
+    # Called by a clientHandler. Interprets the json string and calls the appropriate chatServer method.
     def parseJSON(self, jsonString, socket):
         if self.DEBUG: print "MessageTranslator.parseJSON"
-        data = json.loads(jsonString)
         
+        data = json.loads(jsonString)
         
         try:
             if data['request'] == 'login':
                 response = self.server.requestLogin(data["username"])
                 if not response.has_key("error"):
-                    #login was accepted. Add username to dictionary
+                    #login was accepted. 
+                    # Remove socket if already loged in as someone else.
+                    if self.loggedInSockets.has_key(socket):
+                        self.removeSocket(socket)
+                    #Add socket and username to dictionary
                     self.addSocket(socket, response["username"])
                 socket.sendMessage(json.dumps(response))
             
@@ -69,7 +75,7 @@ class MessageTranslator:
         except Exception as e:
             if self.DEBUG: print "Translator.ParseJson: error: " + e.message
 
-    
+    # Called by the chatServer to send a message to all logged in sockets. 
     def sendMessageToAll(self, message):
         try:
             jsonMessage = json.dumps(message)
