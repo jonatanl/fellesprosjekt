@@ -52,5 +52,5 @@ class ClientHandler(SocketServer.BaseRequestHandler):
 
 
     def sendMessage(self, data):
-        if self.DEBUG: print "clientHandler: sending data back to client"
+        if self.DEBUG: print "clientHandler: sending data back to client: " + str(data)
         self.request.sendall(data)

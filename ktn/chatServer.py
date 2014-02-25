@@ -45,7 +45,7 @@ class ChatServer():
         print "Added user: " + username
     
     # Creates a message in dictionary format. Use 'None' if keys are not to be included in the message.
-    def createMsgDic(response, error, username, message, messages):
+    def createMsgDic(self, response, error, username, message, messages):
         dic = {}
         if not response == None:
             dic["response"] = response
@@ -61,18 +61,20 @@ class ChatServer():
     
     # Handles login requests, and sends response back to the message translator.
     def requestLogin(self, username):
-        response = {}
-        copy = username
-        if not copy.replace("_", "X").isalnum():
-            response = self.createMsgDic("login", "Invalid username!", username, None, None)
-        elif username in self.usernames:
-            response = self.createMsgDic("login", "Name already taken!", username, None, None)
-        else:
-            response = self.createMsgDic("login", None, username, None, self.messageLog)
-            self.addUsername(username)
-            
-        return response
-    
+        try:
+            response = {}
+            copy = username
+            if not copy.replace("_", "X").isalnum():
+                response = self.createMsgDic("login", "Invalid username!", username, None, None)
+            elif username in self.usernames:
+                response = self.createMsgDic("login", "Name already taken!", username, None, None)
+            else:
+                response = self.createMsgDic("login", None, username, None, self.messageLog)
+                self.addUsername(username)
+                
+            return response
+        except Exception as e:
+            print "chatServer.requestLogin: Error: " + e.message
     # Handles logout requests, and sends response back to the message translator.
     def requestLogout(self, username):
         response = {}
