@@ -1,3 +1,4 @@
 # Idea projectfiles
 .idea/*
 *.iml
+*.pyc
