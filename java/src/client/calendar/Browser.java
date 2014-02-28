@@ -18,10 +18,8 @@ public class Browser extends Region{
     public Browser() {
         browser = new WebView();
         webEngine = browser.getEngine();
-        //String url = "/home/ochamp/git/fellesprosjekt/java/libs/fullcalendar-1.6.4/demos/agenda-views.html";
-        File url = new File("libs/fullcalendar/demos/test.html");
-        System.out.println(url.exists());
-        webEngine.load(url.toString());
+        String url = "libs/fullcalendar/demos/test.html";
+        webEngine.load(url);
         getChildren().add(browser);
     }
 }

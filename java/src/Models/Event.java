@@ -3,6 +3,7 @@ package Models;
 import java.util.Date;
 
 public class Event {
+    private int id;
     private String title;
     private Date date;
     private String startTime;
@@ -10,6 +11,14 @@ public class Event {
     private String description;
     private String location;
     private Room room;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;
@@ -59,18 +68,19 @@ public class Event {
         this.location = location;
     }
 
-    public Room getRom() {
+    public Room getRoom() {
         return room;
     }
 
-    public void setRom(Room rom) {
-        room = rom;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     @Override
     public String toString() {
         return "Event{" +
-                "title='" + title + '\'' +
+                "id=" + id +
+                ", title='" + title + '\'' +
                 ", date=" + date +
                 ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +

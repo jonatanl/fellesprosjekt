@@ -1,5 +1,8 @@
 # Idea projectfiles
 .idea/
-#java/.idea/
+# java/.idea/
 *.iml
 out/
+
+# Python files
+*.pyc
