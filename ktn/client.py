@@ -44,7 +44,7 @@ class Client(object):
         return self.connection.recv(1024)
         
     # Called by the socket listener thread when a new message arrives.
-    def newMessage(self, message):
+    def newMessageHandler(self, message):
         if self.DEBUG: print "Client.newMessage"
         dic = json.loads(message)
 

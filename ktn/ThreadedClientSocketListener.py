@@ -21,7 +21,7 @@ class ThreadedClientSocketListener(Thread):
         while True:
             try:
                 message = self.connection.recv(1024).strip()
-                self.listener.newMessage(message)
+                self.listener.newMessageHandler(message)
             except:
                 break
         
