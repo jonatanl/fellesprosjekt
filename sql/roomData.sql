@@ -8,4 +8,6 @@ select * from room;
 insert into users (username, password) values ('jonatan', 123456);
 insert into users (username, password) values ('johannes', 123456);
 insert into users (username, password) values ('ofossan', 123456);
+insert into users (username, password) values ('Erik', 1234567);
 select * from users;
+
