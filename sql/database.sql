@@ -23,6 +23,14 @@ CREATE TABLE calendar.alert (
 	PRIMARY KEY (alertID)
 );
 
+CREATE TABLE calendar.users (
+	userID int auto_increment,
+	username varchar(50),
+	password varchar(50),
+
+	PRIMARY KEY (userID)
+); 
+
 CREATE TABLE calendar.event (
 	eventID int auto_increment,
 	eventName varchar(50),
@@ -31,20 +39,12 @@ CREATE TABLE calendar.event (
 	description varchar(100),
 	location varchar(100),
 	roomID int,
+	ownerID int,
 
 	PRIMARY KEY (eventID),
-	FOREIGN KEY (roomID) REFERENCES room(roomID)
+	FOREIGN KEY (roomID) REFERENCES room(roomID),
+	FOREIGN KEY (ownerID) REFERENCES users(userID)	
 );
-
-CREATE TABLE calendar.users (
-	userID int auto_increment,
-	username varchar(50),
-	password varchar(50),
-	eventID int,
-
-	PRIMARY KEY (userID),
-	FOREIGN KEY (eventID) REFERENCES event(eventID)
-); 
 
 CREATE TABLE calendar.memberOf (
 	userID int,
