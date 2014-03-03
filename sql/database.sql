@@ -1,39 +1,30 @@
+drop database if exists calendar;
+create database calendar;
+use calendar;
 
-
-CREATE TABLE users (
-	userID int,
-	username varchar(50),
-	password varchar(50),
-
-	PRIMARY KEY (userID)
-); 
-
-CREATE TABLE memberOf (
-	userID int,
-	groupID int,
-
-	PRIMARY KEY (userID, groupID),
-	FOREIGN KEY (userID) REFERENCES users(userID),
-	FOREIGN KEY (groupID) REFERENCES group(groupID)
-);
-
-CREATE TABLE group (
-	groupID int,
+CREATE TABLE calendar.group (
+	groupID int auto_increment,
 
 	PRIMARY KEY (groupID)
 );
 
-CREATE TABLE subgroup (
-	groupID int,
-	subgroupID int,
+CREATE TABLE calendar.room (
+	roomID int auto_increment,
+	adress varchar(255),
+	capacity int,
 
-	PRIMARY KEY (groupID, containsID)
-	FOREIGN KEY (groupID) REFERENCES group(groupID),
-	FOREIGN KEY (subgroupID) REFERENCES group(groupID)
+	PRIMARY KEY (roomID)
 );
 
-CREATE TABLE event (
-	eventID int,
+CREATE TABLE calendar.alert (
+	alertID int auto_increment,
+	time DateTime,
+
+	PRIMARY KEY (alertID)
+);
+
+CREATE TABLE calendar.event (
+	eventID int auto_increment,
 	eventName varchar(50),
 	startTime DateTime,
 	endTime DateTime,
@@ -45,22 +36,35 @@ CREATE TABLE event (
 	FOREIGN KEY (roomID) REFERENCES room(roomID)
 );
 
-CREATE TABLE room (
-	roomID int,
-	adress varchar(255),
-	capacity int,
+CREATE TABLE calendar.users (
+	userID int auto_increment,
+	username varchar(50),
+	password varchar(50),
+	eventID int,
 
-	PRIMARY KEY (roomID)
+	PRIMARY KEY (userID),
+	FOREIGN KEY (eventID) REFERENCES event(eventID)
+); 
+
+CREATE TABLE calendar.memberOf (
+	userID int,
+	groupID int,
+
+	PRIMARY KEY (userID, groupID),
+	FOREIGN KEY (userID) REFERENCES users(userID),
+	FOREIGN KEY (groupID) REFERENCES calendar.group(groupID)
 );
 
-CREATE TABLE alert (
-	alertID int,
-	time DateTime,
+CREATE TABLE calendar.subgroup (
+	groupID int,
+	subgroupID int,
 
-	PRIMARY KEY (alertID)
+	PRIMARY KEY (groupID, subgroupID),
+	FOREIGN KEY (groupID) REFERENCES calendar.group(groupID),
+	FOREIGN KEY (subgroupID) REFERENCES calendar.group(groupID)
 );
 
-CREATE TABLE eventParticipant (
+CREATE TABLE calendar.eventParticipant (
 	alertID int,
 	eventID int,
 	userID int,
@@ -71,5 +75,7 @@ CREATE TABLE eventParticipant (
 	PRIMARY KEY (alertID, userID, eventID),
 	FOREIGN KEY (alertID) REFERENCES alert(alertID),
 	FOREIGN KEY (eventID) REFERENCES event(eventID),
-	FOREIGN KEY (userID) REFERENCES user(userID)
+	FOREIGN KEY (userID) REFERENCES users(userID)
 );
+show tables;
+ 
