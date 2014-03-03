@@ -72,7 +72,7 @@ CREATE TABLE calendar.eventParticipant (
 	pendingChange tinyint(1),
 	response varchar(10),
 
-	PRIMARY KEY (alertID, userID, eventID),
+	PRIMARY KEY (userID, eventID),
 	FOREIGN KEY (alertID) REFERENCES alert(alertID),
 	FOREIGN KEY (eventID) REFERENCES event(eventID),
 	FOREIGN KEY (userID) REFERENCES users(userID)
