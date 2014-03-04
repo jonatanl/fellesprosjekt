@@ -4,6 +4,7 @@ use calendar;
 
 CREATE TABLE calendar.group (
 	groupID int auto_increment,
+	name varchar(255),
 
 	PRIMARY KEY (groupID)
 );
