@@ -3,4 +3,7 @@
 	<output-test url="file://$MODULE_DIR$/../out/test/fellesprosjekt"/>
 	<exclude-output/>
 	<contentEntry url="file://$MODULE_DIR$"/>
+	<levels>
+		<level name="mysql" value="project"/>
+	</levels>
 </component>
