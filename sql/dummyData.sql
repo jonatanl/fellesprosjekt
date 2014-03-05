@@ -28,9 +28,7 @@ insert into subgroup values (1, 3);
 
 insert into memberOf values (1, 1);
 insert into memberOf values (2, 1);
-				
-
-
+	
 select * from room;
 select * from users;
 select * from calendar.group;

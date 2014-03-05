@@ -2,6 +2,11 @@ drop database if exists calendar;
 create database calendar;
 use calendar;
 
+CREATE USER sqluser IDENTIFIED BY 'sqluserpw'; 
+
+grant usage on *.* to sqluser@localhost identified by 'sqluserpw'; 
+grant all privileges on calendar.* to sqluser@localhost;
+
 CREATE TABLE calendar.group (
 	groupID int auto_increment,
 	name varchar(255),
