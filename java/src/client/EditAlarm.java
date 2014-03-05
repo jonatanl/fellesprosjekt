@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -25,7 +26,7 @@ public class EditAlarm implements EventHandler<ActionEvent> {
 	private TextField timeBeforeField;
 	private Button saveButton;
 	private Button cancelButton;
-
+	
     private Alarm model;
     private String eventTime;
     
@@ -78,6 +79,24 @@ public class EditAlarm implements EventHandler<ActionEvent> {
     
     @Override
     public void handle(ActionEvent actionEvent) {
+    	if (actionEvent.getSource() == saveButton) {
+			Stage newStage = new Stage();
+			VBox comp = new VBox();
+			TextField nameField = new TextField("Name");
+			TextField phoneNumber = new TextField("Phone Number");
+			comp.getChildren().add(nameField);
+			comp.getChildren().add(phoneNumber);
+
+			Scene stageScene = new Scene(comp, 300, 300);
+			newStage.setScene(stageScene);
+			newStage.show();
+			
+		}
+    	else if (actionEvent.getSource() == cancelButton) {
+    		
+    	}
+    	
+    	
         /*
     	model.setTitle(titleField.getText());
         model.setStartTime(startTime.getText());
