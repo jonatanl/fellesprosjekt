@@ -22,7 +22,7 @@ public class Login extends Application implements EventHandler<ActionEvent> {
     private Text messageText;
     private TextField username;
     private PasswordField password;
-
+    
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("YO!");

@@ -6,3 +6,6 @@ out/
 
 # Python files
 *.pyc
+
+# Eclipse
+.metadata/
