@@ -2,7 +2,6 @@ package GUI;
 
 import java.util.ArrayList;
 
-import sun.reflect.generics.tree.BottomSignature;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,7 +19,9 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
  
 public class ShowMore extends Application {
     public static void main(String[] args) {
@@ -74,7 +76,11 @@ public class ShowMore extends Application {
  
             @Override
             public void handle(ActionEvent event) {
-                System.out.println("back");
+                Stage dialog = new Stage();
+                dialog.initStyle(StageStyle.DECORATED);
+                Scene scene = new Scene(new Group(new Text(100, 100, "Hei på deg")));
+                dialog.setScene(scene);
+                dialog.show();
             }
         });
         return btnOk;
@@ -124,9 +130,11 @@ public class ShowMore extends Application {
     	RadioButton rb1 = new RadioButton("Skal");
     	rb1.setToggleGroup(group);
     	rb1.setSelected(true);
+    	rb1.setDisable(true);
 
     	RadioButton rb2 = new RadioButton("Skal ikke");
     	rb2.setToggleGroup(group);
+    	rb2.setDisable(true);
     	radioBox.getChildren().addAll(rb1,rb2);
     	
     	return radioBox;
