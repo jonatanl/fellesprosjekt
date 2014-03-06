@@ -28,8 +28,8 @@ import javafx.stage.StageStyle;
 public class ShowMore implements EventHandler<ActionEvent> {
     
     ObservableList<String> items;
-    String s_title,s_start,s_end,s_description,s_place,s_room,s_alert,s_timeBefore,s_myParticipation;
-    Label l_title,l_start,l_end,l_description,l_place,l_room,l_alert,l_timeBefore,l_myParticipation;
+    String s_title,s_date,s_start,s_end,s_description,s_place,s_room,s_alert,s_timeBefore,s_myParticipation;
+    Label l_title,l_date,l_start,l_end,l_description,l_place,l_room,l_alert,l_timeBefore,l_myParticipation;
     Stage stage;
     Event event;
     
@@ -89,6 +89,7 @@ public class ShowMore implements EventHandler<ActionEvent> {
     
     public VBox getLeftBox(){
     	Label title = new Label ("Tittel");
+    	Label date = new Label ("Dato");
         Label start = new Label ("Start");
         Label end = new Label ("Slutt");
         Label description = new Label ("Beskrivelse");
