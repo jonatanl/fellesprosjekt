@@ -30,14 +30,14 @@ public class Event {
     }
     
     public EventParticipant findEventParticipant(int eventParticipantId){
-    	/*
+    	
     	for (EventParticipant ep: eventParticipants){
-    		if (ep.getId() == eventParticipantId){
+    		if (ep.getEventId() == eventParticipantId){
     			return ep;
     		}
     	}
     	
-    	 */
+    	
     	return null;
     }
 

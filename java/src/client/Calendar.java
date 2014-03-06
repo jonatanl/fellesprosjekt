@@ -107,7 +107,6 @@ public class Calendar extends Application implements CalendarInterface{
 			e.removeEventParticipant(participant);
 		}
 	}
-
 	
 	public void changeEventParticipantResponse(int eventId, int eventParticipantId,
 			String newResponse, boolean newIsDeleted) {

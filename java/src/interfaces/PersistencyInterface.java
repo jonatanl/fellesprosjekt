@@ -23,7 +23,6 @@ public interface PersistencyInterface {
 	
 	// Kalles når noe forandres i en event, bortsett fra EventParticipants.  
 	public void changeEvent(Event event);
-	
 
 	public void addEventParticipant(int eventID, int participantID);
 	
@@ -31,7 +30,6 @@ public interface PersistencyInterface {
 
 	// Kalles når response eller isDeleted forandres hos en EventParticipant. 
 	public void changeEventParticipantResponse(EventParticipant participant);
-	
 	
 	public void addAlarm(EventParticipant participant, Alarm alarm);
 	
