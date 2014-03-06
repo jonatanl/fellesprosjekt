@@ -1,5 +1,6 @@
 package Models;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Event {
@@ -13,6 +14,19 @@ public class Event {
     private String location;
     private int roomId;
     private int ownerId;
+    private ArrayList<EventParticipant> eventParticipants;
+
+    public Event(){
+    	eventParticipants = new ArrayList<EventParticipant>();
+    }
+    
+    public void addEventParticipant(EventParticipant eventParticipant){
+    	this.eventParticipants.add(eventParticipant);
+    }
+    
+    public void removeEventParticipant(EventParticipant eventParticipant){
+    	this.eventParticipants.remove(eventParticipant);
+    }
 
     public int getEventId() {
         return eventId;
