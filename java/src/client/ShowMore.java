@@ -2,6 +2,8 @@ package client;
 
 import java.util.ArrayList;
 
+import Models.Event;
+import Models.Room;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,12 +31,15 @@ public class ShowMore extends Application {
     }
     
     ObservableList<String> items;
-    Label title,start,end,description,place,room,alert,timeBefore,myParticipation;
+    String s_title,s_start,s_end,s_description,s_place,s_room,s_alert,s_timeBefore,s_myParticipation;
+    Label l_title,l_start,l_end,l_description,l_place,l_room,l_alert,l_timeBefore,l_myParticipation;
+    Stage stage;
+    Event event;
     
     @Override
-    public void start(Stage primaryStage) {
-    		
-        primaryStage.setTitle("Vis mer");
+    public void start(Stage stage) {
+    	this.stage = stage;
+    	stage.setTitle("Vis mer");
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -43,16 +48,21 @@ public class ShowMore extends Application {
         grid.setPadding(new Insets(25, 25, 25, 25));
         
         grid.add(getLeftBox(), 0, 0);
-        grid.add(getMiddleBox(), 1, 0);
+        grid.add(getDataBox(), 1, 0);
         grid.add(getListViewBox(), 2, 0);
         grid.add(getRadioBox(), 0, 1);
         grid.add(getOkButton(), 0, 2);
         
         Scene scene = new Scene(grid, 500, 300);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        stage.setScene(scene);
+        stage.show();
     }
     
+    public ShowMore(Event event, Stage stage){
+    	this.event = event;
+    	setEvent(event.getEventName(), event.getStartTime(), event.getEndTime(), event.getDescription(), event.getLocation());
+    	
+    }
     
     public VBox getListViewBox(){
     	VBox rightBox = new VBox();
@@ -76,11 +86,7 @@ public class ShowMore extends Application {
  
             @Override
             public void handle(ActionEvent event) {
-                Stage dialog = new Stage();
-                dialog.initStyle(StageStyle.DECORATED);
-                Scene scene = new Scene(new Group(new Text(100, 100, "Hei på deg")));
-                dialog.setScene(scene);
-                dialog.show();
+                stage.close();
             }
         });
         return btnOk;
@@ -104,21 +110,29 @@ public class ShowMore extends Application {
         return leftBox;
     }
     
-    public VBox getMiddleBox(){
-    	Label eventTitle = new Label ("Tittel");
-        Label eventStart = new Label ("Start");
-        Label eventEnd = new Label ("Slutt");
-        Label eventDescription = new Label ("Beskrivelse");
-        Label eventPlace = new Label ("Sted");
-        Label eventRoom = new Label ("Rom");
-        Label eventAlert = new Label ("Alarm");
-        Label eventTimeBefore = new Label ("Tid før");
-        Label eventMyParticipation = new Label ("Min deltakelse");
+    public VBox getDataBox(){
+    	Label eventTitle = new Label (s_title);
+        Label eventStart = new Label (s_start);
+        Label eventEnd = new Label (s_end);
+        Label eventDescription = new Label (s_description);
+        Label eventPlace = new Label (s_place);
+        Label eventRoom = new Label (s_room);
+        Label eventAlert = new Label ();
+        Label eventTimeBefore = new Label ();
+        Label eventMyParticipation = new Label ();
         
         VBox middleBox = new VBox();
         middleBox.getChildren().addAll(eventTitle,eventStart,eventEnd,eventDescription,eventPlace,eventRoom,eventAlert,eventTimeBefore,eventMyParticipation);
         
         return middleBox;
+    }
+    
+    public void setEvent(String title, String start, String end, String description, String place){
+    	this.s_title = title;
+    	this.s_start = start;
+    	this.s_end = end;
+    	this.s_description = description;
+    	this.s_place = place;
     }
     
     public HBox getRadioBox(){
