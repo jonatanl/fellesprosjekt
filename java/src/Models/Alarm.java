@@ -4,16 +4,26 @@ public class Alarm {
 	private int alertID;
 	private String time;
 	
-	public int getAlertID() {
+	public int getAlarmID() {
 		return alertID;
 	}
-	public void setAlertID(int alertID) {
+	public void setAlarmID(int alertID) {
 		this.alertID = alertID;
 	}
-	public String getTime() {
-		return time;
-	}
-	public void setTime(String time) {
-		this.time = time;
-	}
+
+    public int getAlertID() {
+        return alertID;
+    }
+
+    public void setAlertID(int alertID) {
+        this.alertID = alertID;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 }

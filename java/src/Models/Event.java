@@ -3,14 +3,16 @@ package Models;
 import java.util.Date;
 
 public class Event {
+    public static final String[] DATABASE_FIELDS = {"eventName", "startTime", "endTime", "description", "location", "roomID", "ownerID"};
+
     private int eventId;
     private String eventName;
     private Date startTime;
     private Date endTime;
     private String description;
     private String location;
-    private Room room;
-    private User user;
+    private int roomId;
+    private int ownerId;
 
     public int getEventId() {
         return eventId;
@@ -60,20 +62,20 @@ public class Event {
         this.location = location;
     }
 
-    public Room getRoom() {
-        return room;
+    public int getRoomId() {
+        return roomId;
     }
 
-    public void setRoom(Room room) {
-        this.room = room;
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 
-    public User getUser() {
-        return user;
+    public int getOwnerId() {
+        return ownerId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
     }
 
     @Override
@@ -85,8 +87,8 @@ public class Event {
                 ", endTime=" + endTime +
                 ", description='" + description + '\'' +
                 ", location='" + location + '\'' +
-                ", room=" + room +
-                ", user=" + user +
+                ", roomId=" + roomId +
+                ", ownerId=" + ownerId +
                 '}';
     }
 }

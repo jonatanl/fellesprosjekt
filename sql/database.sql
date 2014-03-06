@@ -22,11 +22,11 @@ CREATE TABLE calendar.room (
 	PRIMARY KEY (roomID)
 );
 
-CREATE TABLE calendar.alert (
-	alertID int auto_increment,
+CREATE TABLE calendar.alarm (
+	alarmID int auto_increment,
 	time DateTime,
 
-	PRIMARY KEY (alertID)
+	PRIMARY KEY (alarmID)
 );
 
 CREATE TABLE calendar.users (
@@ -71,7 +71,7 @@ CREATE TABLE calendar.subgroup (
 );
 
 CREATE TABLE calendar.eventParticipant (
-	alertID int,
+	alarmID int,
 	eventID int,
 	userID int,
 	isDeleted tinyint(1),
@@ -79,8 +79,8 @@ CREATE TABLE calendar.eventParticipant (
 	response varchar(10),
 
 	PRIMARY KEY (userID, eventID),
-	FOREIGN KEY (alertID) REFERENCES alert(alertID),
-	FOREIGN KEY (eventID) REFERENCES event(eventID),
+	FOREIGN KEY (alarmID) REFERENCES alarm(alarmID),
+	FOREIGN KEY (eventID) REFERENCES event(eventID) ON DELETE CASCADE,
 	FOREIGN KEY (userID) REFERENCES users(userID)
 );
 show tables;

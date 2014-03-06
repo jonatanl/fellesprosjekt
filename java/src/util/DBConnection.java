@@ -8,7 +8,7 @@ public class DBConnection {
     private static final String password = "sqluserpw";
     private static final String user = "sqluser";
 
-    private Connection connection;
+    protected Connection connection;
     private Statement statement;
 
     public Connection connect(){
@@ -57,9 +57,5 @@ public class DBConnection {
             System.out.println(e.getMessage());
         }
         return result;
-    }
-
-    public Connection getConnection(){
-        return connection;
     }
 }
