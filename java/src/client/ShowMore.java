@@ -25,10 +25,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
  
-public class ShowMore extends Application {
-    public static void main(String[] args) {
-        launch(args);
-    }
+public class ShowMore implements EventHandler<ActionEvent> {
     
     ObservableList<String> items;
     String s_title,s_start,s_end,s_description,s_place,s_room,s_alert,s_timeBefore,s_myParticipation;
@@ -36,9 +33,7 @@ public class ShowMore extends Application {
     Stage stage;
     Event event;
     
-    @Override
-    public void start(Stage stage) {
-    	this.stage = stage;
+    public void createStage() {
     	stage.setTitle("Vis mer");
 
         GridPane grid = new GridPane();
@@ -59,14 +54,20 @@ public class ShowMore extends Application {
     }
     
     public ShowMore(Event event, Stage stage){
+    	try {
+			createStage();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     	this.event = event;
-    	setEvent(event.getEventName(), event.getStartTime(), event.getEndTime(), event.getDescription(), event.getLocation());
+    	this.stage = stage;
+    	setEvent(event.getEventName(), event.getDescription(), event.getLocation());
     	
     }
     
     public VBox getListViewBox(){
     	VBox rightBox = new VBox();
-        Label participants = new Label ("Deltakere");
+        Label participants = new Label ("Deltagere");
 
     	ListView<String> list = new ListView<String>();
     	ObservableList<String> items = getList();
@@ -82,13 +83,7 @@ public class ShowMore extends Application {
     public Button getOkButton(){
     	Button btnOk = new Button();
         btnOk.setText("Ok");
-        btnOk.setOnAction(new EventHandler<ActionEvent>() {
- 
-            @Override
-            public void handle(ActionEvent event) {
-                stage.close();
-            }
-        });
+        btnOk.setOnAction(this);
         return btnOk;
     }
     
@@ -127,10 +122,8 @@ public class ShowMore extends Application {
         return middleBox;
     }
     
-    public void setEvent(String title, String start, String end, String description, String place){
+    public void setEvent(String title, String description, String place){
     	this.s_title = title;
-    	this.s_start = start;
-    	this.s_end = end;
     	this.s_description = description;
     	this.s_place = place;
     }
@@ -163,5 +156,11 @@ public class ShowMore extends Application {
     public ObservableList<String> getList(){
     	return items;
     }
+
+	@Override
+	public void handle(ActionEvent event) {
+		stage.close();
+		
+	}
     
 }
