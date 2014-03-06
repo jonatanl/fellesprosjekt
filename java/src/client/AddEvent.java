@@ -114,7 +114,15 @@ public class AddEvent implements EventHandler<ActionEvent> {
     public void setHints() {
     	Date date = new Date();
     	
+    	
+    	
     	String mh = (date.getHours() + ":" + date.getMinutes());
+    	if (date.getHours() < 10) {
+    		mh = "0" + mh;
+    	}
+    	if (date.getMinutes() < 10) {
+    		mh = mh.substring(0, 3) + "0" + mh.charAt(mh.length()-1);
+    	}
     	startTime.setText(mh);
     	
     	String ddmmyyyy = date.getDate() + "-" + (date.getMonth()+1) + "-" + (date.getYear()+1900);
@@ -127,15 +135,36 @@ public class AddEvent implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent actionEvent) {
-        eventModel.setEventName(titleField.getText());
-        eventModel.setDate(dateField.getText());
-        eventModel.setStartTime(startTime.getText());
-        eventModel.setEndTime(endTime.getText());
-        eventModel.setDescription(description.getText());
-        eventModel.setLocation(location.getText());
-        System.out.println(eventModel);
-        
-        thisStage.close();
+    	
+    	if (validInput()) {
+    		eventModel.setEventName(titleField.getText());
+    		eventModel.setDate(dateField.getText());
+    		eventModel.setStartTime(startTime.getText());
+    		eventModel.setEndTime(endTime.getText());
+    		eventModel.setDescription(description.getText());
+    		eventModel.setLocation(location.getText());
+    		System.out.println(eventModel);
+    		
+    		thisStage.close();    		
+    	}
+    	
+    	
+    	
+    }
+    
+    public boolean validInput() {
+    	// Check that the title field has some text
+    	if (titleField.getText().length() <= 1) {
+    		if (titleField.getText().contains(" ") || titleField.getText().isEmpty()) {
+    			titleField.setPromptText("Fill in , you bastard!");
+    			return false;
+    		}
+    	}
+    	if (dateField.getText().length() != 8 || dateField.getText().contains("[a-zA-Z]+")) {
+    		dateField.setPromptText("Invalid dateformat: hh:ss");
+    		return false;
+    	}
+    	return true;
     }
 
 
