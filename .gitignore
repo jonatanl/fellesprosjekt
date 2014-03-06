@@ -9,3 +9,8 @@ out/
 
 # Eclipse
 .metadata/
+.metadata/.plugins/org.eclipse.jdt.core/savedIndexNames.txt
+.metadata/.log
+.metadata/.plugins/org.eclipse.core.resources/.root/.markers.snap
+.metadata/.plugins/org.eclipse.core.resources/.safetable/org.eclipse.core.resources
+.metadata/.plugins/org.eclipse.core.resources/.snap
