@@ -79,9 +79,9 @@ public class AddEvent extends Application implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent actionEvent) {
-        model.setTitle(titleField.getText());
-        model.setStartTime(startTime.getText());
-        model.setEndTime(endTime.getText());
+        //model.setTitle(titleField.getText());
+        //model.setStartTime(startTime.getText());
+        //model.setEndTime(endTime.getText());
         model.setDescription(description.getText());
         model.setLocation(location.getText());
         System.out.println(model);
