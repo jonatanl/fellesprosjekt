@@ -2,6 +2,7 @@ package client;
 
 import Models.Event;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -9,8 +10,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -22,6 +25,9 @@ public class AddEvent extends Application implements EventHandler<ActionEvent> {
     private TextField endTime;
     private TextField description;
     private TextField location;
+    
+    private ListView<String> allPersonList, chosenPersonList;
+    private Button addPerson, removePerson;
 
     private Event model;
 
@@ -39,6 +45,7 @@ public class AddEvent extends Application implements EventHandler<ActionEvent> {
 
         createFields(grid);
         createLabels(grid);
+        grid.add(getListViewBox(),2,0);
 
         Button button = new Button("Add event");
         grid.add(button, 1, 6);
@@ -85,5 +92,30 @@ public class AddEvent extends Application implements EventHandler<ActionEvent> {
         model.setDescription(description.getText());
         model.setLocation(location.getText());
         System.out.println(model);
+        
     }
+    
+    public VBox getListViewBox(){
+    	VBox rightBox = new VBox();
+        Label participants = new Label ("Deltagere");
+
+    	allPersonList = new ListView<String>();
+    	allPersonList.setPrefWidth(175);
+    	allPersonList.setPrefHeight(130);
+    	
+    	addPerson = new Button("Legg til");
+    	addPerson.setOnAction(this);
+
+    	chosenPersonList = new ListView<String>();
+    	chosenPersonList.setPrefWidth(175);
+    	chosenPersonList.setPrefHeight(130);
+    	
+    	removePerson = new Button("Fjern");
+    	removePerson.setOnAction(this);
+    	
+    	rightBox.getChildren().addAll(participants,allPersonList,addPerson,chosenPersonList,removePerson);
+    	
+    	return rightBox;
+    }
+    
 }
