@@ -3,6 +3,7 @@ package Models;
 public class User{
 	private int userId;
 	private String username;
+    private String password;
 	
 	public int getUserId() {
 		return userId;
@@ -22,5 +23,5 @@ public class User{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	private String password;
 }
+

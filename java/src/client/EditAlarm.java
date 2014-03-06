@@ -36,7 +36,7 @@ public class EditAlarm implements EventHandler<ActionEvent> {
     	this.eventTime = eventTime;
     	if (alarm == null){
     		this.model = new Alarm();
-    		this.model.setTime(eventTime);
+    		//this.model.setTime(eventTime);
     	}
     	else{
     		this.model = alarm;
@@ -59,8 +59,8 @@ public class EditAlarm implements EventHandler<ActionEvent> {
         
         grid.add(new Text("Tid før:"), 0, 2);
         
-        timeBeforeField = new TextField(util.Time.subtractTimes(this.eventTime, this.model.getTime()));
-        grid.add(timeBeforeField, 1, 2);
+        //timeBeforeField = new TextField(util.Time.subtractTimes(this.eventTime, this.model.getTime()));
+        //grid.add(timeBeforeField, 1, 2);
         
         saveButton = new Button("Lagre");
         saveButton.setOnAction(this);

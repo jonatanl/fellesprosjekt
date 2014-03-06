@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Event {
+    public static final String[] DATABASE_FIELDS = {"eventName", "startTime", "endTime", "description", "location", "roomID", "ownerID"};
+
     private int eventId;
     private String eventName;
     private Date startTime;
     private Date endTime;
     private String description;
     private String location;
-    private Room room;
-    private User eventOwner;
+    private int roomId;
+    private int ownerId;
+    
     private ArrayList<EventParticipant> eventParticipants;
 
     public Event(){
@@ -27,12 +30,14 @@ public class Event {
     }
     
     public EventParticipant findEventParticipant(int eventParticipantId){
+    	/*
     	for (EventParticipant ep: eventParticipants){
     		if (ep.getId() == eventParticipantId){
     			return ep;
     		}
     	}
     	
+    	 */
     	return null;
     }
 
@@ -84,20 +89,21 @@ public class Event {
         this.location = location;
     }
 
-    public Room getRoom() {
-        return room;
+    public int getRoomId() {
+        return roomId;
     }
 
-    public void setRoom(Room room) {
-        this.room = room;
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
     }
 
-    public User getEventOwner() {
-        return eventOwner;
+
+    public int getOwnerId() {
+        return ownerId;
     }
 
-    public void setEventOwner(User owner) {
-        this.eventOwner = owner;
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
     }
 
     @Override
@@ -109,8 +115,8 @@ public class Event {
                 ", endTime=" + endTime +
                 ", description='" + description + '\'' +
                 ", location='" + location + '\'' +
-                ", room=" + room +
-                ", user=" + eventOwner +
+                ", roomId=" + roomId +
+                ", ownerId=" + ownerId +
                 '}';
     }
 }

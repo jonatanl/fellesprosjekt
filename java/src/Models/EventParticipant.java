@@ -6,21 +6,22 @@ public class EventParticipant {
 	private String response;
 	private boolean pendingChange;
 	private boolean isDeleted;
-	private Alarm alarm;
-	private User user;
+	private int alarmId;
+    private int userId;
+    private int eventId;
 
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public User getUser() {
-		return user;
-	}
-	public void setUser(User user) {
-		this.user = user;
-	}
+    public int getEventId() {
+        return eventId;
+    }
+    public void setEventId(int eventId) {
+        this.eventId = eventId;
+    }
+    public int getUserId() {
+        return userId;
+    }
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 	public String getResponse() {
 		return response;
 	}
@@ -39,10 +40,10 @@ public class EventParticipant {
 	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
-	public Alarm getAlarm() {
-		return alarm;
-	}
-	public void setAlarm(Alarm alarm) {
-		this.alarm = alarm;
-	}
+    public int getAlarmId() {
+        return alarmId;
+    }
+    public void setAlarmId(int alarmId) {
+        this.alarmId = alarmId;
+    }
 }

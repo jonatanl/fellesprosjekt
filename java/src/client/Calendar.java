@@ -68,7 +68,7 @@ public class Calendar extends Application implements CalendarInterface{
 		e.setEndTime(newEndTime);
 		e.setDescription(newDescription);
 		e.setLocation(newLocation);
-		e.setRoom(newRoom);
+		//e.setRoom(newRoom);
 		
 		// TODO Update webview. 
 		
@@ -129,20 +129,20 @@ public class Calendar extends Application implements CalendarInterface{
 	
 	@Override
 	public void addAlarm(EventParticipant participant, Alarm alarm) {
-		participant.setAlarm(alarm);
+		//participant.setAlarm(alarm);
 		// TODO Inform webView
 	}
 	
 	@Override
 	public void removeAlarm(EventParticipant participant) {
-		participant.setAlarm(null);
+		//participant.setAlarm(null);
 		// TODO inform webView.
 		
 	}
 
 	@Override
 	public void changeAlarm(EventParticipant participant, Date newAlarmTime) {
-		participant.setAlarm(new Alarm(newAlarmTime));
+		//participant.setAlarm(new Alarm(newAlarmTime));
 		// TODO inform webView.
 	}
 	
