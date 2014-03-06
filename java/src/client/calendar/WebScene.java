@@ -10,14 +10,17 @@ import javafx.stage.Stage;
 public class WebScene extends Application{
 
     private Scene scene;
+    private Browser browser;
 
 
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("Calendar Frame");
-        scene = new Scene(new Browser());
+        browser = new Browser();
+        scene = new Scene(browser);
         stage.setScene(scene);
         stage.show();
+        browser.callJavaScript("addEvent(333, 'Kode kalender', \"March 5, 2014 12:00:00\", \"March 5, 2014 13:00:00\", false)");
     }
 
     public static void main(String[] args) {
