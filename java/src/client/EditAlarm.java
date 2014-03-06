@@ -1,5 +1,7 @@
 package client;
 
+import java.util.Date;
+
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -28,9 +30,9 @@ public class EditAlarm implements EventHandler<ActionEvent> {
 	private Button cancelButton;
 	
     private Alarm model;
-    private String eventTime;
+    private Date eventTime;
     
-    public EditAlarm(Alarm alarm, String eventTime){
+    public EditAlarm(Alarm alarm, Date eventTime){
     	this.eventTime = eventTime;
     	if (alarm == null){
     		this.model = new Alarm();

@@ -2,10 +2,12 @@
 package interfaces;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import Models.Event;
 import Models.EventParticipant;
 import Models.Alarm;
+import Models.Room;
 
 // Forslag til et interface til database kontrolleren, her kalt Persistency. 
 // Gangen i det hele: 
@@ -21,8 +23,8 @@ import Models.Alarm;
 public interface PersistencyInterface {
 	
 	// 'event' inneholder alle relevante data, untatt id, som etter hvert hentes fra databasen.
-	// 'participantIDs' er id-ene til alle participants. 
-	public void addEvent(Event event, ArrayList<Integer> participantIDs);
+	// Dersom 'event' inneholder referanser til EventParticipant-objekter må disse også lagres i databasen. 
+	public void addEvent(Event event);
 	
 	// 'event' slettes i databasen, og dersom databasen er kodet riktig, med "ON DELETE CASCADE" vil de
 	// tilhørende EventParticipants også slettes i databasen, og forhåpentligvis også alarmene. 
@@ -31,23 +33,27 @@ public interface PersistencyInterface {
 	public void removeEvent(Event event);
 	
 	// Kalles når noe forandres i en event, bortsett fra EventParticipants. 
-	public void changeEvent(Event event);
+	// 'eventId' brukes for å finne eventen i databasen, og deretter for å finne riktig Event-objekt hos Calendar. 
+	public void changeEvent(int eventId, String newEventName, Date newStartTime, Date newEndTime,
+			String newDescription, String newLocation, Room newRoom);
 	
-	// Her trengs bare ID til event og participant for å fjerne riktige entries. 
-	public void addEventParticipant(int eventID, int participantID);
+	// 'participant' legges til i databasen. 
+	// 'eventId brukes for å finne riktig Event-objekt hos Calendar. 
+	public void addEventParticipant(int eventID, EventParticipant participant);
 	
-	public void removeEventParticipant(int eventID, int participantID);
+	public void removeEventParticipant(int eventID, EventParticipant participantID);
 
 	// Kalles når response eller isDeleted forandres hos en EventParticipant. 
-	// Andre EventParticipants må gis beskjed om at en forandring har skjedd. 
-	public void changeEventParticipantResponse(EventParticipant participant);
+	// 'eventParticipantId' brukes for å finne riktig EventParticipant i databasen. 
+	// 'eventParticipantId' og 'eventId' brukes for å finne riktig EventParticipant-objekt hos Calendar. 
+	public void changeEventParticipantResponse(int eventId, int eventParticipantId, String newResponse, boolean newIsDeleted);
 	
 	
 	public void addAlarm(EventParticipant participant, Alarm alarm);
 	
-	public void removeAlarm(EventParticipant participant, Alarm alarm);
+	public void removeAlarm(EventParticipant participant);
 	
-	public void changeAlarm(EventParticipant participant, Alarm alarm);
+	public void changeAlarm(EventParticipant participant, Date newAlarmTime);
 	
 	// Kan vurdere å også ha metoder for addUser, addRoom og addGroup, selv om disse ikke skal brukes når 
 	// systemet er ferdig. Kan være nyttige mens vi tester kanskje. 

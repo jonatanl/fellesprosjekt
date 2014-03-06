@@ -3,11 +3,13 @@ package client;
 import interfaces.CalendarInterface;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import Models.Alarm;
 import Models.Event;
 import Models.EventParticipant;
 import Models.Group;
+import Models.Room;
 import Models.User;
 import javafx.application.Application;
 import javafx.geometry.Pos;
@@ -24,6 +26,7 @@ public class Calendar extends Application implements CalendarInterface{
 	private ArrayList<Event> events;
 	private ArrayList<User> users;
 	private ArrayList<Group> groups;
+	private ArrayList<Room> rooms;
 	
 	public static void main(String[] args)  {
 		launch(args);
@@ -56,8 +59,18 @@ public class Calendar extends Application implements CalendarInterface{
 		// TODO Update the webView.
 	}
 
-	@Override
-	public void changeEvent(Event event) {
+	public void changeEvent(int eventId, String newEventName,
+			Date newStartTime, Date newEndTime, String newDescription,
+			String newLocation, Room newRoom) {
+		Event e = findEvent(eventId);
+		e.setEventName(newEventName);
+		e.setStartTime(newStartTime);
+		e.setEndTime(newEndTime);
+		e.setDescription(newDescription);
+		e.setLocation(newLocation);
+		e.setRoom(newRoom);
+		
+		// TODO Update webview. 
 		
 	}
 	
@@ -71,7 +84,12 @@ public class Calendar extends Application implements CalendarInterface{
 	}
 
 	public User findUser(int userID){
-		
+		for (User u: users){
+			if (u.getUserId() == userID){
+				return u;
+			}
+		}
+		return null;
 	}
 	
 	@Override
@@ -84,32 +102,60 @@ public class Calendar extends Application implements CalendarInterface{
 
 	@Override
 	public void removeEventParticipant(int eventID, EventParticipant participant) {
-				
+		Event e = findEvent(eventID);
+		if (e != null){
+			e.removeEventParticipant(participant);
+		}
 	}
 
-	@Override
-	public void changeEventParticipantResponse(EventParticipant participant) {
-		// TODO Auto-generated method stub
+	
+	public void changeEventParticipantResponse(int eventId, int eventParticipantId,
+			String newResponse, boolean newIsDeleted) {
 		
-	}
-
-	@Override
-	public void addAlarm(EventParticipant participant, Alarm alarm) {
-		// TODO Auto-generated method stub
+		Event e = findEvent(eventId);
 		
-	}
-
-	@Override
-	public void removeAlarm(EventParticipant participant, Alarm alarm) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void changeAlarm(EventParticipant participant, Alarm alarm) {
-		// TODO Auto-generated method stub
+		if (e != null){
+			EventParticipant ep = e.findEventParticipant(eventParticipantId);
+			if (ep != null){
+				ep.setResponse(newResponse);
+				ep.setDeleted(newIsDeleted);
+			}
+		}
+		// TODO Inform other EventParticipants that someone changed their response, by setting their 
+		// field 'pendingChange' to true. 
+		// TODO Inform webView. 
 		
 	}
 	
+	@Override
+	public void addAlarm(EventParticipant participant, Alarm alarm) {
+		participant.setAlarm(alarm);
+		// TODO Inform webView
+	}
+	
+	@Override
+	public void removeAlarm(EventParticipant participant) {
+		participant.setAlarm(null);
+		// TODO inform webView.
+		
+	}
+
+	@Override
+	public void changeAlarm(EventParticipant participant, Date newAlarmTime) {
+		participant.setAlarm(new Alarm(newAlarmTime));
+		// TODO inform webView.
+	}
+	
+	public void addRoom(Room room){
+		rooms.add(room);
+	}
+	
+	public void removeRoom(Room room){
+		rooms.remove(room);
+	}
+
+	
+
+
 	
 }

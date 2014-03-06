@@ -11,7 +11,7 @@ public class Event {
     private String description;
     private String location;
     private Room room;
-    private User user;
+    private User eventOwner;
     private ArrayList<EventParticipant> eventParticipants;
 
     public Event(){
@@ -24,6 +24,16 @@ public class Event {
     
     public void removeEventParticipant(EventParticipant eventParticipant){
     	this.eventParticipants.remove(eventParticipant);
+    }
+    
+    public EventParticipant findEventParticipant(int eventParticipantId){
+    	for (EventParticipant ep: eventParticipants){
+    		if (ep.getId() == eventParticipantId){
+    			return ep;
+    		}
+    	}
+    	
+    	return null;
     }
 
     public int getEventId() {
@@ -82,12 +92,12 @@ public class Event {
         this.room = room;
     }
 
-    public User getUser() {
-        return user;
+    public User getEventOwner() {
+        return eventOwner;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setEventOwner(User owner) {
+        this.eventOwner = owner;
     }
 
     @Override
@@ -100,7 +110,7 @@ public class Event {
                 ", description='" + description + '\'' +
                 ", location='" + location + '\'' +
                 ", room=" + room +
-                ", user=" + user +
+                ", user=" + eventOwner +
                 '}';
     }
 }
