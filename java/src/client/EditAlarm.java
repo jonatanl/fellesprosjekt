@@ -43,6 +43,8 @@ public class EditAlarm implements EventHandler<ActionEvent> {
     	}
     }
     
+
+    
     public void start(Stage stage) throws Exception {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
