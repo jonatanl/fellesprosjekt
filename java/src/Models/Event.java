@@ -3,52 +3,44 @@ package Models;
 import java.util.Date;
 
 public class Event {
-    private int id;
-    private String title;
-    private Date date;
-    private String startTime;
-    private String endTime;
+    private int eventId;
+    private String eventName;
+    private Date startTime;
+    private Date endTime;
     private String description;
     private String location;
     private Room room;
+    private User user;
 
-    public int getId() {
-        return id;
+    public int getEventId() {
+        return eventId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setEventId(int eventId) {
+        this.eventId = eventId;
     }
 
-    public String getTitle() {
-        return title;
+    public String getEventName() {
+        return eventName;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public String getStartTime() {
+    public Date getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(Date startTime) {
         this.startTime = startTime;
     }
 
-    public String getEndTime() {
+    public Date getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
 
@@ -76,17 +68,25 @@ public class Event {
         this.room = room;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
         return "Event{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", date=" + date +
-                ", startTime='" + startTime + '\'' +
-                ", endTime='" + endTime + '\'' +
+                "eventId=" + eventId +
+                ", eventName='" + eventName + '\'' +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
                 ", description='" + description + '\'' +
                 ", location='" + location + '\'' +
                 ", room=" + room +
+                ", user=" + user +
                 '}';
     }
 }

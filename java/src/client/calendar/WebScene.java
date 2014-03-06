@@ -10,12 +10,14 @@ import javafx.stage.Stage;
 public class WebScene extends Application{
 
     private Scene scene;
+    private Browser browser;
 
 
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("Calendar Frame");
-        scene = new Scene(new Browser());
+        browser = new Browser();
+        scene = new Scene(browser);
         stage.setScene(scene);
         stage.show();
     }

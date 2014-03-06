@@ -89,7 +89,7 @@ public class EditAlarm implements EventHandler<ActionEvent> {
 
 			Scene stageScene = new Scene(comp, 300, 300);
 			newStage.setScene(stageScene);
-			newStage.show();
+			newStage.show();		
 			
 		}
     	else if (actionEvent.getSource() == cancelButton) {
