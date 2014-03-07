@@ -27,13 +27,15 @@ public class Login implements EventHandler<ActionEvent> {
     private PersistencyInterface persistency;
     private Calendar calendar;
     
+    private Stage stage;
+    
     public Login(Calendar c, PersistencyInterface p){
     	calendar = c;
     	persistency = p;
     }
     
     public void createStage()  {
-    	Stage stage = new Stage();
+    	stage = new Stage();
         stage.setTitle("Login");
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -81,6 +83,8 @@ public class Login implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent actionEvent) {
     	calendar.startCalendar(1);
+    	stage.close();
+    	
     	/*
     	int userId = persistency.requestLogin(username.getText(), password.getText());
     	if (userId >= 0){

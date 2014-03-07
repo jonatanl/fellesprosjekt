@@ -7,7 +7,9 @@ import java.util.Date;
 import Models.Event;
 import Models.EventParticipant;
 import Models.Alarm;
+import Models.Group;
 import Models.Room;
+import Models.User;
 
 // Forslag til et interface til database kontrolleren, her kalt Persistency. 
 // Gangen i det hele: 
@@ -16,6 +18,14 @@ import Models.Room;
 // 3. Calendar sier fra videre til webView om nødvendig.
 
 public interface PersistencyInterface {
+	
+	// MEthods for retrieving all entries. 
+	public ArrayList<User> getAllUsers();
+	public ArrayList<Event> getAllEvents();
+	public ArrayList<EventParticipant> getAllEventParticipants();
+	public ArrayList<Group> getAllGroups();
+	public ArrayList<Room> getAllRooms();
+	public ArrayList<Alarm> getAllAlarms();
 	
 	// If success, returns the userId of the logged in user. Otherwise, returns -1. 
 	public int requestLogin(String username, String password);
