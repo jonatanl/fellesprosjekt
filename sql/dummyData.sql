@@ -16,8 +16,7 @@ insert into event (eventName, startTime, endTime, description, location, roomID,
 insert into event (eventName, startTime, endTime, description, location, roomID, ownerID) values ('Brukbarhetstest', '2014-03-06 11:00:00', '2014-03-06 13:00:00', 'Test med 4 testpersoner', 'Paa Gloeshaugen', 2, 2);
 
 insert into eventParticipant values(1, 1, 2, 0, 1, 'unknown');
-insert into eventParticipant values(1, 1, 1, 0, 1, 'unknown');
-insert into eventParticipant values(Null, 1, 2, 0, 1, 'Yes');
+insert into eventParticipant values(Null, 1, 1, 0, 1, 'Yes');
 
 insert into calendar.group(name) values ('gruppe1');
 insert into calendar.group(name) values ('gruppe2');

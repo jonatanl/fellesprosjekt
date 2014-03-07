@@ -19,6 +19,9 @@ import Models.User;
 
 public interface PersistencyInterface {
 	
+	// For testing.  
+	public void closeConnection();
+	
 	// MEthods for retrieving all entries. 
 	public ArrayList<User> getAllUsers();
 	public ArrayList<Event> getAllEvents();

@@ -38,7 +38,6 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 	private ArrayList<EventParticipant> eventParticipants;
 	private ArrayList<Alarm> alarms;
 	
-	
 	private User loggedInUser;
 	
 	private PersistencyInterface persistency; 
@@ -49,16 +48,27 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		//persistency = new util.Persistency();
+		persistency = new util.Persistency();
 		this.stage = stage;
 		
 		Login login = new Login(this, persistency);
 		login.createStage();
-		
+	}
 	
+	@Override
+	public void stop(){
+		try {
+			super.stop();
+			persistency.closeConnection();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void startCalendar(int loggedInUserId){
+		System.out.println("logged in with id " + loggedInUserId);
 		//getAllFromDatabase();
 		//loggedInUser = findUser(loggedInUserId);
 		
@@ -122,7 +132,7 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 	public void handle(ActionEvent buttonEvent) {
 		if (buttonEvent.getSource() == b_createEvent) {
 			System.out.println("legg til event");
-			new AddEvent(stage);
+			new AddEvent(stage, persistency, loggedInUser.getUserId(), rooms, users, groups);
 		}
 		
 		else if (buttonEvent.getSource() == b_editEvent) {

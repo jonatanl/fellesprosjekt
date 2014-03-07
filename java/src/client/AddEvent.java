@@ -1,5 +1,7 @@
 package client;
 
+import interfaces.PersistencyInterface;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,7 +10,9 @@ import java.util.Date;
 import sun.font.LayoutPathImpl.EndType;
 import util.Time;
 import Models.Event;
+import Models.Group;
 import Models.Room;
+import Models.User;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -51,8 +55,15 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private ArrayList<String> persons;
     private Stage thisStage;
     private Stage parentStage;
+    private PersistencyInterface persistency;
     
-    public AddEvent(Stage stage) {
+    ArrayList<Room> rooms;
+    ArrayList<User> users;
+    ArrayList<Group> groups;
+    int ownerId;
+    	
+    
+    public AddEvent(Stage stage, PersistencyInterface persistency, int ownerId, ArrayList<Room> rooms, ArrayList<User> users, ArrayList<Group> groups) {
     	try {
 			createStage();
 		} catch (Exception e) {
@@ -60,6 +71,11 @@ public class AddEvent implements EventHandler<ActionEvent> {
 			e.printStackTrace();
 		}
     	this.parentStage = stage;
+    	this.persistency = persistency;
+    	this.ownerId = ownerId;
+    	this.rooms = rooms;
+    	this.users = users;
+    	this.groups = groups;
     }
 
   
@@ -160,7 +176,12 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		eventModel.setEndTime(endTime.getText());
     		eventModel.setDescription(description.getText());
     		eventModel.setLocation(location.getText());
-    		System.out.println(eventModel);
+    		eventModel.setRoomId(roomList.getValue().getId());
+    		eventModel.setOwnerId(ownerId);
+    		
+    		
+    		
+    		persistency.addEvent(eventModel, participantIDs);
     		
     		thisStage.close();    		
 
