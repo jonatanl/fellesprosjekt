@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class Persistency implements PersistencyInterface {
     private DBQuery query;
+    
 
     public Persistency() {
         query = new DBQuery();
