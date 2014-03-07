@@ -1,5 +1,6 @@
 package client;
 
+import interfaces.PersistencyInterface;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -19,13 +20,19 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Login implements EventHandler<ActionEvent> {
-    private Text messageText;
     private TextField username;
     private PasswordField password;
+    private Text errorMessage;
+    
+    private PersistencyInterface persistency;
+    
+    public Login(PersistencyInterface p){
+    	persistency = p;
+    }
     
     public void createStage()  {
     	Stage stage = new Stage();
-        stage.setTitle("YO!");
+        stage.setTitle("Login");
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -47,17 +54,20 @@ public class Login implements EventHandler<ActionEvent> {
 
         password = new PasswordField();
         grid.add(password, 1, 2);
+        
+        errorMessage = new Text();
+        errorMessage.setText("* Invalid username/password");
+        errorMessage.setFill(Color.FIREBRICK);
+        errorMessage.setVisible(false);
+        
+        grid.add(errorMessage, 0, 4);
+        
 
         Button btn = new Button("Sign in");
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
         grid.add(hbBtn, 1, 4);
-
-        messageText = new Text("Sign in button pressed");
-        messageText.setFill(Color.FIREBRICK);
-        messageText.setVisible(false);
-        grid.add(messageText, 1, 6);
 
         Scene scene = new Scene(grid, 300, 275);
         stage.setScene(scene);
@@ -68,8 +78,13 @@ public class Login implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent actionEvent) {
-        if (!messageText.isVisible())
-            messageText.setVisible(true);
+    	boolean success = persistency.requestLogin(username.getText(), password.getText());
+    	if (success){
+    		
+    	}
+    	else{
+    		errorMessage.setVisible(true);
+    	}
     }
 
 }

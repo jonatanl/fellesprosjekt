@@ -1,6 +1,7 @@
 package client;
 
 import interfaces.CalendarInterface;
+import interfaces.PersistencyInterface;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,14 +29,17 @@ public class Calendar extends Application{
 	private ArrayList<Group> groups;
 	private ArrayList<Room> rooms;
 	
+	private PersistencyInterface persistency; 
+	
 	public static void main(String[] args)  {
 		launch(args);
 	}
 
 	@Override
 	public void start(Stage stage) throws Exception {
+		persistency = new util.Persistency();
 		
-		Login login = new Login();
+		Login login = new Login(persistency);
 		login.createStage();
 		
 		/*
