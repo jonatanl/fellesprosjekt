@@ -2,13 +2,14 @@ package client;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import sun.font.LayoutPathImpl.EndType;
 import util.Time;
-
 import Models.Event;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -41,6 +42,10 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private Button addPerson, removePerson, addEvent;
 
     private Event eventModel;
+    
+    private ObservableList<String> allPersons;
+    private ObservableList<String> selectedPersons;
+    private ArrayList<String> persons;
     
     private Stage thisStage;
     private Stage parentStage;
@@ -151,7 +156,6 @@ public class AddEvent implements EventHandler<ActionEvent> {
         //model.setEndTime(endTime.getText());
         eventModel.setDescription(description.getText());
         eventModel.setLocation(location.getText());
-        System.out.println(eventModel);
         
         if (actionEvent.getSource() == addEvent && validInput()) {
         	eventModel.setEventName(titleField.getText());
@@ -166,31 +170,40 @@ public class AddEvent implements EventHandler<ActionEvent> {
         }
         
         else if(actionEvent.getSource() == addPerson){
-        	
+        	int id = allPersonList.getFocusModel().getFocusedIndex();
+        	selectedPersons.add(allPersons.get(id));
+        	allPersons.remove(id);        	
         }
         
-        else if(actionEvent.getSource() == removePerson){
-        	
+        else if(actionEvent.getSource() == removePerson){        	
+        	int id = chosenPersonList.getFocusModel().getFocusedIndex();
+        	allPersons.add(selectedPersons.get(id));
+        	selectedPersons.remove(id);        	
         }
         
     }
     
     public VBox getListViewBox(){
     	VBox rightBox = new VBox();
-        Label participants = new Label ("Deltagere");
+        Label participants = new Label ("Participants");
+        
+        allPersons = FXCollections.observableArrayList("Gunda-Ann","Krøll Alfa","Odd Morgan","Rune Linn");
+        selectedPersons = FXCollections.observableArrayList();
 
     	allPersonList = new ListView<String>();
     	allPersonList.setPrefWidth(175);
     	allPersonList.setPrefHeight(130);
+    	allPersonList.setItems(allPersons);
     	
-    	addPerson = new Button("Legg til");
+    	addPerson = new Button("Add");
     	addPerson.setOnAction(this);
 
     	chosenPersonList = new ListView<String>();
     	chosenPersonList.setPrefWidth(175);
     	chosenPersonList.setPrefHeight(130);
+    	chosenPersonList.setItems(selectedPersons);
     	
-    	removePerson = new Button("Fjern");
+    	removePerson = new Button("Remove");
     	removePerson.setOnAction(this);
     	
     	rightBox.getChildren().addAll(participants,allPersonList,addPerson,chosenPersonList,removePerson);
