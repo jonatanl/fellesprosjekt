@@ -98,7 +98,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     }
 
     private VBox createLabels(){
-        VBox box = new VBox();
+        VBox box = new VBox(7);
         box.getChildren().addAll(new Label("Title"), new Label("Date"), new Label("Start Time"), new Label("End Time"), new Label("Description"), new Label("Location"));
         return box;
     }
@@ -184,10 +184,10 @@ public class AddEvent implements EventHandler<ActionEvent> {
     }
     
     public VBox getListViewBox(){
-    	VBox rightBox = new VBox();
+    	VBox rightBox = new VBox(5);
         Label participants = new Label ("Participants");
         
-        allPersons = FXCollections.observableArrayList("Gunda-Ann","Krøll Alfa","Odd Morgan","Rune Linn");
+        allPersons = FXCollections.observableArrayList("Gunda-Ann","Krøll Alfa","Odd Morgan","Rune Linn","Johannes","Simen","Øivind","Jonatan");
         selectedPersons = FXCollections.observableArrayList();
 
     	allPersonList = new ListView<String>();
