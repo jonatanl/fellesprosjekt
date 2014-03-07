@@ -27,14 +27,15 @@ import javafx.stage.StageStyle;
  
 public class ShowMore implements EventHandler<ActionEvent> {
     
-    ObservableList<String> items;
-    String s_title,s_start,s_end,s_description,s_place,s_room,s_alert,s_timeBefore,s_myParticipation;
-    Label l_title,l_start,l_end,l_description,l_place,l_room,l_alert,l_timeBefore,l_myParticipation;
-    Stage stage;
-    Event event;
+    private ObservableList<String> items;
+    private String s_title,s_start,s_end,s_description,s_place,s_room,s_alert,s_timeBefore,s_myParticipation;
+    private Label l_title,l_start,l_end,l_description,l_place,l_room,l_alert,l_timeBefore,l_myParticipation;
+    
+    private Stage parentStage;
+    private Stage stage;
+    private Event event;
     
     public void createStage() {
-    	stage.setTitle("Vis mer");
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -49,6 +50,9 @@ public class ShowMore implements EventHandler<ActionEvent> {
         grid.add(getOkButton(), 0, 2);
         
         Scene scene = new Scene(grid, 500, 300);
+        
+        stage = new Stage();
+        stage.setTitle("Vis mer");
         stage.setScene(scene);
         stage.show();
     }
@@ -60,7 +64,7 @@ public class ShowMore implements EventHandler<ActionEvent> {
 			e.printStackTrace();
 		}
     	this.event = event;
-    	this.stage = stage;
+    	this.parentStage = stage;
     	setEvent(event.getEventName(), event.getDescription(), event.getLocation());
     	
     }

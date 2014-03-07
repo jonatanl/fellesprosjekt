@@ -5,6 +5,7 @@ package client;
 
 
 
+import Models.Event;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -28,14 +29,13 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 
 	private ToggleGroup participationGroup;
 	private Button confirm;
-	
-	private TestEvent model;
-	private Stage stage;
+	private Event eventModel;
+	private Stage thisStage;
 	private Stage parentStage;
 
 
 	
-	public EndreIkkeOwner(TestEvent event, Stage parentStage) {
+	public EndreIkkeOwner(Event event, Stage parentStage) {
 		try {
 			createStage();
 		} catch (Exception e) {
@@ -48,16 +48,16 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 
 
 	
-	public void setModel(TestEvent model) {
-		this.model = model;
+	public void setModel(Event model) {
+		this.eventModel = model;
 		
-		t_title.setText(model.getTitle());
+		t_title.setText(model.getEventName());
 		t_date.setText(model.getDate());
-		t_start.setText(model.getStart());
-		t_stop.setText(model.getStop());
+		t_start.setText(model.getStartTime());
+		t_stop.setText(model.getEndTime());
 		t_description.setText(model.getDescription());
-		t_place.setText(model.getPlace());
-		t_room.setText(model.getRoom());
+		t_place.setText(model.getLocation());
+		t_room.setText(model.getRoom().toString());
 	}
 	
 	public void createStage() {
@@ -125,14 +125,14 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 		root.getChildren().addAll(container, participation, confirmation);
 		
 		Scene scene = new Scene(root, 300, 300);
-		stage = new Stage();
-		stage.setTitle("Endre Hendelse");
-		stage.setScene(scene);
+		thisStage = new Stage();
+		thisStage.setTitle("Endre Hendelse");
+		thisStage.setScene(scene);
 		
-		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.initOwner(parentStage);
+		thisStage.initModality(Modality.APPLICATION_MODAL);
+		thisStage.initOwner(parentStage);
 		
-		stage.show();
+		thisStage.show();
 
 	}
 
@@ -140,7 +140,7 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 
 	@Override
 	public void handle(ActionEvent arg0) {
-		stage.close();
+		thisStage.close();
 		
 	}
 

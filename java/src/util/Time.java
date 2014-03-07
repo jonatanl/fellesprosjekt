@@ -62,6 +62,10 @@ public class Time {
     		hResult +=1;
     	}
     	
+    	if (hResult > 23) {
+    		hResult -= 24;
+    	}
+    	
     	return toTimeString(hResult, mResult);
 	}
 }
