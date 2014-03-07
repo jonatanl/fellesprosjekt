@@ -2,7 +2,7 @@ package util;
 
 import java.sql.*;
 
-public class DBConnection {
+public abstract class DBConnection {
     private static final String DbString = "com.mysql.jdbc.Driver";
     private static final String url = "jdbc:mysql://localhost/calendar";
     private static final String password = "sqluserpw";
@@ -46,10 +46,9 @@ public class DBConnection {
         return result;
     }
 
-    public ResultSet getResult(String query){
+    public ResultSet getResult(PreparedStatement statement){
         ResultSet result = null;
         try {
-            PreparedStatement statement = connection.prepareStatement(query);
             statement.setMaxFieldSize(1);
             result = statement.executeQuery();
             result.next();

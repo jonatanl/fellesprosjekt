@@ -1,31 +1,34 @@
 package util;
 
-import Models.Alarm;
-import Models.Event;
-import Models.EventParticipant;
+import Models.*;
 import interfaces.PersistencyInterface;
 
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class Persistency implements PersistencyInterface {
-    private DBQuery query;
-    
+public class Persistency extends PersistencyGetMethods implements PersistencyInterface {
 
     public Persistency() {
         query = new DBQuery();
-        EventParticipant participant = new EventParticipant();
-        participant.setEventId(1);
-        participant.setUserId(2);
-        Alarm alarm = new Alarm();
-        alarm.setTime(new Date(1992,25,05).toString());
-        addAlarm(participant, alarm);
+
+        System.out.println(requestLogin("johannes", "123456"));
+
         query.close();
     }
 
     public static void main(String[] args) {
         new Persistency();
+    }
+
+    @Override
+    public int requestLogin(String username, String password) {
+        int id = -1;
+        try {
+            id = query.requestLogin(username, password);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return id;
     }
 
     @Override
@@ -77,7 +80,6 @@ public class Persistency implements PersistencyInterface {
     public void changeEventParticipantResponse(EventParticipant participant) {
 
     }
-
     @Override
     public void addAlarm(EventParticipant participant, Alarm alarm) {
         try {
