@@ -93,10 +93,10 @@ public class EditAlarm implements EventHandler<ActionEvent> {
     	if (actionEvent.getSource() == saveButton) {
     		if(isValid()){
     			System.out.println("Send info to database");
-    			thisStage.close();    			
+    			thisStage.close();
     		}
     		else{
-    			timeBeforeField.setPromptText("Write an integer");
+    			System.out.println("Invalid input");
     		}
 			
 		}
