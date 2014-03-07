@@ -96,7 +96,7 @@ public class EditAlarm implements EventHandler<ActionEvent> {
     			thisStage.close();    			
     		}
     		else{
-    			
+    			timeBeforeField.setPromptText("Write an integer");
     		}
 			
 		}
