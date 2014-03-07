@@ -1,22 +1,15 @@
 package Models;
 
 public class Alarm {
-	private int alertID;
+	private int alarmID;
 	private String time;
-	
-	public int getAlarmID() {
-		return alertID;
-	}
-	public void setAlarmID(int alertID) {
-		this.alertID = alertID;
-	}
 
-    public int getAlertID() {
-        return alertID;
+    public int getAlarmID() {
+        return alarmID;
     }
 
-    public void setAlertID(int alertID) {
-        this.alertID = alertID;
+    public void setAlarmID(int alarmID) {
+        this.alarmID = alarmID;
     }
 
     public String getTime() {

@@ -2,6 +2,7 @@
 package Models;
 
 public class EventParticipant {
+	private int id;
 	private String response;
 	private boolean pendingChange;
 	private boolean isDeleted;
@@ -21,7 +22,7 @@ public class EventParticipant {
     public void setUserId(int userId) {
         this.userId = userId;
     }
-    public String getResponse() {
+	public String getResponse() {
 		return response;
 	}
 	public void setResponse(String response) {

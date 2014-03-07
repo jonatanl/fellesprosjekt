@@ -18,13 +18,13 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class Login extends Application implements EventHandler<ActionEvent> {
+public class Login implements EventHandler<ActionEvent> {
     private Text messageText;
     private TextField username;
     private PasswordField password;
     
-    @Override
-    public void start(Stage stage) throws Exception {
+    public void createStage()  {
+    	Stage stage = new Stage();
         stage.setTitle("YO!");
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -72,7 +72,4 @@ public class Login extends Application implements EventHandler<ActionEvent> {
             messageText.setVisible(true);
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 }

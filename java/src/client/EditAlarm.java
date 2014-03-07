@@ -1,5 +1,7 @@
 package client;
 
+import java.util.Date;
+
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -28,18 +30,20 @@ public class EditAlarm implements EventHandler<ActionEvent> {
 	private Button cancelButton;
 	
     private Alarm model;
-    private String eventTime;
+    private Date eventTime;
     
-    public EditAlarm(Alarm alarm, String eventTime){
+    public EditAlarm(Alarm alarm, Date eventTime){
     	this.eventTime = eventTime;
     	if (alarm == null){
     		this.model = new Alarm();
-    		this.model.setTime(eventTime);
+    		//this.model.setTime(eventTime);
     	}
     	else{
     		this.model = alarm;
     	}
     }
+    
+
     
     public void start(Stage stage) throws Exception {
         GridPane grid = new GridPane();
@@ -57,8 +61,8 @@ public class EditAlarm implements EventHandler<ActionEvent> {
         
         grid.add(new Text("Tid før:"), 0, 2);
         
-        timeBeforeField = new TextField(util.Time.subtractTimes(this.eventTime, this.model.getTime()));
-        grid.add(timeBeforeField, 1, 2);
+        //timeBeforeField = new TextField(util.Time.subtractTimes(this.eventTime, this.model.getTime()));
+        //grid.add(timeBeforeField, 1, 2);
         
         saveButton = new Button("Lagre");
         saveButton.setOnAction(this);
