@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import sun.font.LayoutPathImpl.EndType;
 import util.Time;
 
 import Models.Event;
@@ -126,6 +127,12 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	startTime.setText(mh);
     	
     	String ddmmyyyy = date.getDate() + "-" + (date.getMonth()+1) + "-" + (date.getYear()+1900);
+    	if (date.getDate() < 10) {
+    		ddmmyyyy = "0" + ddmmyyyy;
+    	}
+    	if (date.getMonth()+1 < 10) {
+    		ddmmyyyy = ddmmyyyy.substring(0, 3) + "0" + ddmmyyyy.substring(3) ;
+    	}
     	dateField.setText(ddmmyyyy);
     	
     	endTime.setText((Time.addTimes(mh, "01:00")));
@@ -153,18 +160,32 @@ public class AddEvent implements EventHandler<ActionEvent> {
     }
     
     public boolean validInput() {
+    	boolean hasFailed = false;
     	// Check that the title field has some text
     	if (titleField.getText().length() <= 1) {
     		if (titleField.getText().contains(" ") || titleField.getText().isEmpty()) {
-    			titleField.setPromptText("Fill in , you bastard!");
-    			return false;
+    			titleField.setPromptText("Need title");
+    			hasFailed = true;;
     		}
     	}
-    	if (dateField.getText().length() != 8 || dateField.getText().contains("[a-zA-Z]+")) {
-    		dateField.setPromptText("Invalid dateformat: hh:ss");
-    		return false;
+    	// Checks that the date is in the correct format
+    	if (dateField.getText().length() != 10 || !dateField.getText().substring(0, 2).matches("[0-9]+") || !dateField.getText().substring(3, 5).matches("[0-9]+") || !dateField.getText().substring(6).matches("[0-9]+")) {
+    		dateField.setText("");
+    		dateField.setPromptText("dd:mm:yyyy");
+    		hasFailed = true;
     	}
-    	return true;
+    	// Check that the start and end time is in the correct format
+    	if (startTime.getText().length() != 5 || !startTime.getText().substring(0, 2).matches("[0-9]+") || !startTime.getText().substring(3, 5).matches("[0-9]+")) {
+    		startTime.setText("");
+    		startTime.setPromptText("hh:ss");
+    		hasFailed = true;
+    	}
+    	if (endTime.getText().length() != 5 || !endTime.getText().substring(0, 2).matches("[0-9]+") || !endTime.getText().substring(3, 5).matches("[0-9]+")) {
+    		endTime.setText("");
+    		endTime.setPromptText("hh:ss");
+    		hasFailed = true;
+    	}
+    	return !hasFailed;
     }
 
 
