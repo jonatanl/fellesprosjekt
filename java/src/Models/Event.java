@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Event {
-    public static final String[] DATABASE_FIELDS = {"eventName", "startTime", "endTime", "description", "location", "roomID", "ownerID"};
-
     private int eventId;
     private String eventName;
     private String date;
@@ -15,32 +13,6 @@ public class Event {
     private String location;
     private int roomId;
     private int ownerId;
-    
-    private ArrayList<EventParticipant> eventParticipants;
-
-    public Event(){
-    	eventParticipants = new ArrayList<EventParticipant>();
-    }
-    
-    public void addEventParticipant(EventParticipant eventParticipant){
-    	this.eventParticipants.add(eventParticipant);
-    }
-    
-    public void removeEventParticipant(EventParticipant eventParticipant){
-    	this.eventParticipants.remove(eventParticipant);
-    }
-    
-    public EventParticipant findEventParticipant(int eventParticipantId){
-    	
-    	for (EventParticipant ep: eventParticipants){
-    		if (ep.getEventId() == eventParticipantId){
-    			return ep;
-    		}
-    	}
-    	
-    	
-    	return null;
-    }
 
     public int getEventId() {
         return eventId;
@@ -57,13 +29,13 @@ public class Event {
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }
-    
+
     public String getDate() {
-    	return date;
+        return date;
     }
-    
+
     public void setDate(String date) {
-    	this.date = date;
+        this.date = date;
     }
 
     public String getStartTime() {
@@ -106,7 +78,6 @@ public class Event {
         this.roomId = roomId;
     }
 
-
     public int getOwnerId() {
         return ownerId;
     }
@@ -120,8 +91,9 @@ public class Event {
         return "Event{" +
                 "eventId=" + eventId +
                 ", eventName='" + eventName + '\'' +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
+                ", date='" + date + '\'' +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
                 ", description='" + description + '\'' +
                 ", location='" + location + '\'' +
                 ", roomId=" + roomId +

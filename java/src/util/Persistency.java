@@ -74,7 +74,8 @@ public class Persistency implements PersistencyInterface {
     }
 
     @Override
-    public void changeEventParticipantResponse(EventParticipant participant) { 
+    public void changeEventParticipantResponse(EventParticipant participant) {
+
     }
 
     @Override

@@ -1,17 +1,15 @@
 package Models;
 
-import java.util.Date;
-
 public class Alarm {
-	private int alertID;
+	private int alarmID;
 	private String time;
 
-    public int getAlertID() {
-        return alertID;
+    public int getAlarmID() {
+        return alarmID;
     }
 
-    public void setAlertID(int alertID) {
-        this.alertID = alertID;
+    public void setAlarmID(int alarmID) {
+        this.alarmID = alarmID;
     }
 
     public String getTime() {
@@ -21,5 +19,4 @@ public class Alarm {
     public void setTime(String time) {
         this.time = time;
     }
-
 }

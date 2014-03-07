@@ -22,8 +22,8 @@ public class DBQuery extends DBConnection {
 
         event.setEventId(eventId);
         event.setEventName(result.getString("eventName"));
-        event.setStartTime(result.getDate("startTime"));
-        event.setEndTime(result.getDate("endTime"));
+        event.setStartTime(result.getDate("startTime").toString());
+        event.setEndTime(result.getDate("endTime").toString());
         event.setDescription(result.getString("description"));
         event.setLocation(result.getString("location"));
         event.setRoomId(result.getInt("roomID"));
@@ -47,6 +47,10 @@ public class DBQuery extends DBConnection {
         PreparedStatement statement = connection.prepareStatement(query);
         setEventFields(statement, event);
         statement.executeUpdate();
+
+        for (int participantID : participantIDs){
+            addEventParticipant(event.getEventId(), participantID);
+        }
     }
 
     private void setEventFields (PreparedStatement statement, Event event) throws SQLException{
