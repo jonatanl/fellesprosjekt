@@ -6,6 +6,7 @@ import Models.Event;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
@@ -53,6 +54,7 @@ public class ButtonMenu extends Application implements EventHandler<ActionEvent>
 		root.getChildren().addAll(b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alert);
 		
 		Scene scene = new Scene(root, 500, 500);
+		
 		stage.setTitle("Main test");
 		stage.setScene(scene);
 		
