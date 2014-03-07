@@ -21,7 +21,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 //Main class of the calendar system. 
-public class Calendar extends Application implements CalendarInterface{
+public class Calendar extends Application{
 	
 	private ArrayList<Event> events;
 	private ArrayList<User> users;
@@ -46,7 +46,29 @@ public class Calendar extends Application implements CalendarInterface{
         stage.setScene(scene);
         stage.show();
 	}
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+/*
 	@Override
 	public void addEvent(Event event) {
 		events.add(event);
@@ -152,7 +174,7 @@ public class Calendar extends Application implements CalendarInterface{
 	public void removeRoom(Room room){
 		rooms.remove(room);
 	}
-
+*/
 	
 
 
