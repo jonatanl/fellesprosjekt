@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Event {
+	
     private int eventId;
     private String eventName;
     private String date;
@@ -29,13 +30,13 @@ public class Event {
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }
-
+    
     public String getDate() {
-        return date;
+    	return date;
     }
-
+    
     public void setDate(String date) {
-        this.date = date;
+    	this.date = date;
     }
 
     public String getStartTime() {

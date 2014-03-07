@@ -2,13 +2,15 @@ package client;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import sun.font.LayoutPathImpl.EndType;
 import util.Time;
-
 import Models.Event;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -18,8 +20,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -33,9 +37,14 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private TextField endTime;
     private TextField description;
     private TextField location;
+    
+    private ListView<String> allPersonList, chosenPersonList;
+    private Button addPerson, removePerson, addEvent;
 
     private Event eventModel;
-    
+    private ObservableList<String> allPersons;
+    private ObservableList<String> selectedPersons;
+    private ArrayList<String> persons;
     private Stage thisStage;
     private Stage parentStage;
     
@@ -47,9 +56,6 @@ public class AddEvent implements EventHandler<ActionEvent> {
 			e.printStackTrace();
 		}
     	this.parentStage = stage;
-    	
-    	
-    	
     }
 
   
@@ -64,13 +70,14 @@ public class AddEvent implements EventHandler<ActionEvent> {
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(title, 0, 0, 2, 1);
 
-        createFields(grid);
-        createLabels(grid);
+        grid.add(createLabels(),0,1);
+        grid.add(createFields(),1,1);
+        grid.add(getListViewBox(),2,1);
 
-        Button button = new Button("Add event");
-        grid.add(button, 1, 7);
+        addEvent = new Button("Add event");
+        grid.add(addEvent, 1,2);
 
-        Scene scene = new Scene(grid, 300, 275);
+        Scene scene = new Scene(grid, 500, 475);
         thisStage = new Stage();
         thisStage.setScene(scene);
         
@@ -79,37 +86,33 @@ public class AddEvent implements EventHandler<ActionEvent> {
 		
         thisStage.show();
 
-        button.setOnAction(this);
+        addEvent.setOnAction(this);
         eventModel = new Event();
         
         setHints();
     }
 
-    private void createLabels(GridPane grid){
-        grid.add(new Label("Title"), 0, 1);
-        grid.add(new Label("Date"), 0, 2);
-        grid.add(new Label("Start Time"), 0, 3);
-        grid.add(new Label("End Time"), 0, 4);
-        grid.add(new Label("Description"), 0, 5);
-        grid.add(new Label("Location"), 0, 6);
+
+    private VBox createLabels(){
+        VBox box = new VBox(7);
+        box.getChildren().addAll(new Label("Title"), new Label("Date"), new Label("Start Time"), new Label("End Time"), new Label("Description"), new Label("Location"));
+        return box;
     }
 
-    private void createFields(GridPane grid) {
+    private VBox createFields() {
+    	
+    	VBox box = new VBox();
+    	
         titleField = new TextField();
         dateField = new TextField();
         startTime = new TextField();
         endTime = new TextField();
         description = new TextField();
         location = new TextField();
-
-
-        grid.add(titleField, 1, 1);
-        grid.add(dateField, 1, 2);
-        grid.add(startTime, 1, 3);
-        grid.add(endTime, 1, 4);
-        grid.add(description, 1, 5);
-        grid.add(location, 1, 6);
         
+        box.getChildren().addAll(titleField,dateField,startTime,endTime,description,location);
+        
+        return box;
     }
     
     public void setHints() {
@@ -142,8 +145,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent actionEvent) {
-    	
-    	if (validInput()) {
+    	if (actionEvent.getSource() == addEvent && validInput()) {
     		eventModel.setEventName(titleField.getText());
     		eventModel.setDate(dateField.getText());
     		eventModel.setStartTime(startTime.getText());
@@ -153,10 +155,19 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		System.out.println(eventModel);
     		
     		thisStage.close();    		
+
+    	}
+    	else if(actionEvent.getSource() == addPerson){
+    		int id = allPersonList.getFocusModel().getFocusedIndex();
+    		selectedPersons.add(allPersons.get(id));
+    		allPersons.remove(id);        	
     	}
     	
-    	
-    	
+    	else if(actionEvent.getSource() == removePerson){        	
+    		int id = chosenPersonList.getFocusModel().getFocusedIndex();
+    		allPersons.add(selectedPersons.get(id));
+    		selectedPersons.remove(id);        	
+    	}
     }
     
     public boolean validInput() {
@@ -187,7 +198,37 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	}
     	return !hasFailed;
     }
+    
+    
+        
+    
+    public VBox getListViewBox(){
+    	VBox rightBox = new VBox(5);
+        Label participants = new Label ("Participants");
+        
+        allPersons = FXCollections.observableArrayList("Gunda-Ann","Krøll Alfa","Odd Morgan","Rune Linn","Johannes","Simen","Øivind","Jonatan");
+        selectedPersons = FXCollections.observableArrayList();
 
+    	allPersonList = new ListView<String>();
+    	allPersonList.setPrefWidth(175);
+    	allPersonList.setPrefHeight(130);
+    	allPersonList.setItems(allPersons);
+    	
+    	addPerson = new Button("Add");
+    	addPerson.setOnAction(this);
+
+    	chosenPersonList = new ListView<String>();
+    	chosenPersonList.setPrefWidth(175);
+    	chosenPersonList.setPrefHeight(130);
+    	chosenPersonList.setItems(selectedPersons);
+    	
+    	removePerson = new Button("Remove");
+    	removePerson.setOnAction(this);
+    	
+    	rightBox.getChildren().addAll(participants,allPersonList,addPerson,chosenPersonList,removePerson);
+    	
+    	return rightBox;
+    }
 
 
 }

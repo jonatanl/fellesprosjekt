@@ -20,6 +20,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import Models.Alarm;
+import Models.Event;
 
 public class EditAlarm implements EventHandler<ActionEvent> {
 
@@ -29,23 +30,21 @@ public class EditAlarm implements EventHandler<ActionEvent> {
 	private Button saveButton;
 	private Button cancelButton;
 	
-    private Alarm model;
-    private Date eventTime;
+	private Stage thisStage;
+    private Stage parentStage;
     
-    public EditAlarm(Alarm alarm, Date eventTime){
-    	this.eventTime = eventTime;
-    	if (alarm == null){
-    		this.model = new Alarm();
-    		//this.model.setTime(eventTime);
-    	}
-    	else{
-    		this.model = alarm;
-    	}
+    public EditAlarm(Event event, Stage stage) {
+    	try {
+			createStage();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	this.parentStage = stage;
     }
     
 
-    
-    public void start(Stage stage) throws Exception {
+    public void createStage() throws Exception {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -60,21 +59,29 @@ public class EditAlarm implements EventHandler<ActionEvent> {
         grid.add(alarmCheckBox, 0, 1);
         
         grid.add(new Text("Tid før:"), 0, 2);
+       
+        timeBeforeField = new TextField();
+        grid.add(timeBeforeField, 1, 2);
         
-        //timeBeforeField = new TextField(util.Time.subtractTimes(this.eventTime, this.model.getTime()));
-        //grid.add(timeBeforeField, 1, 2);
-        
-        saveButton = new Button("Lagre");
+        saveButton = new Button("Save");
         saveButton.setOnAction(this);
         grid.add(saveButton, 0, 3);
         
-        cancelButton = new Button("Avbryt");
+        cancelButton = new Button("Cancel");
         cancelButton.setOnAction(this);
         grid.add(cancelButton, 1, 3);
         
         Scene scene = new Scene(grid, 300, 275);
-        stage.setScene(scene);
-        stage.show();
+        thisStage = new Stage();
+        thisStage.setScene(scene);
+        thisStage.show();
+    }
+    
+    public boolean isValid(){
+    	if(timeBeforeField.getText().matches("[0-9]+")){
+    		return true;
+    	}
+    	return false;
     }
 
     
@@ -84,20 +91,17 @@ public class EditAlarm implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent actionEvent) {
     	if (actionEvent.getSource() == saveButton) {
-			Stage newStage = new Stage();
-			VBox comp = new VBox();
-			TextField nameField = new TextField("Name");
-			TextField phoneNumber = new TextField("Phone Number");
-			comp.getChildren().add(nameField);
-			comp.getChildren().add(phoneNumber);
-
-			Scene stageScene = new Scene(comp, 300, 300);
-			newStage.setScene(stageScene);
-			newStage.show();		
+    		if(isValid()){
+    			System.out.println("Send info to database");
+    			thisStage.close();    			
+    		}
+    		else{
+    			timeBeforeField.setPromptText("Write an integer");
+    		}
 			
 		}
     	else if (actionEvent.getSource() == cancelButton) {
-    		
+    		thisStage.close();
     	}
     	
     	

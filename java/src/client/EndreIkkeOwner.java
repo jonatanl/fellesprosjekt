@@ -57,7 +57,7 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 		t_stop.setText(model.getEndTime());
 		t_description.setText(model.getDescription());
 		t_place.setText(model.getLocation());
-		t_room.setText(model.getRoom().toString());
+		//t_room.setText(model.getRoom().toString());
 	}
 	
 	public void createStage() {
