@@ -35,6 +35,10 @@ public class Calendar extends Application{
 	@Override
 	public void start(Stage stage) throws Exception {
 		
+		Login login = new Login();
+		login.createStage();
+		
+		/*
 		GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         
@@ -45,6 +49,7 @@ public class Calendar extends Application{
 		Scene scene = new Scene(grid, 300, 275);
         stage.setScene(scene);
         stage.show();
+        */
 	}
 	
 	

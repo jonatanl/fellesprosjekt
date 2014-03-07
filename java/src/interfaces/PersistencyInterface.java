@@ -17,6 +17,9 @@ import Models.Room;
 
 public interface PersistencyInterface {
 	
+	// Returns true if user and password matches database.
+	public boolean requestLogin(String username, String password);
+	
 	public void addEvent(Event event, ArrayList<Integer> participantIDs);
 	
 	public void removeEvent(Event event);
