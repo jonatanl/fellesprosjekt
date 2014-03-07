@@ -38,7 +38,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private TextField location;
     
     private ListView<String> allPersonList, chosenPersonList;
-    private Button addPerson, removePerson;
+    private Button addPerson, removePerson, addEvent;
 
     private Event eventModel;
     
@@ -70,14 +70,14 @@ public class AddEvent implements EventHandler<ActionEvent> {
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(title, 0, 0, 2, 1);
 
-        createFields(grid);
-        createLabels(grid);
-        grid.add(getListViewBox(),2,0);
+        grid.add(createLabels(),0,1);
+        grid.add(createFields(),1,1);
+        grid.add(getListViewBox(),2,1);
 
-        Button button = new Button("Add event");
-        grid.add(button, 1, 7);
+        addEvent = new Button("Add event");
+        grid.add(addEvent, 1,2);
 
-        Scene scene = new Scene(grid, 300, 275);
+        Scene scene = new Scene(grid, 500, 475);
         thisStage = new Stage();
         thisStage.setScene(scene);
         
@@ -86,36 +86,33 @@ public class AddEvent implements EventHandler<ActionEvent> {
 		
         thisStage.show();
 
-        button.setOnAction(this);
+        addEvent.setOnAction(this);
         eventModel = new Event();
         
         setHints();
     }
 
-    private void createLabels(GridPane grid){
-        grid.add(new Label("Title"), 0, 1);
-        grid.add(new Label("Date"), 0, 2);
-        grid.add(new Label("Start Time"), 0, 3);
-        grid.add(new Label("End Time"), 0, 4);
-        grid.add(new Label("Description"), 0, 5);
-        grid.add(new Label("Location"), 0, 6);
+    private VBox createLabels(){
+        VBox box = new VBox();
+        box.getChildren().addAll(new Label("Title"), new Label("Date"), new Label("Start Time"), new Label("End Time"), new Label("Description"), new Label("Location"));
+        return box;
     }
 
-    private void createFields(GridPane grid) {
+    private VBox createFields() {
+    	
+    	VBox box = new VBox();
+    	
         titleField = new TextField();
         dateField = new TextField();
         startTime = new TextField();
         endTime = new TextField();
         description = new TextField();
         location = new TextField();
+        
+        box.getChildren().addAll(titleField,dateField,startTime,endTime,description,location);
+        
+        return box;
 
-
-        grid.add(titleField, 1, 1);
-        grid.add(dateField, 1, 2);
-        grid.add(startTime, 1, 3);
-        grid.add(endTime, 1, 4);
-        grid.add(description, 1, 5);
-        grid.add(location, 1, 6);
         
     }
     
@@ -155,7 +152,8 @@ public class AddEvent implements EventHandler<ActionEvent> {
         eventModel.setDescription(description.getText());
         eventModel.setLocation(location.getText());
         System.out.println(eventModel);
-        if (validInput()) {
+        
+        if (actionEvent.getSource() == addEvent && validInput()) {
         	eventModel.setEventName(titleField.getText());
         	eventModel.setDate(dateField.getText());
         	eventModel.setStartTime(startTime.getText());
@@ -165,6 +163,14 @@ public class AddEvent implements EventHandler<ActionEvent> {
         	System.out.println(eventModel);
         	
         	thisStage.close();    		
+        }
+        
+        else if(actionEvent.getSource() == addPerson){
+        	
+        }
+        
+        else if(actionEvent.getSource() == removePerson){
+        	
         }
         
     }
