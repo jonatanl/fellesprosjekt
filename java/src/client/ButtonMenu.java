@@ -70,7 +70,7 @@ public class ButtonMenu extends Application implements EventHandler<ActionEvent>
 		}
 		
 		else if (buttonEvent.getSource() == b_editEvent) {
-			new EndreIkkeOwner(model, stage);			
+			new EditOwner(model, stage);			
 		}
 		else if (buttonEvent.getSource() == b_showMore) {
 			new ShowMore(model, stage);
