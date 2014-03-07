@@ -56,6 +56,15 @@ public class Calendar extends Application{
         */
 	}
 	
+	public void startCalendar(String loggedInUserId)
+	
+	
+	
+	// Draws the webScene over again. 
+	public void updateWebScene(){
+		
+	}
+	
 	
 	
 	

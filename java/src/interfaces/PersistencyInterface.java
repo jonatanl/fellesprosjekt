@@ -17,8 +17,8 @@ import Models.Room;
 
 public interface PersistencyInterface {
 	
-	// Returns true if user and password matches database.
-	public boolean requestLogin(String username, String password);
+	// If success, returns the userId of the logged in user. Otherwise, returns -1. 
+	public int requestLogin(String username, String password);
 	
 	public void addEvent(Event event, ArrayList<Integer> participantIDs);
 	
