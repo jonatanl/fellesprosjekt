@@ -25,8 +25,10 @@ public class Login implements EventHandler<ActionEvent> {
     private Text errorMessage;
     
     private PersistencyInterface persistency;
+    private Calendar calendar;
     
-    public Login(PersistencyInterface p){
+    public Login(Calendar c, PersistencyInterface p){
+    	calendar = c;
     	persistency = p;
     }
     
@@ -78,13 +80,16 @@ public class Login implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent actionEvent) {
-    	boolean success = persistency.requestLogin(username.getText(), password.getText());
-    	if (success){
-    		
+    	calendar.startCalendar(1);
+    	/*
+    	int userId = persistency.requestLogin(username.getText(), password.getText());
+    	if (userId >= 0){
+    		calendar.startCalendar(userId);
     	}
     	else{
     		errorMessage.setVisible(true);
     	}
+    	*/
     }
 
 }

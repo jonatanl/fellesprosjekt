@@ -13,21 +13,31 @@ import Models.Group;
 import Models.Room;
 import Models.User;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 //Main class of the calendar system. 
-public class Calendar extends Application{
+public class Calendar extends Application implements EventHandler<ActionEvent>{
+	
+	private Button b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alert;
+	private Stage stage;
 	
 	private ArrayList<Event> events;
 	private ArrayList<User> users;
 	private ArrayList<Group> groups;
 	private ArrayList<Room> rooms;
+	
+	
+	private User loggedInUser;
 	
 	private PersistencyInterface persistency; 
 	
@@ -37,26 +47,48 @@ public class Calendar extends Application{
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		persistency = new util.Persistency();
+		//persistency = new util.Persistency();
+		this.stage = stage;
 		
-		Login login = new Login(persistency);
+		Login login = new Login(this, persistency);
 		login.createStage();
 		
-		/*
-		GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        
-        Text title = new Text("Calendar system, main window.");
-        title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        grid.add(title, 0, 0, 2, 1);
-		
-		Scene scene = new Scene(grid, 300, 275);
-        stage.setScene(scene);
-        stage.show();
-        */
+	
 	}
 	
-	public void startCalendar(String loggedInUserId)
+	public void startCalendar(int loggedInUserId){
+		//loggedInUser = findUser(loggedInUserId);
+		
+		// Create the buttons.
+		b_createEvent = new Button("Legg til");
+		b_createEvent.setMinWidth(60);
+		b_createEvent.setOnAction(this);
+		
+		b_editEvent = new Button("Endre");
+		b_editEvent.setMinWidth(60);
+		b_editEvent.setOnAction(this);
+		
+		b_deleteEvent = new Button("Slett");
+		b_deleteEvent.setOnAction(this);
+		b_deleteEvent.setMinWidth(60);
+		
+		b_showMore = new Button("Vis mer");
+		b_showMore.setOnAction(this);
+		b_showMore.setMinWidth(60);
+		
+		b_alert = new Button("Alarm");
+		b_alert.setOnAction(this);
+		b_alert.setMinWidth(60);
+		
+		VBox root = new VBox();
+		root.getChildren().addAll(b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alert);
+		
+		Scene scene = new Scene(root, 500, 500);
+		
+		stage.setScene(scene);
+		stage.show();
+		
+	}
 	
 	
 	
@@ -66,7 +98,33 @@ public class Calendar extends Application{
 	}
 	
 	
-	
+	public User findUser(int userID){
+		for (User u: users){
+			if (u.getUserId() == userID){
+				return u;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void handle(ActionEvent buttonEvent) {
+		if (buttonEvent.getSource() == b_createEvent) {
+			System.out.println("legg til event");
+			new AddEvent(stage);
+		}
+		
+		else if (buttonEvent.getSource() == b_editEvent) {
+			//new EndreIkkeOwner(model, stage);			
+		}
+		else if (buttonEvent.getSource() == b_showMore) {
+			//new ShowMore(model, stage);
+		}
+		
+		else if (buttonEvent.getSource() == b_alert) {
+			
+		}		
+	}
 	
 	
 	
@@ -123,14 +181,7 @@ public class Calendar extends Application{
 		return null;
 	}
 
-	public User findUser(int userID){
-		for (User u: users){
-			if (u.getUserId() == userID){
-				return u;
-			}
-		}
-		return null;
-	}
+	
 	
 	@Override
 	public void addEventParticipant(int eventID, EventParticipant participant) {
