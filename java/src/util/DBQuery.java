@@ -18,7 +18,8 @@ public class DBQuery extends DBConnection {
     public Event getEvent(int eventId) throws SQLException {
         Event event = new Event();
         String query = "SELECT * FROM event WHERE event.eventID=" + eventId;
-        ResultSet result = getResult(query);
+        PreparedStatement statement = connection.prepareStatement(query);
+        ResultSet result = getResult(statement);
 
         event.setEventId(eventId);
         event.setEventName(result.getString("eventName"));
@@ -97,5 +98,16 @@ public class DBQuery extends DBConnection {
         statement.setInt(2, participant.getUserId());
         statement.setInt(3, participant.getEventId());
         statement.executeUpdate();
+    }
+
+    public int requestLogin(String username, String password) throws SQLException {
+        String query = "SELECT * FROM users WHERE username=? AND password=?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, username);
+        statement.setString(2, password);
+        ResultSet result = getResult(statement);
+        int id = result.getInt("userID");
+
+        return id > 0 ? id : -1;
     }
 }
