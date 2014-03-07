@@ -59,8 +59,6 @@ public class AddEvent implements EventHandler<ActionEvent> {
 		}
     	this.parentStage = stage;
     	
-    	
-    	
     }
 
   

@@ -77,6 +77,7 @@ public class ButtonMenu extends Application implements EventHandler<ActionEvent>
 		}
 		
 		else if (buttonEvent.getSource() == b_alert) {
+			new EditAlarm(model,stage);
 			
 		}
 		
