@@ -8,6 +8,7 @@ import java.util.Date;
 import sun.font.LayoutPathImpl.EndType;
 import util.Time;
 import Models.Event;
+import Models.Room;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,6 +20,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -37,6 +39,8 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private TextField endTime;
     private TextField description;
     private TextField location;
+    
+    private ComboBox<Room> roomList;
     
     private ListView<String> allPersonList, chosenPersonList;
     private Button addPerson, removePerson, addEvent;
@@ -94,14 +98,16 @@ public class AddEvent implements EventHandler<ActionEvent> {
 
 
     private VBox createLabels(){
-        VBox box = new VBox(7);
-        box.getChildren().addAll(new Label("Title"), new Label("Date"), new Label("Start Time"), new Label("End Time"), new Label("Description"), new Label("Location"));
+        VBox box = new VBox();
+        box.setSpacing(15);
+        box.getChildren().addAll(new Label("Title"), new Label("Date"), new Label("Start Time"), new Label("End Time"), new Label("Description"), new Label("Location"), new Label("Room"));
         return box;
     }
 
     private VBox createFields() {
     	
     	VBox box = new VBox();
+    	box.setSpacing(10);
     	
         titleField = new TextField();
         dateField = new TextField();
@@ -109,8 +115,10 @@ public class AddEvent implements EventHandler<ActionEvent> {
         endTime = new TextField();
         description = new TextField();
         location = new TextField();
+        roomList = new ComboBox<>();
+        roomList.setMinWidth(200);
         
-        box.getChildren().addAll(titleField,dateField,startTime,endTime,description,location);
+        box.getChildren().addAll(titleField,dateField,startTime,endTime,description,location, roomList);
         
         return box;
     }

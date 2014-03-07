@@ -35,6 +35,8 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 	private ArrayList<User> users;
 	private ArrayList<Group> groups;
 	private ArrayList<Room> rooms;
+	private ArrayList<EventParticipant> eventParticipants;
+	private ArrayList<Alarm> alarms;
 	
 	
 	private User loggedInUser;
@@ -57,6 +59,7 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 	}
 	
 	public void startCalendar(int loggedInUserId){
+		//getAllFromDatabase();
 		//loggedInUser = findUser(loggedInUserId);
 		
 		// Create the buttons.
@@ -87,7 +90,15 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 		
 		stage.setScene(scene);
 		stage.show();
-		
+	}
+	
+	private void getAllFromDatabase(){
+		users =  persistency.getAllUsers();
+		events = persistency.getAllEvents();
+		rooms = persistency.getAllRooms();
+		eventParticipants = persistency.getAllEventParticipants();
+		groups = persistency.getAllGroups();
+		alarms = persistency.getAllAlarms();
 	}
 	
 	
