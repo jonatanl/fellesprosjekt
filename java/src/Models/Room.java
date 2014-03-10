@@ -1,6 +1,6 @@
 package Models;
 
-public class Room {
+public class Room implements Comparable{
     private int id;
     private String adress;
     private int capacity;
@@ -31,10 +31,11 @@ public class Room {
 
     @Override
     public String toString() {
-        return "Room{" +
-                "id=" + id +
-                ", adress='" + adress + '\'' +
-                ", capacity=" + capacity +
-                '}';
+        return "Room " + adress + ", (capacity " + capacity + ")";
     }
+
+	@Override
+	public int compareTo(Object that) {
+		return this.getCapacity() - ((Room)that).getCapacity();
+	}
 }
