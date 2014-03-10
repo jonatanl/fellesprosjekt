@@ -65,7 +65,7 @@ public class DeleteEventNotOwner {
         hbBtn.getChildren().addAll(ok_btn, cancel_btn);
         grid.add(hbBtn, 1, 3);
 
-		Scene scene = new Scene(grid, 300, 300);
+		Scene scene = new Scene(grid, 350, 150);
 		thisStage = new Stage();
 		thisStage.setTitle("Remove event");
 		thisStage.setScene(scene);
