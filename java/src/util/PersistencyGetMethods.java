@@ -5,13 +5,20 @@ import interfaces.PersistencyInterface;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public abstract class PersistencyGetMethods implements PersistencyInterface{
     protected DBQuery query;
 
     @Override
     public ArrayList<Alarm> getAllAlarms() {
-        return null;
+        ArrayList<Alarm> alarms = new ArrayList<Alarm>();
+        try {
+            alarms = query.getAllAlarms();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return alarms;
     }
 
     @Override
@@ -21,6 +28,7 @@ public abstract class PersistencyGetMethods implements PersistencyInterface{
 
     @Override
     public ArrayList<EventParticipant> getAllEventParticipants() {
+        ArrayList<EventParticipant> participants = new ArrayList<EventParticipant>();
         return null;
     }
 

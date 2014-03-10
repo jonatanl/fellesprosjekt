@@ -21,8 +21,8 @@ public class DBQuery extends DBQueryGetMethods {
 
         event.setEventId(eventId);
         event.setEventName(result.getString("eventName"));
-        event.setStartTime(result.getDate("startTime").toString());
-        event.setEndTime(result.getDate("endTime").toString());
+        event.setStartTime(DateHelper.convertToString(result.getDate("endTime")));
+        event.setEndTime(DateHelper.convertToString(result.getDate("endTime")));
         event.setDescription(result.getString("description"));
         event.setLocation(result.getString("location"));
         event.setRoomId(result.getInt("roomID"));
@@ -54,8 +54,8 @@ public class DBQuery extends DBQueryGetMethods {
 
     private void setEventFields (PreparedStatement statement, Event event) throws SQLException{
         statement.setString(1, event.getEventName());
-        statement.setString(2, event.getStartTime().toString());
-        statement.setString(3, event.getEndTime().toString());
+        statement.setString(2, event.getStartTime());
+        statement.setString(3, event.getEndTime());
         statement.setString(4, event.getDescription());
         statement.setString(5, event.getLocation());
         statement.setString(6, event.getRoomId() + "");

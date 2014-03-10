@@ -1,9 +1,8 @@
 package util;
 
-import Models.Group;
-import Models.Room;
-import Models.User;
+import Models.*;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -79,5 +78,45 @@ public abstract class DBQueryGetMethods extends DBConnection{
 
 
         return rooms;
+    }
+
+    public ArrayList<Alarm> getAllAlarms() throws SQLException {
+        String query = "SELECT * FROM alarm";
+        ResultSet result = getResults(query);
+
+        ArrayList<Alarm> alarms = new ArrayList<Alarm>();
+        Alarm alarm;
+
+        while (result.next()){
+            alarm = new Alarm();
+
+            alarm.setAlarmID(result.getInt("alarmID"));
+            alarm.setTime(result.getDate("time").toString());
+
+            alarms.add(alarm);
+        }
+        return alarms;
+    }
+
+    public ArrayList<EventParticipant> getAllEventParicipants() throws SQLException {
+        String query = "SELECT * FROM eventParticipant";
+        ResultSet result = getResults(query);
+
+        ArrayList<EventParticipant> participants = new ArrayList<EventParticipant>();
+        EventParticipant participant;
+
+        while (result.next()){
+            participant = new EventParticipant();
+
+            participant.setAlarmId(result.getInt("alarmID"));
+            participant.setEventId(result.getInt("eventID"));
+            participant.setUserId(result.getInt("userID"));
+            participant.setDeleted(result.getBoolean("isDeleted"));
+            participant.setPendingChange(result.getBoolean("pendingChange"));
+            participant.setResponse(result.getString("response"));
+
+            participants.add(participant);
+        }
+        return participants;
     }
 }

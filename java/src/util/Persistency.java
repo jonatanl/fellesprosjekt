@@ -1,23 +1,39 @@
 package util;
 
-import Models.*;
+import Models.Alarm;
+import Models.Event;
+import Models.EventParticipant;
+import Models.Group;
 import interfaces.PersistencyInterface;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Persistency extends PersistencyGetMethods implements PersistencyInterface {
 
     public Persistency() {
         query = new DBQuery();
 
-        ArrayList<Room> rooms = getAllRooms();
-
-        for (Room room : rooms){
-            System.out.println(room);
+       /* Event event = null;
+        try {
+            event = query.getEvent(2);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        query.close();
+        System.out.println(event);
+        Date date = DateHelper.convertToDate(event.getEndTime());
+        System.out.println(DateHelper.convertToString(date));
+        changeEvent(event);
+
+        ArrayList<Group> groups = getAllGroups();
+
+        for (Group group : groups){
+            System.out.println(group);
+        }
+
+        query.close(); */
     }
 
     public void closeConnection(){
