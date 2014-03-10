@@ -71,17 +71,18 @@ public class AddEvent implements EventHandler<ActionEvent> {
     
     public AddEvent(Stage stage, PersistencyInterface persistency, int ownerId, ArrayList<Room> rooms, ArrayList<User> users, ArrayList<Group> groups) {
     	try {
+    		this.parentStage = stage;
+        	this.persistency = persistency;
+        	this.ownerId = ownerId;
+        	this.rooms = rooms;
+        	this.users = users;
+        	this.groups = groups;
 			createStage();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	this.parentStage = stage;
-    	this.persistency = persistency;
-    	this.ownerId = ownerId;
-    	this.rooms = rooms;
-    	this.users = users;
-    	this.groups = groups;
+    	
     }
 
   
@@ -138,7 +139,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
         description = new TextField();
         location = new TextField();
         roomList = new ComboBox<>();
-        //updateRoomComboBox();
+        
         roomList.setMinWidth(200);
         
         box.getChildren().addAll(titleField,dateField,startTime,endTime,description,location, roomList);
@@ -221,16 +222,38 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	}
     	else if(actionEvent.getSource() == addPerson){
     		int id = allPersonListView.getFocusModel().getFocusedIndex();
+    		System.out.println(id);
+    		if (id == -1) {
+    			id = 0;
+    		}
     		selectedPersonsObservableList.add(allPersonsObservableList.get(id));
     		allPersonsObservableList.remove(id);
-    		//updateRoomComboBox();
+    		allPersonListView.getSelectionModel().select(0);
+    		updateRoomComboBox();
+    		
+    		if (allPersonsObservableList.size() == 0) {
+    			addPerson.setDisable(true);
+    		}
+    		removePerson.setDisable(false);
     	}
     	
-    	else if(actionEvent.getSource() == removePerson){        	
+    	else if(actionEvent.getSource() == removePerson){     
+
+    		
     		int id = chosenPersonListView.getFocusModel().getFocusedIndex();
+    		
+    		if (id == -1) {
+    			id = 0;
+    		}
     		allPersonsObservableList.add(selectedPersonsObservableList.get(id));
     		selectedPersonsObservableList.remove(id);
-    		//updateRoomComboBox();
+    		chosenPersonListView.getSelectionModel().select(0);
+    		updateRoomComboBox();
+    		
+    		if (selectedPersonsObservableList.size() == 0){
+    			removePerson.setDisable(true);
+    		}
+    		addPerson.setDisable(false);
     	}
     }
     
@@ -308,8 +331,11 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	
     	removePerson = new Button("Remove");
     	removePerson.setOnAction(this);
+    	removePerson.setDisable(true);
     	
     	rightBox.getChildren().addAll(participants,allPersonListView,addPerson,chosenPersonListView,removePerson);
+    	
+    	updateRoomComboBox();
     	
     	return rightBox;
     }
