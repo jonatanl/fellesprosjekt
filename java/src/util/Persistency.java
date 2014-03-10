@@ -11,14 +11,18 @@ public class Persistency extends PersistencyGetMethods implements PersistencyInt
     public Persistency() {
         query = new DBQuery();
 
-        //System.out.println(requestLogin("johannes", "123456"));
+        /*ArrayList<Group> groups = getAllGroups();
 
-        //query.close();
+        for (Group group : groups){
+            System.out.println(group);
+        }*/
+
+        query.close();
     }
-    
-    // Vi tukler med koden din Jonatan!
+
     public void closeConnection(){
-    	query.close();
+        if (query != null)
+    	    query.close();
     	System.out.println("closed.");
     }
 

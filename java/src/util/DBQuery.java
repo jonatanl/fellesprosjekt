@@ -1,15 +1,13 @@
 package util;
 
-import Models.Alarm;
-import Models.Event;
-import Models.EventParticipant;
+import Models.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class DBQuery extends DBConnection {
+public class DBQuery extends DBQueryGetMethods {
 
     public DBQuery() {
         connect();
