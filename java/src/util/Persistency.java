@@ -11,11 +11,11 @@ public class Persistency extends PersistencyGetMethods implements PersistencyInt
     public Persistency() {
         query = new DBQuery();
 
-        /*ArrayList<Group> groups = getAllGroups();
+        ArrayList<Room> rooms = getAllRooms();
 
-        for (Group group : groups){
-            System.out.println(group);
-        }*/
+        for (Room room : rooms){
+            System.out.println(room);
+        }
 
         query.close();
     }
