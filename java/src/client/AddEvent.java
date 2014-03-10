@@ -138,7 +138,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
         description = new TextField();
         location = new TextField();
         roomList = new ComboBox<>();
-        updateRoomComboBox();
+        //updateRoomComboBox();
         roomList.setMinWidth(200);
         
         box.getChildren().addAll(titleField,dateField,startTime,endTime,description,location, roomList);
@@ -223,14 +223,14 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		int id = allPersonListView.getFocusModel().getFocusedIndex();
     		selectedPersonsObservableList.add(allPersonsObservableList.get(id));
     		allPersonsObservableList.remove(id);
-    		updateRoomComboBox();
+    		//updateRoomComboBox();
     	}
     	
     	else if(actionEvent.getSource() == removePerson){        	
     		int id = chosenPersonListView.getFocusModel().getFocusedIndex();
     		allPersonsObservableList.add(selectedPersonsObservableList.get(id));
     		selectedPersonsObservableList.remove(id);
-    		updateRoomComboBox();
+    		//updateRoomComboBox();
     	}
     }
     
@@ -241,9 +241,9 @@ public class AddEvent implements EventHandler<ActionEvent> {
     			result.add(((User)o).getUserId());
     		}
     		else if (o instanceof Group){
-    			for (User u:((Group)o).getMembers()){
+    			for (Integer u:((Group)o).getMembers()){
     				if (!result.contains(u)){
-    					result.add(u.getUserId());
+    					result.add(u);
     				}
     			}
     		}
