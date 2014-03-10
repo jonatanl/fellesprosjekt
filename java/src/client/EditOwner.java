@@ -1,11 +1,6 @@
 package client;
 
-import java.util.ArrayList;
-
-import interfaces.PersistencyInterface;
-import Models.Alarm;
 import Models.Event;
-import Models.EventParticipant;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -56,13 +51,13 @@ public class EditOwner implements EventHandler<ActionEvent>{
 	public void setModel(Event model) {
 		this.eventModel = model;
 		
-		t_title.setText(model.getEventName());
-		t_date.setText(model.getDate());
-		t_start.setText(model.getStartTime());
-		t_stop.setText(model.getEndTime());
-		t_description.setText(model.getDescription());
-		t_place.setText(model.getLocation());
-//		t_room.setText(model.getRoom().toString());
+		t_title.setText(eventModel.getEventName());
+		t_date.setText(eventModel.getDate());
+		t_start.setText(eventModel.getStartTime());
+		t_stop.setText(eventModel.getEndTime());
+		t_description.setText(eventModel.getDescription());
+		t_place.setText(eventModel.getLocation());
+//		t_room.setText(eventModel.getRoom().toString());
 	}
 	
 	public void createStage() {
