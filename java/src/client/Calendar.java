@@ -69,8 +69,8 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 	
 	public void startCalendar(int loggedInUserId){
 		System.out.println("logged in with id " + loggedInUserId);
-		//getAllFromDatabase();
-		//loggedInUser = findUser(loggedInUserId);
+		getAllFromDatabase();
+		loggedInUser = findUser(loggedInUserId);
 		
 		// Create the buttons.
 		b_createEvent = new Button("Legg til");
@@ -104,11 +104,14 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 	
 	private void getAllFromDatabase(){
 		users =  persistency.getAllUsers();
-		events = persistency.getAllEvents();
+		System.out.println(1);
+		//events = persistency.getAllEvents();
 		rooms = persistency.getAllRooms();
-		eventParticipants = persistency.getAllEventParticipants();
+		System.out.println(2);
+		//eventParticipants = persistency.getAllEventParticipants();
 		groups = persistency.getAllGroups();
-		alarms = persistency.getAllAlarms();
+		//alarms = persistency.getAllAlarms();
+		System.out.println(3);
 	}
 	
 	
@@ -136,7 +139,7 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 		}
 		
 		else if (buttonEvent.getSource() == b_editEvent) {
-			//new EndreIkkeOwner(model, stage);			
+			new EditOwner(new Event(), stage);			
 		}
 		else if (buttonEvent.getSource() == b_showMore) {
 			//new ShowMore(model, stage);
