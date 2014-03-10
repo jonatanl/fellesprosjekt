@@ -1,6 +1,11 @@
 package client;
 
+import interfaces.PersistencyInterface;
+
 import java.util.Date;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -21,61 +26,35 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import Models.Alarm;
 import Models.Event;
+import Models.EventParticipant;
 
-public class EditAlarm implements EventHandler<ActionEvent> {
+public class EditAlarm extends Application implements EventHandler<ActionEvent> {
 
 	//private TextField timeBeforeField;
 	private CheckBox alarmCheckBox;
+	private Label minutesLabel;
 	private TextField timeBeforeField;
 	private Button saveButton;
 	private Button cancelButton;
+	private PersistencyInterface persistency;
 	
 	private Stage thisStage;
     private Stage parentStage;
     
-    public EditAlarm(Event event, Stage stage) {
-    	try {
-			createStage();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	this.parentStage = stage;
-    }
+//    public EditAlarm(Event event, Stage stage) {
+//    	try {
+//			createStage();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//    	this.parentStage = stage;
+//    }
+    public static void main(String[] args)  {
+		launch(args);
+	}
     
-
-    public void createStage() throws Exception {
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
-        
-        Text title = new Text("Sett alarm");
-        title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        grid.add(title, 0, 0, 2, 1);
-        
-        alarmCheckBox = new CheckBox("Alarm");
-        grid.add(alarmCheckBox, 0, 1);
-        
-        grid.add(new Text("Tid før:"), 0, 2);
-       
-        timeBeforeField = new TextField();
-        grid.add(timeBeforeField, 1, 2);
-        
-        saveButton = new Button("Save");
-        saveButton.setOnAction(this);
-        grid.add(saveButton, 0, 3);
-        
-        cancelButton = new Button("Cancel");
-        cancelButton.setOnAction(this);
-        grid.add(cancelButton, 1, 3);
-        
-        Scene scene = new Scene(grid, 300, 275);
-        thisStage = new Stage();
-        thisStage.setScene(scene);
-        thisStage.show();
-    }
+   
     
     public boolean isValid(){
     	if(timeBeforeField.getText().matches("[0-9]+")){
@@ -97,12 +76,21 @@ public class EditAlarm implements EventHandler<ActionEvent> {
     		}
     		else{
     			System.out.println("Invalid input");
+    			timeBeforeField.clear();
+    			timeBeforeField.setPromptText("Set an integer");
     		}
 			
 		}
     	else if (actionEvent.getSource() == cancelButton) {
     		thisStage.close();
     	}
+    	
+    	if(alarmCheckBox.isSelected() == true){
+			timeBeforeField.setEditable(true);
+		}
+		else{
+			timeBeforeField.setEditable(false);
+		}
     	
     	
         /*
@@ -114,5 +102,48 @@ public class EditAlarm implements EventHandler<ActionEvent> {
         System.out.println(model);
         */
     }
+	@Override
+	public void start(Stage arg0) throws Exception {
+		GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+        
+        Text title = new Text("Sett alarm");
+        title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        grid.add(title, 0, 0, 2, 1);
+        
+        alarmCheckBox = new CheckBox("Alarm");
+        alarmCheckBox.setOnAction(this);;
+        grid.add(alarmCheckBox, 0, 1);
+        
+        grid.add(new Text("Tid før:"), 0, 2);
+       
+        timeBeforeField = new TextField();
+        timeBeforeField.setEditable(false);
+        timeBeforeField.setPromptText("Must be an integer");
+        grid.add(timeBeforeField, 1, 2);
+        
+        minutesLabel = new Label();
+        minutesLabel.setText("min");
+        grid.add(minutesLabel, 2, 2);
+        
+        saveButton = new Button("Save");
+        saveButton.setOnAction(this);
+        grid.add(saveButton, 0, 3);
+        
+        cancelButton = new Button("Cancel");
+        cancelButton.setOnAction(this);
+        grid.add(cancelButton, 1, 3);
+        
+        Scene scene = new Scene(grid, 300, 275);
+        thisStage = new Stage();
+        thisStage.setScene(scene);
+        thisStage.show();
+		
+	}
+	
+	
     
 }
