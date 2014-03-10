@@ -3,6 +3,7 @@ package util;
 import Models.*;
 import interfaces.PersistencyInterface;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public abstract class PersistencyGetMethods implements PersistencyInterface{
@@ -25,7 +26,15 @@ public abstract class PersistencyGetMethods implements PersistencyInterface{
 
     @Override
     public ArrayList<Group> getAllGroups() {
-        return null;
+        ArrayList<Group> groups = new ArrayList<Group>();
+
+        try {
+            groups = query.getAllGroups();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return groups;
     }
 
     @Override
@@ -35,6 +44,12 @@ public abstract class PersistencyGetMethods implements PersistencyInterface{
 
     @Override
     public ArrayList<User> getAllUsers() {
-        return null;
+        ArrayList<User> users = null;
+        try {
+            users = query.getAllUsers();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
     }
 }
