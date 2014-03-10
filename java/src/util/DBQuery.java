@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DBQuery extends DBQueryGetMethods {
 
@@ -21,8 +22,8 @@ public class DBQuery extends DBQueryGetMethods {
 
         event.setEventId(eventId);
         event.setEventName(result.getString("eventName"));
-        event.setStartTime(DateHelper.convertToString(result.getDate("endTime")));
-        event.setEndTime(DateHelper.convertToString(result.getDate("endTime")));
+        event.setStartTime(new Date(result.getDate("startTime").getTime()));
+        event.setEndTime(new Date(result.getDate("endTime").getTime()));
         event.setDescription(result.getString("description"));
         event.setLocation(result.getString("location"));
         event.setRoomId(result.getInt("roomID"));

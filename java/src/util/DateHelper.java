@@ -5,17 +5,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class DateHelper {
-    public static final String FORMAT = "MMMM d, yyyy hh:mm:ss";
+    public static final String FORMAT_JAVASCRIPT = "MMMM d, yyyy hh:mm:ss";
+    public static final String FORMAT_GUI = "dd-MM-yyyy, hh:mm";
 
-    public static String convertToString(Date date){
-        SimpleDateFormat format = new SimpleDateFormat(FORMAT);
-        return format.format(date);
+    public static String convertToString(Date date, String FORMAT){
+        return new SimpleDateFormat(FORMAT).format(date);
     }
 
-    public static Date convertToDate(String dateString){
+    public static Date convertToDate(String dateString, String format){
         Date date = null;
         try {
-            date = new SimpleDateFormat(FORMAT).parse(dateString);
+            date = new SimpleDateFormat(format).parse(dateString);
         } catch (ParseException e) {
             System.out.println(e.getMessage());
         }
