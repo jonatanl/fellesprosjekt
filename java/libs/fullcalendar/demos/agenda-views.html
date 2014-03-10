@@ -75,19 +75,24 @@
 					},
 					editable: false,
 					events: events,
+					allDaySlot: false,
+					axisFormat: 'H:mm',
 
 					eventClick: function(calEvent, jsEvent, view) {
 
-				        //Fjern kantfarge ved ny markering
+				        //Remove old selections box shadow
 				        if ('null' != lastClicked) {
-				        	$(lastClicked).css('border-color', '');
+				        	$(lastClicked).css('box-shadow','');
 				        }
 
-				        //Sett kantfarge ved markering
-				        $(this).css('border-color', 'black');
+				        //On eventClick set box shadow for current selection
+				        $(this).css({
+				        	'box-shadow' : '7px 7px 5px 0px #888'
+
+				        });
 				        lastClicked = this;
 
-				        //CallBack til JavaFX med ID for event
+				        //CallBack to JavaFX with event ID
 				        app.onClickIDtoJavaFX(calEvent.id);
 
 				    }
@@ -96,31 +101,35 @@
 				});
 
 				$('#calendar').fullCalendar('changeView', 'agendaWeek');
-
 			});
 
 		</script>
 		<script type="text/javascript">
 			
-			function createEventSourceObject(id, title, startDate, endDate, allDay) {
+			function createEventSourceObject(id, title, startDate, endDate) {
 				var event = [{
 								id: id,
 								title: title,
 								start: startDate,
 								end: endDate,
-								allDay: allDay
+								allDay: false
 							}];
 
 				return event;
 			}
 
-			function addEvent(id, title, startDate, endDate, allDay) {			
-				var newEvent = createEventSourceObject(id, title, startDate, endDate, allDay);
+
+			function addEvent(id, title, startDate, endDate) {			
+				app.onClickIDtoJavaFX(id);
+				app.onClickIDtoJavaFX(title);
+				app.onClickIDtoJavaFX(startDate);
+				app.onClickIDtoJavaFX(endDate);
+				var newEvent = createEventSourceObject(id, title, startDate, endDate);
 				$('#calendar').fullCalendar('addEventSource', newEvent);
 			}
 
-			function removeEvent(id, title, startDate, endDate, allDay) {
-				var oldEvent = createEventSourceObject(id, title, startDate, endDate, allDay);
+			function removeEvent(id, title, startDate, endDate) {
+				var oldEvent = createEventSourceObject(id, title, startDate, endDate);
 				$('#calendar').fullCalendar('removeEventSource', oldEvent);
 				$('#calendar').fullCalendar('rerenderEvents');
 			}
@@ -140,8 +149,9 @@
 			}
 
 			#calendar {
-				width: 900px;
 				margin: 0 auto;
+				width: 100%;
+				height: 100%;
 			}
 
 		</style>

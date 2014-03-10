@@ -37,12 +37,7 @@ public class Browser extends Region{
             new ChangeListener<State>() {
                 public void changed(ObservableValue ov, State oldState, State newState) {
                     if (newState == State.SUCCEEDED) {
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                webEngine.executeScript(call);
-                            }
-                        });
+                        webEngine.executeScript(call);
                     }
                 }
             });
