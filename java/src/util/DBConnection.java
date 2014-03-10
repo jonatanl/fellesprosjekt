@@ -38,7 +38,6 @@ public abstract class DBConnection {
 
         try {
             result = statement.executeQuery(query);
-            result.next();
         } catch (SQLException e){
             System.out.println("Failed to execute query: " + e.getMessage());
         }

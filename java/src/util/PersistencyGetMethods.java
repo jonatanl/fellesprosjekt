@@ -31,7 +31,7 @@ public abstract class PersistencyGetMethods implements PersistencyInterface{
         try {
             groups = query.getAllGroups();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
 
         return groups;
@@ -39,7 +39,13 @@ public abstract class PersistencyGetMethods implements PersistencyInterface{
 
     @Override
     public ArrayList<Room> getAllRooms() {
-        return null;
+        ArrayList<Room> rooms = null;
+        try {
+            rooms = query.getAllRooms();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return rooms;
     }
 
     @Override
@@ -48,7 +54,7 @@ public abstract class PersistencyGetMethods implements PersistencyInterface{
         try {
             users = query.getAllUsers();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return users;
     }

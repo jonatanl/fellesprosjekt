@@ -1,6 +1,7 @@
 package util;
 
 import Models.Group;
+import Models.Room;
 import Models.User;
 
 import java.sql.ResultSet;
@@ -27,7 +28,7 @@ public abstract class DBQueryGetMethods extends DBConnection{
     }
 
     public ArrayList<Group> getAllGroups() throws SQLException {
-        String query = "SELECT * FROM group";
+        String query = "SELECT * FROM calendar.group";
         ResultSet result = getResults(query);
 
         ArrayList<Group> groups = new ArrayList<Group>();
@@ -37,9 +38,10 @@ public abstract class DBQueryGetMethods extends DBConnection{
 
             group.setGroupId(result.getInt("groupID"));
             group.setName(result.getString("name"));
-            group.setMembers(getAllUsersInGroup(group.getGroupId()));
-
             groups.add(group);
+        }
+        for (Group g : groups){
+            g.setMembers(getAllUsersInGroup(g.getGroupId()));
         }
 
         return groups;
@@ -57,5 +59,25 @@ public abstract class DBQueryGetMethods extends DBConnection{
         }
 
         return users;
+    }
+
+    public ArrayList<Room> getAllRooms() throws SQLException{
+        String query = "SELECT * FROM room";
+        ResultSet result = getResults(query);
+
+        ArrayList<Room> rooms = new ArrayList<Room>();
+        Room room;
+        while (result.next()){
+            room = new Room();
+
+            room.setId(result.getInt("roomID"));
+            room.setAdress(result.getString("adress"));
+            room.setCapacity(result.getInt("capacity"));
+
+            rooms.add(room);
+        }
+
+
+        return rooms;
     }
 }
