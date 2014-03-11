@@ -7,9 +7,8 @@ public class Event {
 	
     private int eventId;
     private String eventName;
-    private String date;
-	private String startTime;
-    private String endTime;
+	private Date startTime;
+    private Date endTime;
     private String description;
     private String location;
     private int roomId;
@@ -31,31 +30,24 @@ public class Event {
         this.eventName = eventName;
     }
     
-    public String getDate() {
-    	return date;
-    }
-    
-    public void setDate(String date) {
-    	this.date = date;
-    }
 
-    public String getStartTime() {
-        return startTime;
-    }
+    public Date getStartTime() {
+		return startTime;
+	}
 
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
-    }
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
 
-    public String getEndTime() {
-        return endTime;
-    }
+	public Date getEndTime() {
+		return endTime;
+	}
 
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
 
-    public String getDescription() {
+	public String getDescription() {
         return description;
     }
 
@@ -92,7 +84,6 @@ public class Event {
         return "Event{" +
                 "eventId=" + eventId +
                 ", eventName='" + eventName + '\'' +
-                ", date='" + date + '\'' +
                 ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
                 ", description='" + description + '\'' +

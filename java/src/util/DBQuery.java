@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DBQuery extends DBQueryGetMethods {
 
@@ -21,8 +22,8 @@ public class DBQuery extends DBQueryGetMethods {
 
         event.setEventId(eventId);
         event.setEventName(result.getString("eventName"));
-        event.setStartTime(DateHelper.convertToString(result.getDate("endTime")));
-        event.setEndTime(DateHelper.convertToString(result.getDate("endTime")));
+        event.setStartTime(new Date(result.getDate("startTime").getTime()));
+        event.setEndTime(new Date(result.getDate("endTime").getTime()));
         event.setDescription(result.getString("description"));
         event.setLocation(result.getString("location"));
         event.setRoomId(result.getInt("roomID"));
@@ -54,8 +55,8 @@ public class DBQuery extends DBQueryGetMethods {
 
     private void setEventFields (PreparedStatement statement, Event event) throws SQLException{
         statement.setString(1, event.getEventName());
-        statement.setString(2, event.getStartTime());
-        statement.setString(3, event.getEndTime());
+        statement.setString(2, DateHelper.convertToString(event.getStartTime(),DateHelper.FORMAT_GUI));
+        statement.setString(3, DateHelper.convertToString(event.getEndTime(),DateHelper.FORMAT_GUI));
         statement.setString(4, event.getDescription());
         statement.setString(5, event.getLocation());
         statement.setString(6, event.getRoomId() + "");

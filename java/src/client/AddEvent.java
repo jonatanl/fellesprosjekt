@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Set;
 
 import sun.font.LayoutPathImpl.EndType;
+import util.DateHelper;
 import util.Time;
 import Models.Event;
 import Models.Group;
@@ -205,17 +206,14 @@ public class AddEvent implements EventHandler<ActionEvent> {
     public void handle(ActionEvent actionEvent) {
     	if (actionEvent.getSource() == addEvent && validInput()) {
     		eventModel.setEventName(titleField.getText());
-    		eventModel.setDate(dateField.getText());
-    		eventModel.setStartTime(startTime.getText());
-    		eventModel.setEndTime(endTime.getText());
+    		eventModel.setStartTime(DateHelper.convertToDate(dateField.getText() + ", " + startTime.getText(), DateHelper.FORMAT_GUI));
+    		eventModel.setEndTime(DateHelper.convertToDate(dateField.getText() + ", " + endTime.getText(), DateHelper.FORMAT_GUI));
     		eventModel.setDescription(description.getText());
     		eventModel.setLocation(location.getText());
     		eventModel.setRoomId(roomList.getValue().getId());
     		eventModel.setOwnerId(ownerId);
     		
-    		
-    		
-    		//persistency.addEvent(eventModel, getSelectedParticipantIds());
+    		persistency.addEvent(eventModel, getSelectedParticipantIds());
     		
     		thisStage.close();    		
 

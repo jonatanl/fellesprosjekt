@@ -52,9 +52,9 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 		this.eventModel = model;
 		
 		t_title.setText(model.getEventName());
-		t_date.setText(model.getDate());
-		t_start.setText(model.getStartTime());
-		t_stop.setText(model.getEndTime());
+		//t_date.setText(model.getDate());
+		//t_start.setText(model.getStartTime());
+		//t_stop.setText(model.getEndTime());
 		t_description.setText(model.getDescription());
 		t_place.setText(model.getLocation());
 		//t_room.setText(model.getRoom().toString());
