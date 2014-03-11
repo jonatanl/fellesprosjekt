@@ -43,9 +43,10 @@ public class EditAlarm extends Application implements EventHandler<ActionEvent> 
     private int ownerId, eventId;
     private PersistencyInterface persistency;
     
-    public EditAlarm(Alarm alarm, int eventId, Stage stage, int ownerId) {
+    public EditAlarm(Stage stage, Alarm alarm, int eventId, int ownerId) {
     	this.ownerId = ownerId;
     	this.alarm = alarm;
+    	this.eventId = eventId;
     	this.parentStage = stage;
     	
     }
