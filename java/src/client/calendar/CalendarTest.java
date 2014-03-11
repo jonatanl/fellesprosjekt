@@ -4,23 +4,25 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.Date;
+
 /**
  * Created by ochamp on 2/26/14.
  */
-public class WebScene extends Application{
+public class CalendarTest extends Application{
 
     private Scene scene;
-    private Browser browser;
+    private Calendar calendar;
 
 
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("Calendar Frame");
-        browser = new Browser();
-        scene = new Scene(browser);
+        calendar = new Calendar();
+        scene = new Scene(calendar.getContentForScene());
         stage.setScene(scene);
         stage.show();
-        browser.callJavaScript("addEvent(333, 'Kode kalender', \"March 5, 2014 12:00:00\", \"March 5, 2014 13:00:00\", false)");
+        calendar.addEvent("666", "Kode Session", "2014-03-10 12:00:00" , "2014-03-10 13:00:00" ); //Example of adding event
     }
 
     public static void main(String[] args) {
