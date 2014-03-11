@@ -43,7 +43,7 @@ public interface PersistencyInterface {
 	public void addEventParticipant(int eventID, int participantID);
 	
 	public void removeEventParticipant(int eventID, int participantID);
-
+	
 	// Kalles når response eller isDeleted forandres hos en EventParticipant. 
 	public void changeEventParticipantResponse(EventParticipant participant);
 	

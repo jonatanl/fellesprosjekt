@@ -104,14 +104,11 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 	
 	private void getAllFromDatabase(){
 		users =  persistency.getAllUsers();
-		System.out.println(1);
 		//events = persistency.getAllEvents();
 		rooms = persistency.getAllRooms();
-		System.out.println(2);
-		//eventParticipants = persistency.getAllEventParticipants();
+		eventParticipants = persistency.getAllEventParticipants();
 		groups = persistency.getAllGroups();
 		//alarms = persistency.getAllAlarms();
-		System.out.println(3);
 	}
 	
 	
@@ -139,7 +136,18 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 		}
 		
 		else if (buttonEvent.getSource() == b_editEvent) {
-			new EditOwner(new Event(), stage);			
+			
+			Event currentEvent = new Event();
+			currentEvent.setEventId(10);
+			ArrayList<EventParticipant> currentParticipants = new ArrayList<EventParticipant>();
+			for (EventParticipant ep: eventParticipants){
+				if (ep.getEventId() == currentEvent.getEventId()){
+					currentParticipants.add(ep);
+				}
+			}
+			
+			
+			new EditOwner(new Event(), stage, rooms, users, groups, currentParticipants);			
 		}
 		else if (buttonEvent.getSource() == b_showMore) {
 			//new ShowMore(model, stage);
