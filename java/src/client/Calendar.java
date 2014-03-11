@@ -15,9 +15,11 @@ import Models.User;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -28,9 +30,9 @@ import javafx.stage.Stage;
 import client.calendar.Browser;
 
 //Main class of the calendar system. 
-public class Calendar extends Application implements EventHandler<ActionEvent>{
+public class Calendar extends Application{
 	
-	private Button b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alert;
+	
 	private Stage stage;
 	
 	private ArrayList<Event> events;
@@ -44,9 +46,44 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 	
 	private PersistencyInterface persistency; 
 	
+	// Visible elements
+	private Text title;
+	private Buttons buttons;
+	private Browser browser;
+	
+	public ArrayList<User> getUsers() {
+		return users;
+	}
+
+	public ArrayList<Group> getGroups() {
+		return groups;
+	}
+
+	public ArrayList<Room> getRooms() {
+		return rooms;
+	}
+
+	public ArrayList<EventParticipant> getEventParticipants() {
+		return eventParticipants;
+	}
+
 	public static void main(String[] args)  {
 		launch(args);
 	}
+	
+	public User getLoggedInUser() {
+		return loggedInUser;
+	}
+
+	public PersistencyInterface getPersistency() {
+		return persistency;
+	}
+
+	public Stage getStage(){
+		return stage;
+	}
+	
+	
 
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -69,45 +106,28 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 		
 	}
 	
-	public void startCalendar(int loggedInUserId){
+	public void startMainView(int loggedInUserId){
 		System.out.println("logged in with id " + loggedInUserId);
 		getAllFromDatabase();
 		loggedInUser = findUser(loggedInUserId);
+
+		title = new Text("Skalender");
+		title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+		buttons = new Buttons(this);
+		browser = new Browser();
+
+		GridPane root = new GridPane();
+		root.setAlignment(Pos.CENTER);
+		root.setHgap(10);
+		root.setVgap(10);
+		root.setPadding(new Insets(25, 25, 25, 25));
+
+		root.setAlignment(Pos.CENTER);
+		root.add(title, 0, 0, 2, 1);
+		root.add(buttons, 0, 1);
+		root.add(browser, 1, 1);
 		
-		// Create the buttons.
-		b_createEvent = new Button("Legg til");
-		b_createEvent.setMinWidth(60);
-		b_createEvent.setOnAction(this);
-		
-		b_editEvent = new Button("Endre");
-		b_editEvent.setMinWidth(60);
-		b_editEvent.setOnAction(this);
-		
-		b_deleteEvent = new Button("Slett");
-		b_deleteEvent.setOnAction(this);
-		b_deleteEvent.setMinWidth(60);
-		
-		b_showMore = new Button("Vis mer");
-		b_showMore.setOnAction(this);
-		b_showMore.setMinWidth(60);
-		
-		b_alert = new Button("Alarm");
-		b_alert.setOnAction(this);
-		b_alert.setMinWidth(60);
-		
-		VBox root = new VBox();
-		root.getChildren().addAll(b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alert);
-		
-		Scene scene = new Scene(root, 500, 500);
-		
-		
-		javafx.scene.Group g = new javafx.scene.Group();
-		Browser b = new Browser();
-		HBox h = new HBox();
-		h.getChildren().add(root);
-		h.getChildren().add(b);
-		
-		scene= new Scene(h, 500, 500);
+		Scene scene = new Scene(root, 900, 700);
 		
 		stage.setScene(scene);
 		stage.show();
@@ -139,48 +159,7 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 		return null;
 	}
 
-	@Override
-	public void handle(ActionEvent buttonEvent) {
-		if (buttonEvent.getSource() == b_createEvent) {
-			System.out.println("legg til event");
-			new AddEvent(stage, persistency, loggedInUser.getUserId(), rooms, users, groups);
-		}
-		
-		else if (buttonEvent.getSource() == b_editEvent) {
-			
-			Event currentEvent = new Event();
-			currentEvent.setEventId(10);
-			ArrayList<EventParticipant> currentParticipants = new ArrayList<EventParticipant>();
-			for (EventParticipant ep: eventParticipants){
-				if (ep.getEventId() == currentEvent.getEventId()){
-					currentParticipants.add(ep);
-				}
-			}
-			
-			
-			new EditOwner(new Event(), stage, rooms, users, groups, currentParticipants);			
-		}
-		else if (buttonEvent.getSource() == b_showMore) {
-			//new ShowMore(model, stage);
-		}
-		
-		else if (buttonEvent.getSource() == b_alert) {
-			
-		}		
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	
 	

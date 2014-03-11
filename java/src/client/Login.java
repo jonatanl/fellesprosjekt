@@ -85,7 +85,7 @@ public class Login implements EventHandler<ActionEvent> {
     public void handle(ActionEvent actionEvent) {
     	int userId = persistency.requestLogin(username.getText(), password.getText());
     	if (userId >= 0){
-    		calendar.startCalendar(userId);
+    		calendar.startMainView(userId);
     		stage.close();
     	}
     	else{
