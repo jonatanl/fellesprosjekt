@@ -1,5 +1,7 @@
 package Models;
 
+import sun.tools.jar.resources.jar;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -29,11 +31,18 @@ public class Event {
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }
-    
 
     public Date getStartTime() {
 		return startTime;
 	}
+
+    public void setStartTime(java.sql.Date startTime){
+        this.startTime = new Date(startTime.getTime());
+    }
+
+    public void setEndTime(java.sql.Date endTime) {
+        this.endTime = new Date(endTime.getTime());
+    }
 
 	public void setStartTime(Date startTime) {
 		this.startTime = startTime;

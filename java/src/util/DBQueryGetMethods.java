@@ -119,4 +119,29 @@ public abstract class DBQueryGetMethods extends DBConnection{
         }
         return participants;
     }
+
+    public ArrayList<Event> getAllEvents() throws SQLException {
+        String query = "SELECT * FROM event";
+        ResultSet result = getResults(query);
+
+        ArrayList<Event> events = new ArrayList<Event>();
+        Event event;
+
+        while (result.next()){
+            event = new Event();
+
+            event.setEventId(result.getInt("eventID"));
+            event.setEventName(result.getString("eventName"));
+            event.setStartTime(result.getDate("startTime"));
+            event.setEndTime(result.getDate("endTime"));
+            event.setDescription(result.getString("description"));
+            event.setLocation(result.getString("location"));
+            event.setRoomId(result.getInt("roomID"));
+            event.setOwnerId(result.getInt("ownerID"));
+
+            events.add(event);
+        }
+
+        return events;
+    }
 }

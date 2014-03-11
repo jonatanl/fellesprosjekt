@@ -23,7 +23,14 @@ public abstract class PersistencyGetMethods implements PersistencyInterface{
 
     @Override
     public ArrayList<Event> getAllEvents() {
-        return null;
+        ArrayList<Event> events = new ArrayList<>();
+
+        try {
+            events = query.getAllEvents();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return events;
     }
 
     @Override
