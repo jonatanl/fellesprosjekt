@@ -25,13 +25,15 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import client.calendar.Browser;
+import client.calendar.CalendarView;
+import util.DateHelper;
 
 //Main class of the calendar system. 
 public class Calendar extends Application implements EventHandler<ActionEvent>{
 	
 	private Button b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alert;
 	private Stage stage;
+    private CalendarView calendarView;
 	
 	private ArrayList<Event> events;
 	private ArrayList<User> users;
@@ -98,16 +100,16 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 		VBox root = new VBox();
 		root.getChildren().addAll(b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alert);
 		
-		Scene scene = new Scene(root, 500, 500);
+		//Scene scene = new Scene(root, 500, 500);
 		
 		
 		javafx.scene.Group g = new javafx.scene.Group();
-		Browser b = new Browser();
+		calendarView = new CalendarView();
 		HBox h = new HBox();
 		h.getChildren().add(root);
-		h.getChildren().add(b);
-		
-		scene= new Scene(h, 500, 500);
+		h.getChildren().add(calendarView.getContentForScene());
+
+        Scene scene = new Scene(h, 1000, 1000);
 		
 		stage.setScene(scene);
 		stage.show();
@@ -115,7 +117,7 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 	
 	private void getAllFromDatabase(){
 		users =  persistency.getAllUsers();
-		//events = persistency.getAllEvents();
+		events = persistency.getAllEvents();
 		rooms = persistency.getAllRooms();
 		eventParticipants = persistency.getAllEventParticipants();
 		groups = persistency.getAllGroups();
@@ -126,7 +128,15 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 	
 	// Draws the webScene over again. 
 	public void updateWebScene(){
-		
+        calendarView.removeAllEvents();
+        for(Event event : events) {
+            calendarView.addEvent(
+                    "" + event.getEventId(),
+                    event.getEventName(),
+                    DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_JAVASCRIPT),
+                    DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_JAVASCRIPT)
+            );
+        }
 	}
 	
 	
