@@ -6,7 +6,7 @@ package client;
 
 import Models.Event;
 import Models.EventParticipant;
-import interfaces.PersistencyInterface;
+import interfaces.CalendarInterface;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -25,17 +25,17 @@ public class DeleteEventNotOwner {
 
     Button ok_btn = new Button("Ok");
     Button cancel_btn = new Button("Cancel");
-    private PersistencyInterface persistency;
+    CalendarInterface participant;
     private int eventID;
     private int participantID;
     
 	private Stage thisStage;
     private Stage parentStage;
     
-    public DeleteEventNotOwner(Event event, EventParticipant user, Stage parentStage, PersistencyInterface p) {
-    	this.persistency = p;
-    	this.eventID = event.getEventId();
+    public DeleteEventNotOwner(Event event, EventParticipant user, Stage parentStage, CalendarInterface ci) {
+    	this.participant = ci;
     	this.participantID = user.getUserId();
+    	this.eventID = event.getEventId();
     	
     	try {
 			createStage();
@@ -79,7 +79,7 @@ public class DeleteEventNotOwner {
         ok_btn.setOnAction(new EventHandler<ActionEvent>() {
         	public void handle(ActionEvent actionEvent) {
         		System.out.println("Event removed");
-        		persistency.removeEventParticipant(eventID, participantID);
+        		participant.changeEventParticipantResponse(eventID, participantID, "Deleted", true);
         		thisStage.close();
             }
 		});
