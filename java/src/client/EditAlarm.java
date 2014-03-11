@@ -36,20 +36,19 @@ public class EditAlarm extends Application implements EventHandler<ActionEvent> 
 	private TextField timeBeforeField;
 	private Button saveButton;
 	private Button cancelButton;
-	private PersistencyInterface persistency;
 	
 	private Stage thisStage;
     private Stage parentStage;
+    private Alarm alarm;
+    private int ownerId, eventId;
+    private PersistencyInterface persistency;
     
-//    public EditAlarm(Event event, Stage stage) {
-//    	try {
-//			createStage();
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//    	this.parentStage = stage;
-//    }
+    public EditAlarm(Alarm alarm, int eventId, Stage stage, int ownerId) {
+    	this.ownerId = ownerId;
+    	this.alarm = alarm;
+    	this.parentStage = stage;
+    	
+    }
     public static void main(String[] args)  {
 		launch(args);
 	}
@@ -64,14 +63,17 @@ public class EditAlarm extends Application implements EventHandler<ActionEvent> 
     }
 
     
-    
-    
-    
     @Override
     public void handle(ActionEvent actionEvent) {
     	if (actionEvent.getSource() == saveButton) {
     		if(isValid()){
     			System.out.println("Send info to database");
+    			
+    			alarm.setAlarmID(eventId);
+    			alarm.setTime(timeBeforeField.getText());
+    			
+    			//persistency.addAlarm(participant, alarm);;
+    			
     			thisStage.close();
     		}
     		else{
