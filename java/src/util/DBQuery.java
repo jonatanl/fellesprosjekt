@@ -2,6 +2,7 @@ package util;
 
 import Models.*;
 
+import java.beans.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -44,11 +45,19 @@ public class DBQuery extends DBQueryGetMethods {
         if (event.getEventId() != 0)
             return;
         String query = "INSERT INTO calendar.event VALUES(default , ?, ?, ?, ?, ?, ?, ?)";
-        PreparedStatement statement = connection.prepareStatement(query);
+        PreparedStatement statement = connection.prepareStatement(query, com.mysql.jdbc.Statement.RETURN_GENERATED_KEYS);
         setEventFields(statement, event);
         statement.executeUpdate();
 
+        // We need to get the row id from the new row, before we can add eventParticipants
+        ResultSet result = statement.getGeneratedKeys();
+        result.next();
+        event.setEventId(result.getInt(1));
+
+        if (event.getEventId()==0)
+            return;
         for (int participantID : participantIDs){
+            System.out.println("Event: " + event.getEventId() + ", User: " + participantID);
             addEventParticipant(event.getEventId(), participantID);
         }
     }
