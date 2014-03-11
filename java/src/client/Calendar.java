@@ -19,11 +19,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import client.calendar.Browser;
 
 //Main class of the calendar system. 
 public class Calendar extends Application implements EventHandler<ActionEvent>{
@@ -97,6 +99,15 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 		root.getChildren().addAll(b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alert);
 		
 		Scene scene = new Scene(root, 500, 500);
+		
+		
+		javafx.scene.Group g = new javafx.scene.Group();
+		Browser b = new Browser();
+		HBox h = new HBox();
+		h.getChildren().add(root);
+		h.getChildren().add(b);
+		
+		scene= new Scene(h, 500, 500);
 		
 		stage.setScene(scene);
 		stage.show();
