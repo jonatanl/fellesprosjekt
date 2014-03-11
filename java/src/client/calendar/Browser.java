@@ -29,7 +29,6 @@ public class Browser extends Region{
 
         //Legg til callback for kalenderklikk
         callBackJavaScript();
-
     }
 
     public void callJavaScript(final String call){
@@ -41,6 +40,7 @@ public class Browser extends Region{
                     }
                 }
             });
+        webEngine.reload();
     }
 
     public void callBackJavaScript() {

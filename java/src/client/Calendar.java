@@ -6,6 +6,7 @@ import interfaces.PersistencyInterface;
 import java.util.ArrayList;
 import java.util.Date;
 
+import util.DateHelper;
 import Models.Alarm;
 import Models.Event;
 import Models.EventParticipant;
@@ -159,20 +160,28 @@ public class Calendar extends Application{
 		return null;
 	}
 
-
 	
-	
-	
-	
+	public void addEvent(Event event) {
+		events = new ArrayList<Event>();
+		events.add(event);
+		// Not working because of Date-->string issue. 
+		//String s = "addEvent(" + event.getEventId() + ", \'" + event.getEventName() + "\', \'" + 
+		//	 	DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_GUI) + "\', \'" +  
+		//		DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_GUI) + "\', false)";
+		
+		String s = "addEvent(" + event.getEventId() + ", \'" + event.getEventName() + "\', \'" + 
+				"2014-03-10 12:00:00" + "\', \'" +  
+				"2014-03-10 13:00:00" + "\', false)";
+		
+		//String s = "addEvent(" + event.getEventId() + ", \'" + event.getEventName() + "\', \'" + 
+		//	 	DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_WEB) + "\', \'" +  
+		//		DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_WEB) + "\', false)";
+		//System.out.println(s);
+		browser.callJavaScript(s);
+	}
 	
 	
 /*
-	@Override
-	public void addEvent(Event event) {
-		events.add(event);
-		// TODO Update the webView. 
-	}
-
 	@Override
 	public void removeEvent(Event event) {
 		events.remove(event);

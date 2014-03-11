@@ -1,6 +1,8 @@
 package client;
 
 import java.util.ArrayList;
+import java.util.Date;
+
 import Models.Event;
 import Models.EventParticipant;
 import javafx.event.ActionEvent;
@@ -9,7 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 
 public class Buttons extends VBox implements EventHandler<ActionEvent> {
-	private Button b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alarm;
+	private Button b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alarm, b_test;
 	private Calendar calendar;
 	private boolean isOwner = false;
 	private Event selectedEvent = null;
@@ -62,7 +64,12 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 		b_alarm.setMinWidth(80);
 		b_alarm.setMinHeight(30);
 		
-		this.getChildren().addAll(b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alarm);
+		b_test = new Button("Test");
+		b_test.setOnAction(this);
+		b_test.setMinWidth(80);
+		b_test.setMinHeight(30);
+		
+		this.getChildren().addAll(b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alarm, b_test);
 		this.setSpacing(10);
 		
 		//setSelectedEvent(null);
@@ -97,6 +104,16 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 		
 		else if (buttonEvent.getSource() == b_alarm) {
 			
-		}				
+		}		
+		else if (buttonEvent.getSource() == b_test){
+			// Testing
+						Event e = new Event();
+						e.setEventId(20);
+						e.setEventName("Skalender progging");
+						Date d = new Date();
+						e.setStartTime(new Date(2014, 3, 10, 12, 0, 0));
+						e.setEndTime(new Date(2014, 3, 10, 13, 0, 0));
+						calendar.addEvent(e);
+		}
 	}
 }
