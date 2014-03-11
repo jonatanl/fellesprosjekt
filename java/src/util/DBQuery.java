@@ -2,6 +2,7 @@ package util;
 
 import Models.*;
 
+import java.beans.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,7 +34,7 @@ public class DBQuery extends DBQueryGetMethods {
     }
 
     public void updateEvent(Event event) throws SQLException{
-        String query = "UPDATE event set eventName=?, endTime=?, startTime=?, description=?, location=?, roomID=?, ownerID=?"
+        String query = "UPDATE event set eventName=?, startTime=?, endTime=?, description=?, location=?, roomID=?, ownerID=?"
                 + "WHERE eventID=" + event.getEventId();
         PreparedStatement statement = connection.prepareStatement(query);
         setEventFields(statement, event);
@@ -44,19 +45,27 @@ public class DBQuery extends DBQueryGetMethods {
         if (event.getEventId() != 0)
             return;
         String query = "INSERT INTO calendar.event VALUES(default , ?, ?, ?, ?, ?, ?, ?)";
-        PreparedStatement statement = connection.prepareStatement(query);
+        PreparedStatement statement = connection.prepareStatement(query, com.mysql.jdbc.Statement.RETURN_GENERATED_KEYS);
         setEventFields(statement, event);
         statement.executeUpdate();
 
+        // We need to get the row id from the new row, before we can add eventParticipants
+        ResultSet result = statement.getGeneratedKeys();
+        result.next();
+        event.setEventId(result.getInt(1));
+
+        if (event.getEventId()==0)
+            return;
         for (int participantID : participantIDs){
+            System.out.println("Event: " + event.getEventId() + ", User: " + participantID);
             addEventParticipant(event.getEventId(), participantID);
         }
     }
 
     private void setEventFields (PreparedStatement statement, Event event) throws SQLException{
         statement.setString(1, event.getEventName());
-        statement.setString(2, DateHelper.convertToString(event.getStartTime(),DateHelper.FORMAT_GUI));
-        statement.setString(3, DateHelper.convertToString(event.getEndTime(),DateHelper.FORMAT_GUI));
+        statement.setString(2, new java.sql.Date(event.getStartTime().getTime()).toString());
+        statement.setString(3, new java.sql.Date(event.getEndTime().getTime()).toString());
         statement.setString(4, event.getDescription());
         statement.setString(5, event.getLocation());
         statement.setString(6, event.getRoomId() + "");
