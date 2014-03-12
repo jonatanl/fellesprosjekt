@@ -38,12 +38,14 @@ public class Persistency extends PersistencyGetMethods implements PersistencyInt
     }
 
     @Override
-    public void addEvent(Event event, ArrayList<Integer> participantIDs) {
+    public boolean addEvent(Event event, ArrayList<Integer> participantIDs) {
+        boolean success = false;
         try {
-            query.addEvent(event, participantIDs);
+            success = query.addEvent(event, participantIDs);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return success;
     }
 
     @Override

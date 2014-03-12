@@ -15,24 +15,6 @@ public class DBQuery extends DBQueryGetMethods {
         connect();
     }
 
-    public Event getEvent(int eventId) throws SQLException {
-        Event event = new Event();
-        String query = "SELECT * FROM event WHERE event.eventID=" + eventId;
-        PreparedStatement statement = connection.prepareStatement(query);
-        ResultSet result = getResult(statement);
-
-        event.setEventId(eventId);
-        event.setEventName(result.getString("eventName"));
-        event.setStartTime(new Date(result.getDate("startTime").getTime()));
-        event.setEndTime(new Date(result.getDate("endTime").getTime()));
-        event.setDescription(result.getString("description"));
-        event.setLocation(result.getString("location"));
-        event.setRoomId(result.getInt("roomID"));
-        event.setOwnerId(result.getInt("ownerID"));
-
-        return event;
-    }
-
     public void updateEvent(Event event) throws SQLException{
         String query = "UPDATE event set eventName=?, startTime=?, endTime=?, description=?, location=?, roomID=?, ownerID=?"
                 + "WHERE eventID=" + event.getEventId();
@@ -41,9 +23,9 @@ public class DBQuery extends DBQueryGetMethods {
         statement.executeUpdate();
     }
 
-    public void addEvent(Event event, ArrayList<Integer> participantIDs) throws SQLException{
+    public boolean addEvent(Event event, ArrayList<Integer> participantIDs) throws SQLException{
         if (event.getEventId() != 0)
-            return;
+            return false;
         String query = "INSERT INTO calendar.event VALUES(default , ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(query, com.mysql.jdbc.Statement.RETURN_GENERATED_KEYS);
         setEventFields(statement, event);
@@ -55,10 +37,12 @@ public class DBQuery extends DBQueryGetMethods {
         event.setEventId(result.getInt(1));
 
         if (event.getEventId()==0)
-            return;
+            return false;
         for (int participantID : participantIDs){
             addEventParticipant(event.getEventId(), participantID);
         }
+
+        return true;
     }
 
     private void setEventFields (PreparedStatement statement, Event event) throws SQLException{
@@ -116,5 +100,18 @@ public class DBQuery extends DBQueryGetMethods {
         int id = result.getInt("userID");
 
         return id > 0 ? id : -1;
+    }
+
+    public void changeEventParticipant(EventParticipant participant) throws SQLException {
+        String query = "UPDATE eventParticipant set isDeleted=?, pendingChange=?, response=? WHERE eventID=? AND userID=?";
+        PreparedStatement statement = connection.prepareStatement(query);
+
+        statement.setInt(1, participant.isDeleted()? 1 : 0);
+        statement.setInt(2, participant.isPendingChange()? 1 : 0);
+        statement.setString(3, participant.getResponse());
+        statement.setInt(4, participant.getEventId());
+        statement.setInt(5, participant.getUserId());
+
+        statement.executeUpdate();
     }
 }
