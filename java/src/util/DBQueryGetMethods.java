@@ -91,10 +91,11 @@ public abstract class DBQueryGetMethods extends DBConnection{
             alarm = new Alarm();
 
             alarm.setAlarmID(result.getInt("alarmID"));
-            alarm.setTime(result.getDate("time").toString());
+            alarm.setTime(DateHelper.convertToDate(result.getString("time"), DateHelper.FORMAT_DB));
 
             alarms.add(alarm);
         }
+
         return alarms;
     }
 

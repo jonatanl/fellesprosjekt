@@ -22,10 +22,6 @@ public class Persistency extends PersistencyGetMethods implements PersistencyInt
     	System.out.println("closed.");
     }
 
-    public static void main(String[] args) {
-        new Persistency();
-    }
-
     @Override
     public int requestLogin(String username, String password) {
         int id = -1;
@@ -67,12 +63,16 @@ public class Persistency extends PersistencyGetMethods implements PersistencyInt
     }
 
     @Override
-    public void addEventParticipant(int eventID, int participantID) {
+    public boolean addEventParticipant(int eventID, int participantID) {
+        boolean success = false;
+
         try {
-            query.addEventParticipant(eventID, participantID);
+            success = query.addEventParticipant(eventID, participantID);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+
+        return success;
     }
 
     @Override
@@ -86,24 +86,41 @@ public class Persistency extends PersistencyGetMethods implements PersistencyInt
 
     @Override
     public void changeEventParticipantResponse(EventParticipant participant) {
-
-    }
-    @Override
-    public void addAlarm(EventParticipant participant, Alarm alarm) {
         try {
-            query.addAlarm(participant, alarm);
+            query.changeEventParticipant(participant);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
     @Override
-    public void removeAlarm(EventParticipant participant, Alarm alarm) {
+    public boolean addAlarm(EventParticipant participant, Alarm alarm) {
+        boolean success = false;
 
+        try {
+            success = query.addAlarm(participant, alarm);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return success;
     }
 
     @Override
-    public void changeAlarm(EventParticipant participant, Alarm alarm) {
+    public void removeAlarm(Alarm alarm) {
+        try {
+            query.removeAlarm(alarm);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
+    @Override
+    public void changeAlarm(Alarm alarm) {
+        try {
+            query.changeAlarm(alarm);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

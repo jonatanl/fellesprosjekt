@@ -4,10 +4,7 @@ import interfaces.PersistencyInterface;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
 import sun.font.LayoutPathImpl.EndType;
 import util.DateHelper;
@@ -214,7 +211,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		eventModel.setOwnerId(ownerId);
     		
     		persistency.addEvent(eventModel, getSelectedParticipantIds());
-    		
+
     		thisStage.close();    		
 
     	}
