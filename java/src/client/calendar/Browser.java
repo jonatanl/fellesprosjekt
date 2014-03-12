@@ -11,6 +11,8 @@ import netscape.javascript.JSObject;
 
 import java.io.File;
 
+import client.Calendar;
+
 /**
  * Created by ochamp on 2/26/14.
  */
@@ -18,6 +20,7 @@ public class Browser extends Region{
 
     private final WebView browser;
     private final WebEngine webEngine;
+    public static Calendar calendar;
 
     public Browser() {
         browser = new WebView();
@@ -58,8 +61,9 @@ public class Browser extends Region{
     }
 
     public static class CallBack {
-        public void onClickIDtoJavaFX(String id) {
+        public void onClickIDtoJavaFX(int id) {
             System.out.println(id);
+            	calendar.setSelectedEvent(id);
         }
     }
 }
