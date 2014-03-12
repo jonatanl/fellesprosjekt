@@ -108,7 +108,7 @@ public class Calendar extends Application{
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         buttons = new Buttons(this);
         calendarView = new CalendarView();
-        calendarView.setOwnerId(loggedInUser.getUserId());
+        calendarView.setUserId(loggedInUser.getUserId());
 
         GridPane root = new GridPane();
         root.setAlignment(Pos.CENTER);

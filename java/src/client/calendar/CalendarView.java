@@ -22,8 +22,8 @@ public class CalendarView {
         calendar.callJavaScript("removeAllEvents()");
     }
 
-    public void setOwnerId(int id) {
-        calendar.callJavaScript("setOwnerId(" + id + ")");
+    public void setUserId(int id) {
+        calendar.callJavaScript("setUserId(" + id + ")");
     }
 
     public Browser getContentForScene() {

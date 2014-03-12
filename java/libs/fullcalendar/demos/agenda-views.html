@@ -13,7 +13,7 @@
 
 			$(document).ready(function() {
 				var lastClicked;
-				var ownerId;
+				var userId;
 
 
 				var date = new Date();
@@ -131,9 +131,9 @@
 				$('#calendar').fullCalendar('rerenderEvents');
 			}
 
-			function setOwnerId(id) {
-				ownerId = id;
-				app.onClickIDtoJavaFX('OwnerID was set to: ' + id + ' in javaScript')
+			function setUserId(id) {
+				userId = id;
+				app.onClickIDtoJavaFX('OwnerID was set to ' + id + ' in javaScript')
 			}
 
 			function removeAllEvents() {
