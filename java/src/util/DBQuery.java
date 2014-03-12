@@ -2,6 +2,7 @@ package util;
 
 import Models.*;
 
+import javax.print.DocFlavor;
 import java.beans.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -61,12 +62,13 @@ public class DBQuery extends DBQueryGetMethods {
         statement.executeUpdate();
     }
 
-    public void addEventParticipant(int eventID, int participantID) throws SQLException {
+    public boolean addEventParticipant(int eventID, int participantID) throws SQLException {
         String query = "INSERT INTO eventParticipant(eventID, userID) VALUES(?, ?)";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setInt(1, eventID);
         statement.setInt(2, participantID);
-        statement.executeUpdate();
+        int succsess = statement.executeUpdate();
+        return succsess != 0;
     }
 
     public void removeEventParticipant (int eventID, int participantID) throws SQLException {
@@ -77,17 +79,39 @@ public class DBQuery extends DBQueryGetMethods {
         statement.executeUpdate();
     }
 
-    public void addAlarm(EventParticipant participant, Alarm alarm) throws SQLException {
+    public boolean addAlarm(EventParticipant participant, Alarm alarm) throws SQLException {
         String query = "INSERT INTO alarm VALUES(default, ?)";
-        PreparedStatement statement = connection.prepareStatement(query);
-        statement.setString(1, alarm.getTime());
-        alarm.setAlarmID(statement.executeUpdate());
+        PreparedStatement statement = connection.prepareStatement(query, com.mysql.jdbc.Statement.RETURN_GENERATED_KEYS);
+        statement.setString(1, DateHelper.convertToString(alarm.getTime(), DateHelper.FORMAT_DB));
+        statement.executeUpdate();
+
+        ResultSet result = statement.getGeneratedKeys();
+        result.next();
+        alarm.setAlarmID(result.getInt("alarmID"));
 
         query = "UPDATE eventParticipant SET alarmID=? WHERE userID=? AND eventID=?";
         statement = connection.prepareStatement(query);
         statement.setInt(1, alarm.getAlarmID());
         statement.setInt(2, participant.getUserId());
         statement.setInt(3, participant.getEventId());
+
+        int success = statement.executeUpdate();
+        return success != 0 && alarm.getAlarmID() > 0;
+    }
+
+    public void changeAlarm(Alarm alarm) throws SQLException {
+        String query = "UPDATE alarm set time=? WHERE alarmID=?";
+        PreparedStatement statement = connection.prepareStatement(query);
+
+        statement.setString(1, DateHelper.convertToString(alarm.getTime(), DateHelper.FORMAT_DB));
+        statement.setInt(2, alarm.getAlarmID());
+
+        statement.executeUpdate();
+    }
+
+    public void removeAlarm(Alarm alarm) throws SQLException {
+        String query = "DELETE FROM alarm WHERE alarmID=" + alarm.getAlarmID();
+        PreparedStatement statement = connection.prepareStatement(query);
         statement.executeUpdate();
     }
 

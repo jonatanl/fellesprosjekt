@@ -1,8 +1,10 @@
 package Models;
 
+import java.util.Date;
+
 public class Alarm {
 	private int alarmID;
-	private String time;
+	private Date time;
 
     public int getAlarmID() {
         return alarmID;
@@ -12,11 +14,11 @@ public class Alarm {
         this.alarmID = alarmID;
     }
 
-    public String getTime() {
+    public Date getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(Date time) {
         this.time = time;
     }
 }

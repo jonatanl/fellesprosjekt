@@ -2,7 +2,6 @@ package util;
 
 import Models.*;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -39,11 +38,27 @@ public abstract class DBQueryGetMethods extends DBConnection{
             group.setName(result.getString("name"));
             groups.add(group);
         }
+
         for (Group g : groups){
             g.setMembers(getAllUsersInGroup(g.getGroupId()));
+            g.setSubGroups(getAllSubgroups(g.getGroupId()));
         }
 
         return groups;
+    }
+
+    private ArrayList<Integer> getAllSubgroups(int groupId) throws SQLException{
+        String query = "SELECT subgroupID FROM subgroup WHERE groupID=" + groupId;
+        ResultSet result = getResults(query);
+
+        ArrayList<Integer> members = new ArrayList<>();
+        int subgroupID;
+        while (result.next()){
+            subgroupID = result.getInt("subgroupID");
+            members.add(subgroupID);
+        }
+
+        return members;
     }
 
     private ArrayList<Integer> getAllUsersInGroup(int groupId) throws SQLException{
@@ -91,10 +106,11 @@ public abstract class DBQueryGetMethods extends DBConnection{
             alarm = new Alarm();
 
             alarm.setAlarmID(result.getInt("alarmID"));
-            alarm.setTime(result.getDate("time").toString());
+            alarm.setTime(DateHelper.convertToDate(result.getString("time"), DateHelper.FORMAT_DB));
 
             alarms.add(alarm);
         }
+
         return alarms;
     }
 

@@ -1,5 +1,7 @@
 package client.calendar;
 
+import client.Calendar;
+
 
 /**
  * Created by ochamp on 3/10/14.
@@ -10,7 +12,8 @@ public class CalendarView {
 
     private Browser calendar;
 
-    public CalendarView() {
+    public CalendarView(Calendar c) {
+    	Browser.calendar = c;
         calendar = new Browser();
     }
 

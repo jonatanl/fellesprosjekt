@@ -4,10 +4,7 @@ import interfaces.PersistencyInterface;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
 import sun.font.LayoutPathImpl.EndType;
 import util.DateHelper;
@@ -85,13 +82,10 @@ public class AddEvent implements EventHandler<ActionEvent> {
         	this.groups = groups;
 			createStage();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
+            System.out.println(e.getMessage());
+        }
     }
 
-  
     public void createStage() throws Exception {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -223,7 +217,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		eventModel.setLocation(location.getText());
     		eventModel.setRoomId(roomList.getValue().getId());
     		eventModel.setOwnerId(ownerId);
-    		
+
     		if (persistency.addEvent(eventModel, getSelectedParticipantIds())){
     			calendar.addEvent(eventModel);
     			thisStage.close();

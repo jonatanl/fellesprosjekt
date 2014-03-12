@@ -7,6 +7,9 @@ import java.util.Date;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.sun.glass.ui.Pixels.Format;
+
+import util.DateHelper;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -27,6 +30,7 @@ import javafx.stage.Stage;
 import Models.Alarm;
 import Models.Event;
 import Models.EventParticipant;
+import util.DateHelper;
 
 public class EditAlarm extends Application implements EventHandler<ActionEvent> {
 
@@ -52,16 +56,19 @@ public class EditAlarm extends Application implements EventHandler<ActionEvent> 
     public static void main(String[] args)  {
 		launch(args);
 	}
-    
-   
-    
+
     public boolean isValid(){
-    	if(timeBeforeField.getText().matches("[0-9]+")){
+    	if (timeBeforeField.getText().length() != 17 
+    			&& timeBeforeField.getText().substring(0, 2).matches("[0-9]+") 
+    			&& timeBeforeField.getText().substring(3, 5).matches("[0-9]+") 
+    			&& timeBeforeField.getText().substring(6, 10).matches("[0-9]+")
+    			&& timeBeforeField.getText().substring(12, 14).matches("[0-9]+")
+    			&& timeBeforeField.getText().substring(15, 17).matches("[0-9]+")) {
     		return true;
     	}
+    	timeBeforeField.setPromptText("dd-MM-yyyy, HH:mm");
     	return false;
     }
-
     
     @Override
     public void handle(ActionEvent actionEvent) {
@@ -70,7 +77,7 @@ public class EditAlarm extends Application implements EventHandler<ActionEvent> 
     			System.out.println("Send info to database");
     			
     			alarm.setAlarmID(eventId);
-    			alarm.setTime(timeBeforeField.getText());
+    			alarm.setTime(DateHelper.convertToDate(timeBeforeField.getText(), DateHelper.FORMAT_GUI));
     			
     			//persistency.addAlarm(participant, alarm);;
     			
@@ -87,7 +94,7 @@ public class EditAlarm extends Application implements EventHandler<ActionEvent> 
     		thisStage.close();
     	}
     	
-    	if(alarmCheckBox.isSelected() == true){
+    	if(alarmCheckBox.isSelected()){
 			timeBeforeField.setEditable(true);
 		}
 		else{
@@ -114,11 +121,11 @@ public class EditAlarm extends Application implements EventHandler<ActionEvent> 
        
         timeBeforeField = new TextField();
         timeBeforeField.setEditable(false);
-        timeBeforeField.setPromptText("Must be an integer");
+        timeBeforeField.setPromptText("dd:MM:yyyy, HH:mm");
         grid.add(timeBeforeField, 1, 2);
         
         minutesLabel = new Label();
-        minutesLabel.setText("min");
+        minutesLabel.setText("Set time for alert");
         grid.add(minutesLabel, 2, 2);
         
         saveButton = new Button("Save");
@@ -135,7 +142,4 @@ public class EditAlarm extends Application implements EventHandler<ActionEvent> 
         thisStage.show();
 		
 	}
-	
-	
-    
 }

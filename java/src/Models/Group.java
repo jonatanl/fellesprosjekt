@@ -6,10 +6,20 @@ import java.util.ArrayList;
 public class Group {
 	private int groupId;
 	private ArrayList<Integer> members;
-    private String name;
+	private ArrayList<Integer> subGroups;
+
+	private String name;
 	
 	public Group(){
 		members = new ArrayList<Integer>();
+	}
+	
+    public ArrayList<Integer> getSubGroups() {
+		return subGroups;
+	}
+
+	public void setSubGroups(ArrayList<Integer> subGroups) {
+		this.subGroups = subGroups;
 	}
 
     public int getGroupId() {

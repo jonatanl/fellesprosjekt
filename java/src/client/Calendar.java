@@ -21,7 +21,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import client.calendar.Browser;
 
 //Main class of the calendar system. 
 public class Calendar extends Application{
@@ -37,13 +36,24 @@ public class Calendar extends Application{
 	private ArrayList<Alarm> alarms;
 	
 	private User loggedInUser;
-	
+	private Event selectedEvent;
+
 	private PersistencyInterface persistency;
 	
 	// Visible elements
 	private Text title;
 	private Buttons buttons;
 	private CalendarView calendarView;
+
+	public Event getSelectedEvent() {
+		return selectedEvent;
+	}
+
+	public void setSelectedEvent(int eventId) {
+		this.selectedEvent = findEvent(eventId);
+		buttons.setSelectedEvent(selectedEvent);
+		buttons.setIsOwner(selectedEvent.getOwnerId() == loggedInUser.getUserId());
+	}
 	
 	public ArrayList<User> getUsers() {
 		return users;
@@ -107,7 +117,7 @@ public class Calendar extends Application{
         title = new Text("Skalender");
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         buttons = new Buttons(this);
-        calendarView = new CalendarView();
+        calendarView = new CalendarView(this);
         calendarView.setUserId(loggedInUser.getUserId());
 
         GridPane root = new GridPane();
@@ -160,6 +170,15 @@ public class Calendar extends Application{
 		for (User u: users){
 			if (u.getUserId() == userID){
 				return u;
+			}
+		}
+		return null;
+	}
+	
+	public Event findEvent(int eventId){
+		for (Event e: events){
+			if (e.getEventId() == eventId){
+				return e;
 			}
 		}
 		return null;
