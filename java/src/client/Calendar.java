@@ -159,7 +159,8 @@ public class Calendar extends Application{
                     "" + event.getEventId(),
                     event.getEventName(),
                     DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_JAVASCRIPT),
-                    DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_JAVASCRIPT)
+                    DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_JAVASCRIPT),
+                    event.getOwnerId()
             );
         }
         System.out.println("-------------------------------------------------");

@@ -106,29 +106,35 @@
 		</script>
 		<script type="text/javascript">
 			
-			function createEventSourceObject(id, title, startDate, endDate) {
-				var event = [{
+			function createEventSourceObject(id, title, startDate, endDate, ownerId) {
+				if (ownerId == userId) {
+					var event = [{
+								id: id,
+								title: title,
+								start: startDate,
+								end: endDate,
+								allDay: false,
+								backgroundColor: '#EAB7AD',
+								borderColor: '#E88B79'
+							}];
+				} else {
+					var event = [{
 								id: id,
 								title: title,
 								start: startDate,
 								end: endDate,
 								allDay: false
 							}];
+				}
 
 				return event;
 			}
 
 
-			function addEvent(id, title, startDate, endDate) {			
+			function addEvent(id, title, startDate, endDate, ownerId) {			
 				app.onClickIDtoJavaFX(id);
-				var newEvent = createEventSourceObject(id, title, startDate, endDate);
+				var newEvent = createEventSourceObject(id, title, startDate, endDate, ownerId);
 				$('#calendar').fullCalendar('addEventSource', newEvent);
-			}
-
-			function removeEvent(id, title, startDate, endDate) {
-				var oldEvent = createEventSourceObject(id, title, startDate, endDate);
-				$('#calendar').fullCalendar('removeEventSource', oldEvent);
-				$('#calendar').fullCalendar('rerenderEvents');
 			}
 
 			function setUserId(id) {
