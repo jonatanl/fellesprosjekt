@@ -30,6 +30,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -44,6 +45,8 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private TextField description;
     private TextField location;
     
+    private Text errorMessage;
+    
     private ComboBox<Room> roomList;
     
     private ListView<Object> allPersonListView, chosenPersonListView;
@@ -57,6 +60,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private ArrayList<String> persons;
     private Stage thisStage;
     private Stage parentStage;
+    private Calendar calendar;
     private PersistencyInterface persistency;
     
     private ObservableList<Room> allRoomsObservableList;
@@ -67,8 +71,9 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private int ownerId;
     	
     
-    public AddEvent(Stage stage, PersistencyInterface persistency, int ownerId, ArrayList<Room> rooms, ArrayList<User> users, ArrayList<Group> groups) {
+    public AddEvent(Calendar calendar, Stage stage, PersistencyInterface persistency, int ownerId, ArrayList<Room> rooms, ArrayList<User> users, ArrayList<Group> groups) {
     	try {
+    		this.calendar = calendar;
     		this.parentStage = stage;
         	this.persistency = persistency;
         	this.ownerId = ownerId;
@@ -77,13 +82,10 @@ public class AddEvent implements EventHandler<ActionEvent> {
         	this.groups = groups;
 			createStage();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	
+            System.out.println(e.getMessage());
+        }
     }
 
-  
     public void createStage() throws Exception {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -98,9 +100,15 @@ public class AddEvent implements EventHandler<ActionEvent> {
         grid.add(createLabels(),0,1);
         grid.add(createFields(),1,1);
         grid.add(createListViewBox(),2,1);
+        
+        errorMessage = new Text("Error: Unable to add event.");
+        errorMessage.setFill(Color.FIREBRICK);
+        errorMessage.setVisible(false);
 
+        grid.add(errorMessage, 1, 2);
+        
         addEvent = new Button("Add event");
-        grid.add(addEvent, 1,2);
+        grid.add(addEvent, 1,3);
 
         Scene scene = new Scene(grid, 500, 475);
         thisStage = new Stage();
@@ -209,11 +217,15 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		eventModel.setLocation(location.getText());
     		eventModel.setRoomId(roomList.getValue().getId());
     		eventModel.setOwnerId(ownerId);
-    		
-    		persistency.addEvent(eventModel, getSelectedParticipantIds());
 
-    		thisStage.close();    		
-
+    		if (persistency.addEvent(eventModel, getSelectedParticipantIds())){
+    			calendar.addEvent(eventModel);
+    			thisStage.close();
+    		}
+    		else{
+    			// Some error occured at the database.
+    			errorMessage.setVisible(true);
+    		}
     	}
     	else if(actionEvent.getSource() == addPerson){
     		int id = allPersonListView.getFocusModel().getFocusedIndex();
