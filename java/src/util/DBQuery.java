@@ -64,8 +64,8 @@ public class DBQuery extends DBQueryGetMethods {
 
     private void setEventFields (PreparedStatement statement, Event event) throws SQLException{
         statement.setString(1, event.getEventName());
-        statement.setString(2, new java.sql.Date(event.getStartTime().getTime()).toString());
-        statement.setString(3, new java.sql.Date(event.getEndTime().getTime()).toString());
+        statement.setString(2, DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_DB));
+        statement.setString(3, DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_DB));
         statement.setString(4, event.getDescription());
         statement.setString(5, event.getLocation());
         statement.setString(6, event.getRoomId() + "");

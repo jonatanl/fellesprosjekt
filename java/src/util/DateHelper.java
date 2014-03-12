@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 public class DateHelper {
     public static final String FORMAT_JAVASCRIPT = "MMMM d, yyyy hh:mm:ss";
     public static final String FORMAT_GUI = "dd-MM-yyyy, hh:mm";
+    public static final String FORMAT_DB = "yyyy-MM-dd hh:mm:ss";
 
     public static String convertToString(Date date, String FORMAT){
         return new SimpleDateFormat(FORMAT).format(date);

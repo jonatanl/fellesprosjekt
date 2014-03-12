@@ -14,26 +14,6 @@ public class Persistency extends PersistencyGetMethods implements PersistencyInt
 
     public Persistency() {
         query = new DBQuery();
-
-       /* Event event = null;
-        try {
-            event = query.getEvent(2);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(event);
-        Date date = DateHelper.convertToDate(event.getEndTime());
-        System.out.println(DateHelper.convertToString(date));
-        changeEvent(event);
-
-        ArrayList<Group> groups = getAllGroups();
-
-        for (Group group : groups){
-            System.out.println(group);
-        }
-
-        query.close(); */
     }
 
     public void closeConnection(){
