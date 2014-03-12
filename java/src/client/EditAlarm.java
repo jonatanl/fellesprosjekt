@@ -30,6 +30,7 @@ import javafx.stage.Stage;
 import Models.Alarm;
 import Models.Event;
 import Models.EventParticipant;
+import util.DateHelper;
 
 public class EditAlarm extends Application implements EventHandler<ActionEvent> {
 
@@ -55,9 +56,7 @@ public class EditAlarm extends Application implements EventHandler<ActionEvent> 
     public static void main(String[] args)  {
 		launch(args);
 	}
-    
-   
-    
+
     public boolean isValid(){
     	if (timeBeforeField.getText().length() != 17 
     			&& timeBeforeField.getText().substring(0, 2).matches("[0-9]+") 
@@ -70,7 +69,6 @@ public class EditAlarm extends Application implements EventHandler<ActionEvent> 
     	timeBeforeField.setPromptText("dd-MM-yyyy, HH:mm");
     	return false;
     }
-
     
     @Override
     public void handle(ActionEvent actionEvent) {
@@ -96,7 +94,7 @@ public class EditAlarm extends Application implements EventHandler<ActionEvent> 
     		thisStage.close();
     	}
     	
-    	if(alarmCheckBox.isSelected() == true){
+    	if(alarmCheckBox.isSelected()){
 			timeBeforeField.setEditable(true);
 		}
 		else{
@@ -144,7 +142,4 @@ public class EditAlarm extends Application implements EventHandler<ActionEvent> 
         thisStage.show();
 		
 	}
-	
-	
-    
 }
