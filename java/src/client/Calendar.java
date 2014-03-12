@@ -144,8 +144,36 @@ public class Calendar extends Application{
         rooms = persistency.getAllRooms();
 		eventParticipants = persistency.getAllEventParticipants();
 		groups = persistency.getAllGroups();
+		// Add members of subgroups to groups, so that groups contain own and subgroup's members. 
+		for (Group g: groups)
+		{
+			addSubGroupMembers(g);
+		}
 		
 		//alarms = persistency.getAllAlarms();
+	}
+	
+	private Group addSubGroupMembers(Group g){
+		for (int subGroupId: g.getSubGroups()){
+			// Find subgroup.
+			Group sg = findGroup(subGroupId);
+
+			// Skip if subgroup does not exist. 
+			if (sg == null)
+				continue;
+			
+			// Recursively call subgroups of subgroups.
+			sg = addSubGroupMembers(sg);
+
+			// Add members of subgroup
+			for (int member: sg.getMembers()){
+				if (!g.getMembers().contains(member)){
+					g.addMember(member);
+				}
+			}
+		}
+		
+		return g;
 	}
 	
 	
@@ -180,6 +208,15 @@ public class Calendar extends Application{
 		for (Event e: events){
 			if (e.getEventId() == eventId){
 				return e;
+			}
+		}
+		return null;
+	}
+	
+	public Group findGroup(int groupId){
+		for (Group g: groups){
+			if (g.getGroupId() == groupId){
+				return g;
 			}
 		}
 		return null;

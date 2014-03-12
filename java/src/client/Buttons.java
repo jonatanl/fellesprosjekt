@@ -72,7 +72,7 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 		this.getChildren().addAll(b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alarm, b_test);
 		this.setSpacing(10);
 		
-		//setSelectedEvent(null);
+		setSelectedEvent(null);
 	}
 
 	

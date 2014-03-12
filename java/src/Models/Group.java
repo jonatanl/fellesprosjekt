@@ -5,8 +5,8 @@ import java.util.ArrayList;
 // Models a group of users. 
 public class Group {
 	private int groupId;
-	private ArrayList<Integer> members;
-	private ArrayList<Integer> subGroups;
+	private ArrayList<Integer> members = new ArrayList<Integer>();
+	private ArrayList<Integer> subGroups = new ArrayList<Integer>();
 
 	private String name;
 	
@@ -21,7 +21,7 @@ public class Group {
 	public void setSubGroups(ArrayList<Integer> subGroups) {
 		this.subGroups = subGroups;
 	}
-
+	
     public int getGroupId() {
         return groupId;
     }
@@ -37,7 +37,11 @@ public class Group {
     public void setMembers(ArrayList<Integer> members) {
         this.members = members;
     }
-
+    
+    public void addMember(int userId){
+    	members.add(userId);
+    }
+    
     public String getName() {
         return name;
     }
