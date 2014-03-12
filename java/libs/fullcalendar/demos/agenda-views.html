@@ -13,6 +13,7 @@
 
 			$(document).ready(function() {
 				var lastClicked;
+				var userId;
 
 
 				var date = new Date();
@@ -76,7 +77,6 @@
 					editable: false,
 					events: events,
 					allDaySlot: false,
-					axisFormat: 'H:mm',
 
 					eventClick: function(calEvent, jsEvent, view) {
 
@@ -121,9 +121,6 @@
 
 			function addEvent(id, title, startDate, endDate) {			
 				app.onClickIDtoJavaFX(id);
-				app.onClickIDtoJavaFX(title);
-				app.onClickIDtoJavaFX(startDate);
-				app.onClickIDtoJavaFX(endDate);
 				var newEvent = createEventSourceObject(id, title, startDate, endDate);
 				$('#calendar').fullCalendar('addEventSource', newEvent);
 			}
@@ -132,6 +129,11 @@
 				var oldEvent = createEventSourceObject(id, title, startDate, endDate);
 				$('#calendar').fullCalendar('removeEventSource', oldEvent);
 				$('#calendar').fullCalendar('rerenderEvents');
+			}
+
+			function setUserId(id) {
+				userId = id;
+				app.onClickIDtoJavaFX('OwnerID was set to ' + id + ' in javaScript')
 			}
 
 			function removeAllEvents() {

@@ -108,6 +108,7 @@ public class Calendar extends Application{
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         buttons = new Buttons(this);
         calendarView = new CalendarView();
+        calendarView.setUserId(loggedInUser.getUserId());
 
         GridPane root = new GridPane();
         root.setAlignment(Pos.CENTER);
@@ -141,6 +142,7 @@ public class Calendar extends Application{
 	// Draws the webScene over again. 
 	public void updateWebScene(){
         calendarView.removeAllEvents();
+
         for(Event event : events) {
             calendarView.addEvent(
                     "" + event.getEventId(),
@@ -149,6 +151,7 @@ public class Calendar extends Application{
                     DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_JAVASCRIPT)
             );
         }
+        System.out.println("-------------------------------------------------");
 	}
 	
 	

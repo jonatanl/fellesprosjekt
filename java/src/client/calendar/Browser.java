@@ -32,6 +32,8 @@ public class Browser extends Region{
     }
 
     public void callJavaScript(final String call){
+        System.out.println("javaScript string: " + call);
+
         webEngine.getLoadWorker().stateProperty().addListener(
             new ChangeListener<State>() {
                 public void changed(ObservableValue ov, State oldState, State newState) {
