@@ -1,13 +1,14 @@
-insert into room (adress, capacity) values('test', 10);
-insert into room (adress, capacity) values('test', 12);
-insert into room (adress, capacity) values('test', 13);
-insert into room (adress, capacity) values('test', 14);
-insert into room (adress, capacity) values('test', 30);
+insert into room (adress, capacity) values('test1', 2);
+insert into room (adress, capacity) values('test2', 3);
+insert into room (adress, capacity) values('test3', 4);
+insert into room (adress, capacity) values('test4', 10);
+insert into room (adress, capacity) values('test5', 30);
  
 insert into users (username, password) values ('jonatan', 123456);
 insert into users (username, password) values ('johannes', 123456);
 insert into users (username, password) values ('ofossan', 123456);
-insert into users (username, password) values ('Erik', 1234567);
+insert into users (username, password) values ('Erik', 123456);
+insert into users (username, password) values ('simen', 123456);
 
 insert into alarm (time) values ('2014-03-05 09:00:00');
 insert into alarm (time) values ('2014-03-06 10:00:00');
