@@ -21,7 +21,7 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 	}
 	
 	// Set whether or not the user is the owner of the currently selected event. 
-	public void setOwner(boolean isOwner) {
+	public void setIsOwner(boolean isOwner) {
 		this.isOwner = isOwner;
 	}
 	
@@ -86,17 +86,19 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 		
 		else if (buttonEvent.getSource() == b_editEvent) {
 			
-			Event currentEvent = new Event();
-			currentEvent.setEventId(10);
 			ArrayList<EventParticipant> currentParticipants = new ArrayList<EventParticipant>();
 			for (EventParticipant ep: calendar.getEventParticipants()){
-				if (ep.getEventId() == currentEvent.getEventId()){
+				if (ep.getEventId() == selectedEvent.getEventId()){
 					currentParticipants.add(ep);
 				}
 			}
 			
-			
-			new EditOwner(new Event(), calendar.getStage(), calendar.getRooms(), calendar.getUsers(), calendar.getGroups(), currentParticipants);			
+			if (isOwner){
+				new EditOwner(selectedEvent, calendar.getStage(), calendar.getRooms(), calendar.getUsers(), calendar.getGroups(), currentParticipants);
+			}
+			else{
+				new EndreIkkeOwner(selectedEvent, calendar.getStage());
+			}
 		}
 		else if (buttonEvent.getSource() == b_showMore) {
 			//new ShowMore(model, stage);
