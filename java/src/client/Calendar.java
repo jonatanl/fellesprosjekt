@@ -1,10 +1,9 @@
 package client;
 
-import interfaces.CalendarInterface;
+import client.calendar.CalendarView;
 import interfaces.PersistencyInterface;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import util.DateHelper;
 import Models.Alarm;
@@ -14,16 +13,10 @@ import Models.Group;
 import Models.Room;
 import Models.User;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -45,12 +38,12 @@ public class Calendar extends Application{
 	
 	private User loggedInUser;
 	
-	private PersistencyInterface persistency; 
+	private PersistencyInterface persistency;
 	
 	// Visible elements
 	private Text title;
 	private Buttons buttons;
-	private Browser browser;
+	private CalendarView calendarView;
 	
 	public ArrayList<User> getUsers() {
 		return users;
@@ -108,36 +101,38 @@ public class Calendar extends Application{
 	}
 	
 	public void startMainView(int loggedInUserId){
-		System.out.println("logged in with id " + loggedInUserId);
-		getAllFromDatabase();
-		loggedInUser = findUser(loggedInUserId);
+        System.out.println("logged in with id " + loggedInUserId);
+        getAllFromDatabase();
+        loggedInUser = findUser(loggedInUserId);
 
-		title = new Text("Skalender");
-		title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-		buttons = new Buttons(this);
-		browser = new Browser();
+        title = new Text("Skalender");
+        title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        buttons = new Buttons(this);
+        calendarView = new CalendarView();
 
-		GridPane root = new GridPane();
-		root.setAlignment(Pos.CENTER);
-		root.setHgap(10);
-		root.setVgap(10);
-		root.setPadding(new Insets(25, 25, 25, 25));
+        GridPane root = new GridPane();
+        root.setAlignment(Pos.CENTER);
+        root.setHgap(10);
+        root.setVgap(10);
+        root.setPadding(new Insets(25, 25, 25, 25));
 
-		root.setAlignment(Pos.CENTER);
-		root.add(title, 0, 0, 2, 1);
-		root.add(buttons, 0, 1);
-		root.add(browser, 1, 1);
-		
+        root.setAlignment(Pos.CENTER);
+        root.add(title, 0, 0, 2, 1);
+        root.add(buttons, 0, 1);
+        root.add(calendarView.getContentForScene(), 1, 1);
+
 		Scene scene = new Scene(root, 900, 700);
 		
 		stage.setScene(scene);
 		stage.show();
+        updateWebScene();
 	}
 	
 	private void getAllFromDatabase(){
 		users =  persistency.getAllUsers();
-		//events = persistency.getAllEvents();
-		rooms = persistency.getAllRooms();
+		events = persistency.getAllEvents();
+        System.out.println("Events size after persistency fetch: " + events.size());
+        rooms = persistency.getAllRooms();
 		eventParticipants = persistency.getAllEventParticipants();
 		groups = persistency.getAllGroups();
 		//alarms = persistency.getAllAlarms();
@@ -147,7 +142,17 @@ public class Calendar extends Application{
 	
 	// Draws the webScene over again. 
 	public void updateWebScene(){
-		
+        calendarView.removeAllEvents();
+        System.out.println("Size before CalendarView update: " + events.size());
+        for(Event event : events) {
+            System.out.println(event.toString());
+            calendarView.addEvent(
+                    "" + event.getEventId(),
+                    event.getEventName(),
+                    DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_JAVASCRIPT),
+                    DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_JAVASCRIPT)
+            );
+        }
 	}
 	
 	
@@ -162,22 +167,8 @@ public class Calendar extends Application{
 
 	
 	public void addEvent(Event event) {
-		events = new ArrayList<Event>();
 		events.add(event);
-		// Not working because of Date-->string issue. 
-		//String s = "addEvent(" + event.getEventId() + ", \'" + event.getEventName() + "\', \'" + 
-		//	 	DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_GUI) + "\', \'" +  
-		//		DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_GUI) + "\', false)";
-		
-		String s = "addEvent(" + event.getEventId() + ", \'" + event.getEventName() + "\', \'" + 
-				"2014-03-10 12:00:00" + "\', \'" +  
-				"2014-03-10 13:00:00" + "\', false)";
-		
-		//String s = "addEvent(" + event.getEventId() + ", \'" + event.getEventName() + "\', \'" + 
-		//	 	DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_WEB) + "\', \'" +  
-		//		DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_WEB) + "\', false)";
-		//System.out.println(s);
-		browser.callJavaScript(s);
+        updateWebScene();
 	}
 	
 	
