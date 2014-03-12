@@ -30,7 +30,6 @@ import Models.EventParticipant;
 
 public class EditAlarm extends Application implements EventHandler<ActionEvent> {
 
-	//private TextField timeBeforeField;
 	private CheckBox alarmCheckBox;
 	private Label minutesLabel;
 	private TextField timeBeforeField;
@@ -40,11 +39,11 @@ public class EditAlarm extends Application implements EventHandler<ActionEvent> 
 	private Stage thisStage;
     private Stage parentStage;
     private Alarm alarm;
-    private int ownerId, eventId;
+    private int userId, eventId;
     private PersistencyInterface persistency;
     
-    public EditAlarm(Stage stage, Alarm alarm, int eventId, int ownerId) {
-    	this.ownerId = ownerId;
+    public EditAlarm(Stage stage, Alarm alarm, int eventId, int userId) {
+    	this.userId = userId;
     	this.alarm = alarm;
     	this.eventId = eventId;
     	this.parentStage = stage;
@@ -94,16 +93,6 @@ public class EditAlarm extends Application implements EventHandler<ActionEvent> 
 		else{
 			timeBeforeField.setEditable(false);
 		}
-    	
-    	
-        /*
-    	model.setTitle(titleField.getText());
-        model.setStartTime(startTime.getText());
-        model.setEndTime(endTime.getText());
-        model.setDescription(description.getText());
-        model.setLocation(location.getText());
-        System.out.println(model);
-        */
     }
 	@Override
 	public void start(Stage arg0) throws Exception {
@@ -113,15 +102,15 @@ public class EditAlarm extends Application implements EventHandler<ActionEvent> 
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
         
-        Text title = new Text("Sett alarm");
+        Text title = new Text("Set alert");
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(title, 0, 0, 2, 1);
         
-        alarmCheckBox = new CheckBox("Alarm");
-        alarmCheckBox.setOnAction(this);;
+        alarmCheckBox = new CheckBox("Alert");
+        alarmCheckBox.setOnAction(this);
         grid.add(alarmCheckBox, 0, 1);
         
-        grid.add(new Text("Tid før:"), 0, 2);
+        grid.add(new Text("Time before:"), 0, 2);
        
         timeBeforeField = new TextField();
         timeBeforeField.setEditable(false);
