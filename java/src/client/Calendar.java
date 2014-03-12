@@ -144,6 +144,7 @@ public class Calendar extends Application{
         rooms = persistency.getAllRooms();
 		eventParticipants = persistency.getAllEventParticipants();
 		groups = persistency.getAllGroups();
+		
 		//alarms = persistency.getAllAlarms();
 	}
 	
