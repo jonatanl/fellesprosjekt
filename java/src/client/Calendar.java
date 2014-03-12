@@ -21,7 +21,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import client.calendar.Browser;
 
 //Main class of the calendar system. 
 public class Calendar extends Application{
