@@ -1,0 +1,29 @@
+package client.calendar;
+
+
+/**
+ * Created by ochamp on 3/10/14.
+ */
+
+
+public class CalendarView {
+
+    private Browser calendar;
+
+    public CalendarView() {
+        calendar = new Browser();
+    }
+
+    public void addEvent(String id, String title, String startDate, String endDate) {
+        calendar.callJavaScript("addEvent(" + id + ", \'" + title + "\', \'" + startDate + "\', \'" + endDate + "\', false)");
+    }
+
+    public void removeAllEvents() {
+        calendar.callJavaScript("removeAllEvents()");
+    }
+
+
+    public Browser getContentForScene() {
+        return calendar;
+    }
+}
