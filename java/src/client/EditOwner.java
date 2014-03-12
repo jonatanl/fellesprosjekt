@@ -42,7 +42,7 @@ public class EditOwner implements EventHandler<ActionEvent>{
 	private Event eventModel;
 	private Stage thisStage;
 	private Stage parentStage;
-
+	
 	private ObservableList<Object> allPersonsObservableList;
     private ObservableList<Object> selectedPersonsObservableList;
     

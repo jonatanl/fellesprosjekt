@@ -30,7 +30,10 @@ public class DeleteEventOwner {
 	private Stage thisStage;
     private Stage parentStage;
     
-    public DeleteEventOwner(Event event, Stage stage, PersistencyInterface p) {
+    private Calendar calendar;
+    
+    public DeleteEventOwner(Calendar c, Event event, Stage stage, PersistencyInterface p) {
+    	this.calendar = c;
     	this.persistency = p;
     	this.thisEvent = event;
     	
@@ -76,8 +79,10 @@ public class DeleteEventOwner {
         ok_btn.setOnAction(new EventHandler<ActionEvent>() {
         	public void handle(ActionEvent actionEvent) {
         		System.out.println("Event deleted");
-        		persistency.removeEvent(thisEvent);
-        		thisStage.close();
+        		if (persistency.removeEvent(thisEvent)){
+        			calendar.removeEvent(thisEvent);
+        			thisStage.close();
+        		}
             }
 		});
         

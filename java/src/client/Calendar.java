@@ -229,13 +229,11 @@ public class Calendar extends Application{
 	}
 	
 	
-/*
-	@Override
 	public void removeEvent(Event event) {
 		events.remove(event);
-		// TODO Update the webView.
+		updateWebScene();
 	}
-
+/*
 	public void changeEvent(int eventId, String newEventName,
 			Date newStartTime, Date newEndTime, String newDescription,
 			String newLocation, Room newRoom) {

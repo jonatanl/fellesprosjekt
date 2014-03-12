@@ -35,7 +35,7 @@ public interface PersistencyInterface {
 	
 	public boolean addEvent(Event event, ArrayList<Integer> participantIDs);
 	
-	public void removeEvent(Event event);
+	public boolean removeEvent(Event event);
 	
 	// Kalles n�r noe forandres i en event, bortsett fra EventParticipants.  
 	public void changeEvent(Event event);

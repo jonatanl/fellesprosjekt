@@ -100,6 +100,11 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 				new EndreIkkeOwner(selectedEvent, calendar.getStage());
 			}
 		}
+		else if (buttonEvent.getSource() == b_deleteEvent){
+			if (isOwner){
+				new DeleteEventOwner(calendar, selectedEvent, calendar.getStage(), calendar.getPersistency());
+			}
+		}
 		else if (buttonEvent.getSource() == b_showMore) {
 			//new ShowMore(model, stage);
 		}
@@ -108,14 +113,7 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 			
 		}		
 		else if (buttonEvent.getSource() == b_test){
-			// Testing
-						Event e = new Event();
-						e.setEventId(20);
-						e.setEventName("Skalender progging");
-						Date d = new Date();
-						e.setStartTime(new Date(2014, 3, 10, 12, 0, 0));
-						e.setEndTime(new Date(2014, 3, 10, 13, 0, 0));
-						calendar.addEvent(e);
+			// Add code here for testing.
 		}
 	}
 }

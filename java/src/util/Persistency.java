@@ -45,12 +45,15 @@ public class Persistency extends PersistencyGetMethods implements PersistencyInt
     }
 
     @Override
-    public void removeEvent(Event event) {
+    public boolean removeEvent(Event event) {
+    	boolean success = false;
         try {
             query.removeEvent(event);
+            success = true;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return success;
     }
 
     @Override
