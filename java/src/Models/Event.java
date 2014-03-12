@@ -1,8 +1,7 @@
 package Models;
 
-import sun.tools.jar.resources.jar;
+import util.DateHelper;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 public class Event {
@@ -36,12 +35,12 @@ public class Event {
 		return startTime;
 	}
 
-    public void setStartTime(java.sql.Date startTime){
-        this.startTime = new Date(startTime.getTime());
+    public void setStartTime(String startTime){
+        this.startTime = DateHelper.convertToDate(startTime, DateHelper.FORMAT_DB);
     }
 
-    public void setEndTime(java.sql.Date endTime) {
-        this.endTime = new Date(endTime.getTime());
+    public void setEndTime(String endTime) {
+        this.endTime = DateHelper.convertToDate(endTime, DateHelper.FORMAT_DB);
     }
 
 	public void setStartTime(Date startTime) {

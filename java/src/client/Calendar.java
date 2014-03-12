@@ -101,7 +101,6 @@ public class Calendar extends Application{
 	}
 	
 	public void startMainView(int loggedInUserId){
-        System.out.println("logged in with id " + loggedInUserId);
         getAllFromDatabase();
         loggedInUser = findUser(loggedInUserId);
 
@@ -131,7 +130,6 @@ public class Calendar extends Application{
 	private void getAllFromDatabase(){
 		users =  persistency.getAllUsers();
 		events = persistency.getAllEvents();
-        System.out.println("Events size after persistency fetch: " + events.size());
         rooms = persistency.getAllRooms();
 		eventParticipants = persistency.getAllEventParticipants();
 		groups = persistency.getAllGroups();
@@ -143,9 +141,7 @@ public class Calendar extends Application{
 	// Draws the webScene over again. 
 	public void updateWebScene(){
         calendarView.removeAllEvents();
-        System.out.println("Size before CalendarView update: " + events.size());
         for(Event event : events) {
-            System.out.println(event.toString());
             calendarView.addEvent(
                     "" + event.getEventId(),
                     event.getEventName(),

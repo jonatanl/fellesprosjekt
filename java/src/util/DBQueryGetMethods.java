@@ -132,8 +132,8 @@ public abstract class DBQueryGetMethods extends DBConnection{
 
             event.setEventId(result.getInt("eventID"));
             event.setEventName(result.getString("eventName"));
-            event.setStartTime(result.getDate("startTime"));
-            event.setEndTime(result.getDate("endTime"));
+            event.setStartTime(result.getString("startTime"));
+            event.setEndTime(result.getString("endTime"));
             event.setDescription(result.getString("description"));
             event.setLocation(result.getString("location"));
             event.setRoomId(result.getInt("roomID"));

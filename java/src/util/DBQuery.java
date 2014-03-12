@@ -57,7 +57,6 @@ public class DBQuery extends DBQueryGetMethods {
         if (event.getEventId()==0)
             return;
         for (int participantID : participantIDs){
-            System.out.println("Event: " + event.getEventId() + ", User: " + participantID);
             addEventParticipant(event.getEventId(), participantID);
         }
     }
