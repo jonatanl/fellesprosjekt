@@ -81,7 +81,7 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 	public void handle(ActionEvent buttonEvent) {
 		if (buttonEvent.getSource() == b_createEvent) {
 			System.out.println("legg til event");
-			new AddEvent(calendar.getStage(), calendar.getPersistency(), calendar.getLoggedInUser().getUserId(), calendar.getRooms(), calendar.getUsers(), calendar.getGroups());
+			new AddEvent(calendar, calendar.getStage(), calendar.getPersistency(), calendar.getLoggedInUser().getUserId(), calendar.getRooms(), calendar.getUsers(), calendar.getGroups());
 		}
 		
 		else if (buttonEvent.getSource() == b_editEvent) {
