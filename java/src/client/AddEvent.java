@@ -268,7 +268,9 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	ArrayList<Integer> result = new ArrayList<Integer>();
     	for (Object o: selectedPersonsObservableList){
     		if (o instanceof User){
-    			result.add(((User)o).getUserId());
+    			if (!result.contains(((User)o).getUserId())){
+    				result.add(((User)o).getUserId());
+    			}
     		}
     		else if (o instanceof Group){
     			for (Integer u:((Group)o).getMembers()){
