@@ -106,7 +106,7 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 			}
 		}
 		else if (buttonEvent.getSource() == b_showMore) {
-			//new ShowMore(model, stage);
+			new ShowMore(selectedEvent, calendar.getStage());
 		}
 		
 		else if (buttonEvent.getSource() == b_alarm) {

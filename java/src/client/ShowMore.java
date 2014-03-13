@@ -1,6 +1,7 @@
 package client;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import Models.Event;
 import Models.Room;
@@ -34,6 +35,27 @@ public class ShowMore implements EventHandler<ActionEvent> {
     private Stage stage;
     private Event event;
     
+    public ShowMore(Event event, Stage stage){
+    	try {
+    		this.event = event;
+    		this.parentStage = stage;
+    		setEvent(event.getEventName(), event.getStartTime(), event.getEndTime(), event.getDescription(), event.getLocation());
+    		createStage();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    }
+    
+    public void setEvent(String title, Date start, Date end, String description, String place){
+    	this.s_title = title;
+    	this.s_description = description;
+    	this.s_place = place;
+    	this.s_start = start.toString();
+    	this.s_end = end.toString();
+    }
+
+    
     public void createStage() {
 
         GridPane grid = new GridPane();
@@ -56,17 +78,6 @@ public class ShowMore implements EventHandler<ActionEvent> {
         stage.show();
     }
     
-    public ShowMore(Event event, Stage stage){
-    	try {
-			createStage();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-    	this.event = event;
-    	this.parentStage = stage;
-    	setEvent(event.getEventName(), event.getDescription(), event.getLocation());
-    	
-    }
     
     public VBox getListViewBox(){
     	VBox rightBox = new VBox();
@@ -125,13 +136,7 @@ public class ShowMore implements EventHandler<ActionEvent> {
         
         return middleBox;
     }
-    
-    public void setEvent(String title, String description, String place){
-    	this.s_title = title;
-    	this.s_description = description;
-    	this.s_place = place;
-    }
-    
+        
     public HBox getRadioBox(){
     	HBox radioBox = new HBox();
         radioBox.setPadding(new Insets(5, 5, 5, 5));
