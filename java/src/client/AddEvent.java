@@ -5,7 +5,6 @@ import interfaces.PersistencyInterface;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
 import sun.font.LayoutPathImpl.EndType;
 import util.DateHelper;
 import util.Time;
@@ -50,7 +49,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private ComboBox<Room> roomList;
     
     private ListView<Object> allPersonListView, chosenPersonListView;
-    private Button addPerson, removePerson, addEvent;
+    private Button addPerson, removePerson, addEvent, cancel;
 
     private Event eventModel;
     
@@ -108,7 +107,14 @@ public class AddEvent implements EventHandler<ActionEvent> {
         grid.add(errorMessage, 1, 2);
         
         addEvent = new Button("Add event");
+        addEvent.setOnAction(this);
+        addEvent.setMinHeight(30);
         grid.add(addEvent, 1,3);
+        
+        cancel = new Button("Cancel");
+        cancel.setOnAction(this);
+        cancel.setMinHeight(30);
+        grid.add(cancel, 2, 3);
 
         Scene scene = new Scene(grid, 500, 475);
         thisStage = new Stage();
@@ -119,7 +125,6 @@ public class AddEvent implements EventHandler<ActionEvent> {
 		
         thisStage.show();
 
-        addEvent.setOnAction(this);
         eventModel = new Event();
         
         setHints();
@@ -227,6 +232,9 @@ public class AddEvent implements EventHandler<ActionEvent> {
     			// Some error occured at the database.
     			errorMessage.setVisible(true);
     		}
+    	}
+    	else if(actionEvent.getSource() == cancel){
+    		thisStage.close();
     	}
     	else if(actionEvent.getSource() == addPerson){
     		int id = allPersonListView.getFocusModel().getFocusedIndex();
