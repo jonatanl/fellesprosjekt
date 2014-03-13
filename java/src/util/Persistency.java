@@ -1,23 +1,25 @@
 package util;
 
-import Models.*;
+import Models.Alarm;
+import Models.Event;
+import Models.EventParticipant;
+import Models.Group;
 import interfaces.PersistencyInterface;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Persistency extends PersistencyGetMethods implements PersistencyInterface {
 
     public Persistency() {
         query = new DBQuery();
-
-        System.out.println(requestLogin("johannes", "123456"));
-
-        query.close();
     }
 
-    public static void main(String[] args) {
-        new Persistency();
+    public void closeConnection(){
+        if (query != null)
+    	    query.close();
+    	System.out.println("closed.");
     }
 
     @Override
@@ -32,21 +34,26 @@ public class Persistency extends PersistencyGetMethods implements PersistencyInt
     }
 
     @Override
-    public void addEvent(Event event, ArrayList<Integer> participantIDs) {
+    public boolean addEvent(Event event, ArrayList<Integer> participantIDs) {
+        boolean success = false;
         try {
-            query.addEvent(event, participantIDs);
+            success = query.addEvent(event, participantIDs);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return success;
     }
 
     @Override
-    public void removeEvent(Event event) {
+    public boolean removeEvent(Event event) {
+    	boolean success = false;
         try {
             query.removeEvent(event);
+            success = true;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return success;
     }
 
     @Override
@@ -59,12 +66,16 @@ public class Persistency extends PersistencyGetMethods implements PersistencyInt
     }
 
     @Override
-    public void addEventParticipant(int eventID, int participantID) {
+    public boolean addEventParticipant(int eventID, int participantID) {
+        boolean success = false;
+
         try {
-            query.addEventParticipant(eventID, participantID);
+            success = query.addEventParticipant(eventID, participantID);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+
+        return success;
     }
 
     @Override
@@ -78,24 +89,41 @@ public class Persistency extends PersistencyGetMethods implements PersistencyInt
 
     @Override
     public void changeEventParticipantResponse(EventParticipant participant) {
-
-    }
-    @Override
-    public void addAlarm(EventParticipant participant, Alarm alarm) {
         try {
-            query.addAlarm(participant, alarm);
+            query.changeEventParticipant(participant);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
     @Override
-    public void removeAlarm(EventParticipant participant, Alarm alarm) {
+    public boolean addAlarm(EventParticipant participant, Alarm alarm) {
+        boolean success = false;
 
+        try {
+            success = query.addAlarm(participant, alarm);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return success;
     }
 
     @Override
-    public void changeAlarm(EventParticipant participant, Alarm alarm) {
+    public void removeAlarm(Alarm alarm) {
+        try {
+            query.removeAlarm(alarm);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
+    @Override
+    public void changeAlarm(Alarm alarm) {
+        try {
+            query.changeAlarm(alarm);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

@@ -2,7 +2,7 @@ drop database if exists calendar;
 create database calendar;
 use calendar;
 
-CREATE USER sqluser IDENTIFIED BY 'sqluserpw'; 
+#CREATE USER sqluser IDENTIFIED BY 'sqluserpw'; 
 
 grant usage on *.* to sqluser@localhost identified by 'sqluserpw'; 
 grant all privileges on calendar.* to sqluser@localhost;
@@ -74,12 +74,12 @@ CREATE TABLE calendar.eventParticipant (
 	alarmID int,
 	eventID int,
 	userID int,
-	isDeleted tinyint(1),
-	pendingChange tinyint(1),
+	isDeleted tinyint(1) DEFAULT 0,
+	pendingChange tinyint(1) DEFAULT 0,
 	response varchar(10),
 
 	PRIMARY KEY (userID, eventID),
-	FOREIGN KEY (alarmID) REFERENCES alarm(alarmID),
+	FOREIGN KEY (alarmID) REFERENCES alarm(alarmID) ON DELETE SET NULL,
 	FOREIGN KEY (eventID) REFERENCES event(eventID) ON DELETE CASCADE,
 	FOREIGN KEY (userID) REFERENCES users(userID)
 );

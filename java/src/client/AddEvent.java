@@ -1,14 +1,18 @@
 package client;
 
+import interfaces.PersistencyInterface;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 
 import sun.font.LayoutPathImpl.EndType;
+import util.DateHelper;
 import util.Time;
 import Models.Event;
+import Models.Group;
 import Models.Room;
+import Models.User;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -26,6 +30,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -40,29 +45,47 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private TextField description;
     private TextField location;
     
+    private Text errorMessage;
+    
     private ComboBox<Room> roomList;
     
-    private ListView<String> allPersonList, chosenPersonList;
+    private ListView<Object> allPersonListView, chosenPersonListView;
     private Button addPerson, removePerson, addEvent;
 
     private Event eventModel;
-    private ObservableList<String> allPersons;
-    private ObservableList<String> selectedPersons;
+    
+    // The Observable lists contain both users and groups. 
+    private ObservableList<Object> allPersonsObservableList;
+    private ObservableList<Object> selectedPersonsObservableList;
     private ArrayList<String> persons;
     private Stage thisStage;
     private Stage parentStage;
+    private Calendar calendar;
+    private PersistencyInterface persistency;
     
-    public AddEvent(Stage stage) {
+    private ObservableList<Room> allRoomsObservableList;
+    
+    private ArrayList<Room> rooms;
+    private ArrayList<User> users;
+    private ArrayList<Group> groups;
+    private int ownerId;
+    	
+    
+    public AddEvent(Calendar calendar, Stage stage, PersistencyInterface persistency, int ownerId, ArrayList<Room> rooms, ArrayList<User> users, ArrayList<Group> groups) {
     	try {
+    		this.calendar = calendar;
+    		this.parentStage = stage;
+        	this.persistency = persistency;
+        	this.ownerId = ownerId;
+        	this.rooms = rooms;
+        	this.users = users;
+        	this.groups = groups;
 			createStage();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	this.parentStage = stage;
+            System.out.println(e.getMessage());
+        }
     }
 
-  
     public void createStage() throws Exception {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -76,10 +99,16 @@ public class AddEvent implements EventHandler<ActionEvent> {
 
         grid.add(createLabels(),0,1);
         grid.add(createFields(),1,1);
-        grid.add(getListViewBox(),2,1);
+        grid.add(createListViewBox(),2,1);
+        
+        errorMessage = new Text("Error: Unable to add event.");
+        errorMessage.setFill(Color.FIREBRICK);
+        errorMessage.setVisible(false);
 
+        grid.add(errorMessage, 1, 2);
+        
         addEvent = new Button("Add event");
-        grid.add(addEvent, 1,2);
+        grid.add(addEvent, 1,3);
 
         Scene scene = new Scene(grid, 500, 475);
         thisStage = new Stage();
@@ -116,12 +145,39 @@ public class AddEvent implements EventHandler<ActionEvent> {
         description = new TextField();
         location = new TextField();
         roomList = new ComboBox<>();
+        
         roomList.setMinWidth(200);
         
         
         box.getChildren().addAll(titleField,dateField,startTime,endTime,description,location, roomList);
         
         return box;
+    }
+    
+    private void updateRoomComboBox(){
+    	int nParticipants = getSelectedParticipantIds().size();
+    	
+    	Collections.sort(rooms);
+    	
+    	ArrayList<Room> sortedList = new ArrayList<Room>();
+    	ArrayList<Room> goodRooms = new ArrayList<Room>();
+    	ArrayList<Room> badRooms = new ArrayList<Room>();
+    	
+    	for (Room r:rooms){
+    		if (r.getCapacity() >= nParticipants){
+    			goodRooms.add(r);
+    		}
+    		else{
+    			badRooms.add(r);
+    		}
+    	}
+    	sortedList.addAll(goodRooms);
+    	sortedList.addAll(badRooms);
+    	
+    	
+    	ObservableList<Room> sortedObservableList = FXCollections.observableArrayList(sortedList);
+    	
+    	roomList.setItems(sortedObservableList);
     }
     
     public void setHints() {
@@ -156,27 +212,76 @@ public class AddEvent implements EventHandler<ActionEvent> {
     public void handle(ActionEvent actionEvent) {
     	if (actionEvent.getSource() == addEvent && validInput()) {
     		eventModel.setEventName(titleField.getText());
-    		eventModel.setDate(dateField.getText());
-    		eventModel.setStartTime(startTime.getText());
-    		eventModel.setEndTime(endTime.getText());
+    		eventModel.setStartTime(DateHelper.convertToDate(dateField.getText() + ", " + startTime.getText(), DateHelper.FORMAT_GUI));
+    		eventModel.setEndTime(DateHelper.convertToDate(dateField.getText() + ", " + endTime.getText(), DateHelper.FORMAT_GUI));
     		eventModel.setDescription(description.getText());
     		eventModel.setLocation(location.getText());
-    		System.out.println(eventModel);
-    		
-    		thisStage.close();    		
+    		eventModel.setRoomId(roomList.getValue().getId());
+    		eventModel.setOwnerId(ownerId);
 
+    		if (persistency.addEvent(eventModel, getSelectedParticipantIds())){
+    			calendar.addEvent(eventModel);
+    			thisStage.close();
+    		}
+    		else{
+    			// Some error occured at the database.
+    			errorMessage.setVisible(true);
+    		}
     	}
     	else if(actionEvent.getSource() == addPerson){
-    		int id = allPersonList.getFocusModel().getFocusedIndex();
-    		selectedPersons.add(allPersons.get(id));
-    		allPersons.remove(id);        	
+    		int id = allPersonListView.getFocusModel().getFocusedIndex();
+    		System.out.println(id);
+    		if (id == -1) {
+    			id = 0;
+    		}
+    		selectedPersonsObservableList.add(allPersonsObservableList.get(id));
+    		allPersonsObservableList.remove(id);
+    		allPersonListView.getSelectionModel().select(0);
+    		updateRoomComboBox();
+    		
+    		if (allPersonsObservableList.size() == 0) {
+    			addPerson.setDisable(true);
+    		}
+    		removePerson.setDisable(false);
     	}
     	
-    	else if(actionEvent.getSource() == removePerson){        	
-    		int id = chosenPersonList.getFocusModel().getFocusedIndex();
-    		allPersons.add(selectedPersons.get(id));
-    		selectedPersons.remove(id);        	
+    	else if(actionEvent.getSource() == removePerson){     
+
+    		
+    		int id = chosenPersonListView.getFocusModel().getFocusedIndex();
+    		
+    		if (id == -1) {
+    			id = 0;
+    		}
+    		allPersonsObservableList.add(selectedPersonsObservableList.get(id));
+    		selectedPersonsObservableList.remove(id);
+    		chosenPersonListView.getSelectionModel().select(0);
+    		updateRoomComboBox();
+    		
+    		if (selectedPersonsObservableList.size() == 0){
+    			removePerson.setDisable(true);
+    		}
+    		addPerson.setDisable(false);
     	}
+    }
+    
+    private ArrayList<Integer> getSelectedParticipantIds(){
+    	ArrayList<Integer> result = new ArrayList<Integer>();
+    	for (Object o: selectedPersonsObservableList){
+    		if (o instanceof User){
+    			if (!result.contains(((User)o).getUserId())){
+    				result.add(((User)o).getUserId());
+    			}
+    		}
+    		else if (o instanceof Group){
+    			for (Integer u:((Group)o).getMembers()){
+    				if (!result.contains(u)){
+    					result.add(u);
+    				}
+    			}
+    		}
+    	}
+    	return result;
     }
     
     public boolean validInput() {
@@ -212,30 +317,36 @@ public class AddEvent implements EventHandler<ActionEvent> {
     
         
     
-    public VBox getListViewBox(){
+    public VBox createListViewBox(){
     	VBox rightBox = new VBox(5);
         Label participants = new Label ("Participants");
         
-        allPersons = FXCollections.observableArrayList("Gunda-Ann","Krøll Alfa","Odd Morgan","Rune Linn","Johannes","Simen","Øivind","Jonatan");
-        selectedPersons = FXCollections.observableArrayList();
+        ArrayList<Object> usersAndGroups = new ArrayList<Object>(users);
+        usersAndGroups.addAll(groups);
+        
+        allPersonsObservableList = FXCollections.observableArrayList(usersAndGroups);
+        selectedPersonsObservableList= FXCollections.observableArrayList();
 
-    	allPersonList = new ListView<String>();
-    	allPersonList.setPrefWidth(175);
-    	allPersonList.setPrefHeight(130);
-    	allPersonList.setItems(allPersons);
+    	allPersonListView = new ListView<Object>();
+    	allPersonListView.setPrefWidth(175);
+    	allPersonListView.setPrefHeight(130);
+    	allPersonListView.setItems(allPersonsObservableList);
     	
     	addPerson = new Button("Add");
     	addPerson.setOnAction(this);
 
-    	chosenPersonList = new ListView<String>();
-    	chosenPersonList.setPrefWidth(175);
-    	chosenPersonList.setPrefHeight(130);
-    	chosenPersonList.setItems(selectedPersons);
+    	chosenPersonListView = new ListView<Object>();
+    	chosenPersonListView.setPrefWidth(175);
+    	chosenPersonListView.setPrefHeight(130);
+    	chosenPersonListView.setItems(selectedPersonsObservableList);
     	
     	removePerson = new Button("Remove");
     	removePerson.setOnAction(this);
+    	removePerson.setDisable(true);
     	
-    	rightBox.getChildren().addAll(participants,allPersonList,addPerson,chosenPersonList,removePerson);
+    	rightBox.getChildren().addAll(participants,allPersonListView,addPerson,chosenPersonListView,removePerson);
+    	
+    	updateRoomComboBox();
     	
     	return rightBox;
     }

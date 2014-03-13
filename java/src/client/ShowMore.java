@@ -29,7 +29,6 @@ public class ShowMore implements EventHandler<ActionEvent> {
     
     private ObservableList<String> items;
     private String s_title,s_start,s_end,s_description,s_place,s_room,s_alert,s_timeBefore,s_myParticipation;
-    private Label l_title,l_start,l_end,l_description,l_place,l_room,l_alert,l_timeBefore,l_myParticipation;
     
     private Stage parentStage;
     private Stage stage;
@@ -52,7 +51,7 @@ public class ShowMore implements EventHandler<ActionEvent> {
         Scene scene = new Scene(grid, 500, 300);
         
         stage = new Stage();
-        stage.setTitle("Vis mer");
+        stage.setTitle("Show more");
         stage.setScene(scene);
         stage.show();
     }
@@ -71,7 +70,7 @@ public class ShowMore implements EventHandler<ActionEvent> {
     
     public VBox getListViewBox(){
     	VBox rightBox = new VBox();
-        Label participants = new Label ("Deltagere");
+        Label participants = new Label ("Participants");
 
     	ListView<String> list = new ListView<String>();
     	ObservableList<String> items = getList();
@@ -86,26 +85,26 @@ public class ShowMore implements EventHandler<ActionEvent> {
     
     public Button getOkButton(){
     	Button btnOk = new Button();
-        btnOk.setText("Ok");
+        btnOk.setText("Close");
         btnOk.setOnAction(this);
         return btnOk;
     }
     
     public VBox getLeftBox(){
-    	Label title = new Label ("Tittel");
-    	Label date = new Label ("Dato");
+    	Label title = new Label ("Title");
+    	Label date = new Label ("Date");
         Label start = new Label ("Start");
-        Label end = new Label ("Slutt");
-        Label description = new Label ("Beskrivelse");
-        Label place = new Label ("Sted");
-        Label room = new Label ("Rom");
-        Label alert = new Label ("Alarm");
-        Label timeBefore = new Label ("Tid før");
-        Label myParticipation = new Label ("Min deltakelse");
+        Label end = new Label ("End");
+        Label description = new Label ("Description");
+        Label place = new Label ("Place");
+        Label room = new Label ("Room");
+        Label alert = new Label ("Alert");
+        Label timeBefore = new Label ("Time befor");
+        Label myParticipation = new Label ("My participance");
         
         
         VBox leftBox = new VBox();
-        leftBox.getChildren().addAll(title,start,end,description,place,room,alert,timeBefore,myParticipation);
+        leftBox.getChildren().addAll(title,date,start,end,description,place,room,alert,timeBefore,myParticipation);
         
         return leftBox;
     }
@@ -139,12 +138,12 @@ public class ShowMore implements EventHandler<ActionEvent> {
         
         ToggleGroup group = new ToggleGroup();
     	
-    	RadioButton rb1 = new RadioButton("Skal");
+    	RadioButton rb1 = new RadioButton("Going");
     	rb1.setToggleGroup(group);
     	rb1.setSelected(true);
     	rb1.setDisable(true);
 
-    	RadioButton rb2 = new RadioButton("Skal ikke");
+    	RadioButton rb2 = new RadioButton("Not going");
     	rb2.setToggleGroup(group);
     	rb2.setDisable(true);
     	radioBox.getChildren().addAll(rb1,rb2);

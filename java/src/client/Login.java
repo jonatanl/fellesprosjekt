@@ -50,13 +50,14 @@ public class Login implements EventHandler<ActionEvent> {
         Label userName = new Label("Username:");
         grid.add(userName, 0, 1);
 
-        username = new TextField();
+        username = new TextField("johannes");
         grid.add(username, 1, 1);
 
         Label pw = new Label("Password:");
         grid.add(pw, 0, 2);
 
         password = new PasswordField();
+        password.setText("123456");
         grid.add(password, 1, 2);
         
         errorMessage = new Text();
@@ -82,18 +83,15 @@ public class Login implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent actionEvent) {
-    	calendar.startCalendar(1);
-    	stage.close();
-    	
-    	/*
     	int userId = persistency.requestLogin(username.getText(), password.getText());
     	if (userId >= 0){
-    		calendar.startCalendar(userId);
+    		calendar.startMainView(userId);
+    		stage.close();
     	}
     	else{
     		errorMessage.setVisible(true);
     	}
-    	*/
+    	
     }
 
 }

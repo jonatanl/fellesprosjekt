@@ -1,11 +1,11 @@
 package client;
 
-import interfaces.CalendarInterface;
+import client.calendar.CalendarView;
 import interfaces.PersistencyInterface;
 
 import java.util.ArrayList;
-import java.util.Date;
 
+import util.DateHelper;
 import Models.Alarm;
 import Models.Event;
 import Models.EventParticipant;
@@ -13,22 +13,19 @@ import Models.Group;
 import Models.Room;
 import Models.User;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 //Main class of the calendar system. 
-public class Calendar extends Application implements EventHandler<ActionEvent>{
+public class Calendar extends Application{
 	
-	private Button b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alert;
+	
 	private Stage stage;
 	
 	private ArrayList<Event> events;
@@ -38,74 +35,163 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 	private ArrayList<EventParticipant> eventParticipants;
 	private ArrayList<Alarm> alarms;
 	
-	
 	private User loggedInUser;
+	private Event selectedEvent;
+
+	private PersistencyInterface persistency;
 	
-	private PersistencyInterface persistency; 
+	// Visible elements
+	private Text title;
+	private Buttons buttons;
+	private CalendarView calendarView;
+
+	public Event getSelectedEvent() {
+		return selectedEvent;
+	}
+
+	public void setSelectedEvent(int eventId) {
+		this.selectedEvent = findEvent(eventId);
+		buttons.setSelectedEvent(selectedEvent);
+		buttons.setIsOwner(selectedEvent.getOwnerId() == loggedInUser.getUserId());
+	}
 	
+	public ArrayList<User> getUsers() {
+		return users;
+	}
+
+	public ArrayList<Group> getGroups() {
+		return groups;
+	}
+
+	public ArrayList<Room> getRooms() {
+		return rooms;
+	}
+
+	public ArrayList<EventParticipant> getEventParticipants() {
+		return eventParticipants;
+	}
+
 	public static void main(String[] args)  {
 		launch(args);
 	}
+	
+	public User getLoggedInUser() {
+		return loggedInUser;
+	}
+
+	public PersistencyInterface getPersistency() {
+		return persistency;
+	}
+
+	public Stage getStage(){
+		return stage;
+	}
+	
+	
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		//persistency = new util.Persistency();
+		persistency = new util.Persistency();
 		this.stage = stage;
 		
 		Login login = new Login(this, persistency);
 		login.createStage();
-		
-	
 	}
 	
-	public void startCalendar(int loggedInUserId){
-		//getAllFromDatabase();
-		//loggedInUser = findUser(loggedInUserId);
+	@Override
+	public void stop(){
+		try {
+			super.stop();
+			persistency.closeConnection();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		// Create the buttons.
-		b_createEvent = new Button("Legg til");
-		b_createEvent.setMinWidth(60);
-		b_createEvent.setOnAction(this);
-		
-		b_editEvent = new Button("Endre");
-		b_editEvent.setMinWidth(60);
-		b_editEvent.setOnAction(this);
-		
-		b_deleteEvent = new Button("Slett");
-		b_deleteEvent.setOnAction(this);
-		b_deleteEvent.setMinWidth(60);
-		
-		b_showMore = new Button("Vis mer");
-		b_showMore.setOnAction(this);
-		b_showMore.setMinWidth(60);
-		
-		b_alert = new Button("Alarm");
-		b_alert.setOnAction(this);
-		b_alert.setMinWidth(60);
-		
-		VBox root = new VBox();
-		root.getChildren().addAll(b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alert);
-		
-		Scene scene = new Scene(root, 500, 500);
+	}
+	
+	public void startMainView(int loggedInUserId){
+        getAllFromDatabase();
+        loggedInUser = findUser(loggedInUserId);
+
+        title = new Text("Skalender");
+        title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        buttons = new Buttons(this);
+        calendarView = new CalendarView(this);
+        calendarView.setUserId(loggedInUser.getUserId());
+
+        GridPane root = new GridPane();
+        root.setAlignment(Pos.CENTER);
+        root.setHgap(10);
+        root.setVgap(10);
+        root.setPadding(new Insets(25, 25, 25, 25));
+
+        root.setAlignment(Pos.CENTER);
+        root.add(title, 0, 0, 2, 1);
+        root.add(buttons, 0, 1);
+        root.add(calendarView.getContentForScene(), 1, 1);
+
+		Scene scene = new Scene(root, 900, 700);
 		
 		stage.setScene(scene);
 		stage.show();
+        updateWebScene();
 	}
 	
 	private void getAllFromDatabase(){
 		users =  persistency.getAllUsers();
 		events = persistency.getAllEvents();
-		rooms = persistency.getAllRooms();
+        rooms = persistency.getAllRooms();
 		eventParticipants = persistency.getAllEventParticipants();
 		groups = persistency.getAllGroups();
-		alarms = persistency.getAllAlarms();
+		// Add members of subgroups to groups, so that groups contain own and subgroup's members. 
+		for (Group g: groups)
+		{
+			addSubGroupMembers(g);
+		}
+		
+		//alarms = persistency.getAllAlarms();
+	}
+	
+	private Group addSubGroupMembers(Group g){
+		for (int subGroupId: g.getSubGroups()){
+			// Find subgroup.
+			Group sg = findGroup(subGroupId);
+
+			// Skip if subgroup does not exist. 
+			if (sg == null)
+				continue;
+			
+			// Recursively call subgroups of subgroups.
+			sg = addSubGroupMembers(sg);
+
+			// Add members of subgroup
+			for (int member: sg.getMembers()){
+				if (!g.getMembers().contains(member)){
+					g.addMember(member);
+				}
+			}
+		}
+		
+		return g;
 	}
 	
 	
 	
 	// Draws the webScene over again. 
 	public void updateWebScene(){
-		
+        calendarView.removeAllEvents();
+
+        for(Event event : events) {
+            calendarView.addEvent(
+                    "" + event.getEventId(),
+                    event.getEventName(),
+                    DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_JAVASCRIPT),
+                    DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_JAVASCRIPT),
+                    event.getOwnerId()
+            );
+        }
+        System.out.println("-------------------------------------------------");
 	}
 	
 	
@@ -117,57 +203,37 @@ public class Calendar extends Application implements EventHandler<ActionEvent>{
 		}
 		return null;
 	}
-
-	@Override
-	public void handle(ActionEvent buttonEvent) {
-		if (buttonEvent.getSource() == b_createEvent) {
-			System.out.println("legg til event");
-			new AddEvent(stage);
+	
+	public Event findEvent(int eventId){
+		for (Event e: events){
+			if (e.getEventId() == eventId){
+				return e;
+			}
 		}
-		
-		else if (buttonEvent.getSource() == b_editEvent) {
-			//new EndreIkkeOwner(model, stage);			
-		}
-		else if (buttonEvent.getSource() == b_showMore) {
-			//new ShowMore(model, stage);
-		}
-		
-		else if (buttonEvent.getSource() == b_alert) {
-			
-		}		
+		return null;
 	}
 	
+	public Group findGroup(int groupId){
+		for (Group g: groups){
+			if (g.getGroupId() == groupId){
+				return g;
+			}
+		}
+		return null;
+	}
+
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-/*
-	@Override
 	public void addEvent(Event event) {
 		events.add(event);
-		// TODO Update the webView. 
+        updateWebScene();
 	}
-
-	@Override
+	
+	
 	public void removeEvent(Event event) {
 		events.remove(event);
-		// TODO Update the webView.
+		updateWebScene();
 	}
-
+/*
 	public void changeEvent(int eventId, String newEventName,
 			Date newStartTime, Date newEndTime, String newDescription,
 			String newLocation, Room newRoom) {

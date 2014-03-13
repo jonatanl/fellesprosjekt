@@ -1,15 +1,15 @@
 package Models;
 
-import java.util.ArrayList;
+import util.DateHelper;
+
 import java.util.Date;
 
 public class Event {
 	
     private int eventId;
     private String eventName;
-    
-	private String startTime;
-    private String endTime;
+	private Date startTime;
+    private Date endTime;
     private String description;
     private String location;
     private int roomId;
@@ -30,32 +30,32 @@ public class Event {
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }
-    
-    public String getDate() {
-    	return date;
-    }
-    
-    public void setDate(String date) {
-    	this.date = date;
-    }
 
-    public String getStartTime() {
-        return startTime;
-    }
+    public Date getStartTime() {
+		return startTime;
+	}
 
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
+    public void setStartTime(String startTime){
+        this.startTime = DateHelper.convertToDate(startTime, DateHelper.FORMAT_DB);
     }
 
     public void setEndTime(String endTime) {
-        this.endTime = endTime;
+        this.endTime = DateHelper.convertToDate(endTime, DateHelper.FORMAT_DB);
     }
 
-    public String getDescription() {
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+
+	public String getDescription() {
         return description;
     }
 
@@ -92,7 +92,6 @@ public class Event {
         return "Event{" +
                 "eventId=" + eventId +
                 ", eventName='" + eventName + '\'' +
-                ", date='" + date + '\'' +
                 ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
                 ", description='" + description + '\'' +

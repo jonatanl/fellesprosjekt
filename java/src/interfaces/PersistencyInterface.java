@@ -15,9 +15,12 @@ import Models.User;
 // Gangen i det hele: 
 // 1. Et popup-vindu, f.eks. AddEvent, kaller metoden addEvent() hos Persistency.
 // 2. Persistency fikser databasen og kaller deretter riktig metode hos Calendar.
-// 3. Calendar sier fra videre til webView om nødvendig.
+// 3. Calendar sier fra videre til webView om nï¿½dvendig.
 
 public interface PersistencyInterface {
+	
+	// For testing.  
+	public void closeConnection();
 	
 	// MEthods for retrieving all entries. 
 	public ArrayList<User> getAllUsers();
@@ -30,26 +33,26 @@ public interface PersistencyInterface {
 	// If success, returns the userId of the logged in user. Otherwise, returns -1. 
 	public int requestLogin(String username, String password);
 	
-	public void addEvent(Event event, ArrayList<Integer> participantIDs);
+	public boolean addEvent(Event event, ArrayList<Integer> participantIDs);
 	
-	public void removeEvent(Event event);
+	public boolean removeEvent(Event event);
 	
-	// Kalles når noe forandres i en event, bortsett fra EventParticipants.  
+	// Kalles nï¿½r noe forandres i en event, bortsett fra EventParticipants.  
 	public void changeEvent(Event event);
 
-	public void addEventParticipant(int eventID, int participantID);
+	public boolean addEventParticipant(int eventID, int participantID);
 	
 	public void removeEventParticipant(int eventID, int participantID);
-
-	// Kalles når response eller isDeleted forandres hos en EventParticipant. 
+	
+	// Kalles nï¿½r response eller isDeleted forandres hos en EventParticipant. 
 	public void changeEventParticipantResponse(EventParticipant participant);
 	
-	public void addAlarm(EventParticipant participant, Alarm alarm);
+	public boolean addAlarm(EventParticipant participant, Alarm alarm);
 	
-	public void removeAlarm(EventParticipant participant, Alarm alarm);
+	public void removeAlarm(Alarm alarm);
 	
-	public void changeAlarm(EventParticipant participant, Alarm alarm);
+	public void changeAlarm(Alarm alarm);
 	
-	// Kan vurdere å også ha metoder for addUser, addRoom og addGroup, selv om disse ikke skal brukes når 
-	// systemet er ferdig. Kan være nyttige mens vi tester kanskje. 
+	// Kan vurdere ï¿½ ogsï¿½ ha metoder for addUser, addRoom og addGroup, selv om disse ikke skal brukes nï¿½r 
+	// systemet er ferdig. Kan vï¿½re nyttige mens vi tester kanskje. 
 }
