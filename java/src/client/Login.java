@@ -51,6 +51,7 @@ public class Login implements EventHandler<ActionEvent> {
         grid.add(userName, 0, 1);
 
         username = new TextField("johannes");
+        username.setOnAction(this);
         grid.add(username, 1, 1);
 
         Label pw = new Label("Password:");
@@ -58,6 +59,7 @@ public class Login implements EventHandler<ActionEvent> {
 
         password = new PasswordField();
         password.setText("123456");
+        password.setOnAction(this);
         grid.add(password, 1, 2);
         
         errorMessage = new Text();
@@ -67,18 +69,19 @@ public class Login implements EventHandler<ActionEvent> {
         
         grid.add(errorMessage, 0, 4);
         
-
         Button btn = new Button("Sign in");
+        btn.setOnAction(this);
+
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
         hbBtn.getChildren().add(btn);
+
         grid.add(hbBtn, 1, 4);
 
         Scene scene = new Scene(grid, 300, 275);
         stage.setScene(scene);
         stage.show();
 
-        btn.setOnAction(this);
     }
 
     @Override
