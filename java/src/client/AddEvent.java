@@ -5,10 +5,12 @@ import interfaces.PersistencyInterface;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 import sun.font.LayoutPathImpl.EndType;
 import util.DateHelper;
 import util.Time;
 import Models.Event;
+import Models.EventParticipant;
 import Models.Group;
 import Models.Room;
 import Models.User;
@@ -47,6 +49,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private Text errorMessage;
     
     private ComboBox<Room> roomList;
+    private int nParticipants;
     
     private ListView<Object> allPersonListView, chosenPersonListView;
     private Button addPerson, removePerson, addEvent, cancel;
@@ -68,7 +71,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private ArrayList<User> users;
     private ArrayList<Group> groups;
 
-    Room noRoom = new Room();
+    private Room noRoom = new Room();
 
     private int ownerId;
     	
@@ -82,6 +85,9 @@ public class AddEvent implements EventHandler<ActionEvent> {
         	this.rooms = rooms;
         	this.users = users;
         	this.groups = groups;
+
+            noRoom = rooms.get(0);
+
 			createStage();
 		} catch (Exception e) {
             System.out.println(e.getMessage());
@@ -163,11 +169,9 @@ public class AddEvent implements EventHandler<ActionEvent> {
     }
     
     private void updateRoomComboBox(){
-    	int nParticipants = getSelectedParticipantIds().size();
-    	
-    	Collections.sort(rooms);
-        noRoom = rooms.get(1);
-    	
+    	nParticipants = getSelectedParticipantIds().size();
+        Collections.sort(rooms);
+
     	ArrayList<Room> sortedList = new ArrayList<Room>();
     	ArrayList<Room> goodRooms = new ArrayList<Room>();
     	ArrayList<Room> badRooms = new ArrayList<Room>();
@@ -180,11 +184,9 @@ public class AddEvent implements EventHandler<ActionEvent> {
     			badRooms.add(r);
     		}
     	}
-        sortedList.add(noRoom);
     	sortedList.addAll(goodRooms);
     	sortedList.addAll(badRooms);
-    	
-    	
+
     	ObservableList<Room> sortedObservableList = FXCollections.observableArrayList(sortedList);
     	
     	roomList.setItems(sortedObservableList);
@@ -228,14 +230,22 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		eventModel.setDescription(description.getText());
     		eventModel.setLocation(location.getText());
             eventModel.setOwnerId(ownerId);
-
     		if(roomList.getValue() != noRoom)
                 eventModel.setRoomId(roomList.getValue().getId());
             else
                 eventModel.setRoomId(1);
-
-    		if (persistency.addEvent(eventModel, getSelectedParticipantIds())){
+    		
+    		
+    		ArrayList<Integer> selectedParticpantIds = getSelectedParticipantIds();
+    		if (persistency.addEvent(eventModel, selectedParticpantIds)){
     			calendar.addEvent(eventModel);
+    			// EventParticipants are now in database with default values. 
+    			// Create list of default eventParticipants to add to Calendar. 
+    			ArrayList<EventParticipant> participants = new ArrayList<EventParticipant>();
+    			for (int id: selectedParticpantIds){
+    				participants.add(new EventParticipant(eventModel.getEventId(), id));
+    			}
+    			calendar.addEventParticipants(participants);
     			thisStage.close();
     		}
     		else{
@@ -255,7 +265,11 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		selectedPersonsObservableList.add(allPersonsObservableList.get(id));
     		allPersonsObservableList.remove(id);
     		allPersonListView.getSelectionModel().select(0);
-    		updateRoomComboBox();
+
+            //Refresher roomlist om kapasiteten blir for liten
+            nParticipants = selectedPersonsObservableList.size();
+            if(nParticipants > roomList.getValue().getCapacity())
+                updateRoomComboBox();
     		
     		if (allPersonsObservableList.size() == 0) {
     			addPerson.setDisable(true);
@@ -265,17 +279,15 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	
     	else if(actionEvent.getSource() == removePerson){     
 
-    		
     		int id = chosenPersonListView.getFocusModel().getFocusedIndex();
-    		
+
     		if (id == -1) {
     			id = 0;
     		}
     		allPersonsObservableList.add(selectedPersonsObservableList.get(id));
     		selectedPersonsObservableList.remove(id);
     		chosenPersonListView.getSelectionModel().select(0);
-    		updateRoomComboBox();
-    		
+
     		if (selectedPersonsObservableList.size() == 0){
     			removePerson.setDisable(true);
     		}

@@ -2,15 +2,35 @@
 package Models;
 
 public class EventParticipant {
-	private int id;
-	private String response;
-	private boolean pendingChange;
-	private boolean isDeleted;
+	private String response = null;
+	private boolean pendingChange = true;
+	private boolean isDeleted = false;
 	private int alarmId;
     private int userId;
     private int eventId;
+    
+    public static final String going = "isGoing";
+    public static final String notGoing = "isNotGoing";
+    
+    public EventParticipant() {
+    
+    }
 
-    public int getEventId() {
+    public EventParticipant(EventParticipant ep) {
+		this.response = ep.getResponse();
+		this.pendingChange = ep.isPendingChange();
+		this.isDeleted = ep.isDeleted();
+		this.alarmId = ep.getAlarmId();
+		this.userId = ep.getUserId();
+		this.eventId = ep.getEventId();
+	}
+    
+    public EventParticipant(int eventId, int userId){
+    	this.eventId  = eventId;
+    	this.userId = userId;
+    }
+    
+	public int getEventId() {
         return eventId;
     }
     public void setEventId(int eventId) {
@@ -46,4 +66,12 @@ public class EventParticipant {
     public void setAlarmId(int alarmId) {
         this.alarmId = alarmId;
     }
+    
+    @Override
+	public String toString() {
+		return "EventParticipant [response=" + response
+				+ ", pendingChange=" + pendingChange + ", isDeleted="
+				+ isDeleted + ", alarmId=" + alarmId + ", userId=" + userId
+				+ ", eventId=" + eventId + "]";
+	}
 }

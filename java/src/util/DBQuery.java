@@ -63,10 +63,12 @@ public class DBQuery extends DBQueryGetMethods {
     }
 
     public boolean addEventParticipant(int eventID, int participantID) throws SQLException {
-        String query = "INSERT INTO eventParticipant(eventID, userID) VALUES(?, ?)";
+        String query = "INSERT INTO eventParticipant(eventID, userID, isDeleted, pendingChange) VALUES(?, ?, ?, ?)";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setInt(1, eventID);
         statement.setInt(2, participantID);
+        statement.setInt(3, 0);
+        statement.setInt(4, 1);
         int succsess = statement.executeUpdate();
         return succsess != 0;
     }
@@ -99,20 +101,22 @@ public class DBQuery extends DBQueryGetMethods {
         return success != 0 && alarm.getAlarmID() > 0;
     }
 
-    public void changeAlarm(Alarm alarm) throws SQLException {
+    public boolean changeAlarm(Alarm alarm) throws SQLException {
         String query = "UPDATE alarm set time=? WHERE alarmID=?";
         PreparedStatement statement = connection.prepareStatement(query);
 
         statement.setString(1, DateHelper.convertToString(alarm.getTime(), DateHelper.FORMAT_DB));
         statement.setInt(2, alarm.getAlarmID());
 
-        statement.executeUpdate();
+        int success = statement.executeUpdate();
+        return success != 0 && alarm.getAlarmID() > 0;
     }
 
-    public void removeAlarm(Alarm alarm) throws SQLException {
+    public boolean removeAlarm(Alarm alarm) throws SQLException {
         String query = "DELETE FROM alarm WHERE alarmID=" + alarm.getAlarmID();
         PreparedStatement statement = connection.prepareStatement(query);
-        statement.executeUpdate();
+        int success = statement.executeUpdate();
+        return success != 0;
     }
 
     public int requestLogin(String username, String password) throws SQLException {

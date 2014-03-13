@@ -110,20 +110,24 @@ public class Persistency extends PersistencyGetMethods implements PersistencyInt
     }
 
     @Override
-    public void removeAlarm(Alarm alarm) {
+    public boolean removeAlarm(Alarm alarm) {
+    	boolean success = false;
         try {
-            query.removeAlarm(alarm);
+            success = query.removeAlarm(alarm);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return success;
     }
 
     @Override
-    public void changeAlarm(Alarm alarm) {
+    public boolean changeAlarm(Alarm alarm) {
+    	boolean success = false;
         try {
-            query.changeAlarm(alarm);
+            success = query.changeAlarm(alarm);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        return success;
     }
 }

@@ -49,9 +49,9 @@ public interface PersistencyInterface {
 	
 	public boolean addAlarm(EventParticipant participant, Alarm alarm);
 	
-	public void removeAlarm(Alarm alarm);
+	public boolean removeAlarm(Alarm alarm);
 	
-	public void changeAlarm(Alarm alarm);
+	public boolean changeAlarm(Alarm alarm);
 	
 	// Kan vurdere � ogs� ha metoder for addUser, addRoom og addGroup, selv om disse ikke skal brukes n�r 
 	// systemet er ferdig. Kan v�re nyttige mens vi tester kanskje. 

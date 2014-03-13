@@ -52,6 +52,7 @@ public class Calendar extends Application{
 	public void setSelectedEvent(int eventId) {
 		this.selectedEvent = findEvent(eventId);
 		buttons.setSelectedEvent(selectedEvent);
+		buttons.setParticipant(findEventParticipant(loggedInUser.getUserId(), eventId));
 		buttons.setIsOwner(selectedEvent.getOwnerId() == loggedInUser.getUserId());
 	}
 	
@@ -176,7 +177,27 @@ public class Calendar extends Application{
 		return g;
 	}
 	
+	public void changeEvent(int eventID, Event event) {
+		Event original = findEvent(eventID);
+		original = event;
+		event.setEventId(eventID);
+	}
 	
+	public void changeEventParticipantResponse(int eventId, int eventParticipantId,
+			String newResponse, boolean newIsDeleted) {
+		
+	Event e = findEvent(eventId);
+	
+	if (e != null){
+		//EventParticipant ep = e.findEventParticipant(eventParticipantId);
+		//if (ep != null){
+		//	ep.setResponse(newResponse);
+		//	ep.setDeleted(newIsDeleted);
+		}
+	// TODO Inform other EventParticipants that someone changed their response, by setting their 
+	// field 'pendingChange' to true. 
+	}
+
 	
 	// Draws the webScene over again. 
 	public void updateWebScene(){
@@ -222,10 +243,17 @@ public class Calendar extends Application{
 		return null;
 	}
 	
+<<<<<<< HEAD
 	public Room findRoom(int roomId){
 		for (Room r: rooms){
 			if (r.getId() == roomId){
 				return r;
+=======
+	public EventParticipant findEventParticipant(int userId, int eventId){
+		for (EventParticipant ep: eventParticipants){
+			if (ep.getEventId() == eventId && ep.getUserId() == userId){
+				return ep;
+>>>>>>> 6a246515ff2c8d7a6815798f6cbe7962b8825e54
 			}
 		}
 		return null;
@@ -243,6 +271,19 @@ public class Calendar extends Application{
 		events.remove(events.indexOf(event));
 		updateWebScene();
 	}
+	
+	public void addEventParticipant(EventParticipant participant) {
+		eventParticipants.add(participant);
+		updateWebScene();
+	}
+	
+	
+	public void addEventParticipants(ArrayList<EventParticipant> participants){
+		eventParticipants.addAll(participants);
+		updateWebScene();
+	}
+	
+	
 /*
 	public void changeEvent(int eventId, String newEventName,
 			Date newStartTime, Date newEndTime, String newDescription,
@@ -271,12 +312,7 @@ public class Calendar extends Application{
 	
 	
 	@Override
-	public void addEventParticipant(int eventID, EventParticipant participant) {
-		Event e = findEvent(eventID);
-		if (e != null){
-			e.addEventParticipant(participant);
-		}
-	}
+	
 
 	@Override
 	public void removeEventParticipant(int eventID, EventParticipant participant) {
@@ -286,23 +322,7 @@ public class Calendar extends Application{
 		}
 	}
 	
-	public void changeEventParticipantResponse(int eventId, int eventParticipantId,
-			String newResponse, boolean newIsDeleted) {
-		
-		Event e = findEvent(eventId);
-		
-		if (e != null){
-			EventParticipant ep = e.findEventParticipant(eventParticipantId);
-			if (ep != null){
-				ep.setResponse(newResponse);
-				ep.setDeleted(newIsDeleted);
-			}
-		}
-		// TODO Inform other EventParticipants that someone changed their response, by setting their 
-		// field 'pendingChange' to true. 
-		// TODO Inform webView. 
-		
-	}
+	
 	
 	@Override
 	public void addAlarm(EventParticipant participant, Alarm alarm) {
