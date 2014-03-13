@@ -5,7 +5,7 @@ public class EventParticipant {
 	private String response = null;
 	private boolean pendingChange = true;
 	private boolean isDeleted = false;
-	private int alarmId;
+	private int alarmId = -1;
     private int userId;
     private int eventId;
     

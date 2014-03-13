@@ -151,7 +151,25 @@ public class Calendar extends Application{
 			addSubGroupMembers(g);
 		}
 		
-		//alarms = persistency.getAllAlarms();
+		alarms = persistency.getAllAlarms();
+	}
+	
+	public void setAlarm(Alarm a, int userId, int eventId){
+		EventParticipant ep = findEventParticipant(userId, eventId);
+		if (a == null){
+			// Remove alarm.
+			ep.setAlarmId(-1);
+		}
+		else if (ep.getAlarmId() == -1){
+			// No alarm set yet. 
+			alarms.add(a);
+			ep.setAlarmId(a.getAlarmID());
+		}
+		else{
+			// Update alarm. 
+			Alarm original = findAlarm(eventId, userId);
+			original.setTime(a.getTime());
+		}
 	}
 	
 	private Group addSubGroupMembers(Group g){
@@ -227,6 +245,26 @@ public class Calendar extends Application{
 		for (EventParticipant ep: eventParticipants){
 			if (ep.getEventId() == eventId && ep.getUserId() == userId){
 				return ep;
+			}
+		}
+		return null;
+	}
+	
+	public Alarm findAlarm(int eventId, int userId){
+		EventParticipant ep = findEventParticipant(userId, eventId);
+		if (ep != null){
+			if (ep.getAlarmId() == -1){
+				return null;
+			}
+			return findAlarm(ep.getAlarmId());
+		}
+		return null;
+	}
+	
+	public Alarm findAlarm(int alarmId){
+		for (Alarm a: alarms){
+			if (a.getAlarmID() == alarmId){
+				return a;
 			}
 		}
 		return null;

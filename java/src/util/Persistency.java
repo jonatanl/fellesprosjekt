@@ -108,6 +108,10 @@ public class Persistency extends PersistencyGetMethods implements PersistencyInt
 
         return success;
     }
+    
+    public void test(){
+    	System.out.println("test");
+    }
 
     @Override
     public boolean removeAlarm(Alarm alarm) {
