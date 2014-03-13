@@ -148,6 +148,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
         
         roomList.setMinWidth(200);
         
+        
         box.getChildren().addAll(titleField,dateField,startTime,endTime,description,location, roomList);
         
         return box;
@@ -288,6 +289,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	// Check that the title field has some text
     	if (titleField.getText().length() <= 1) {
     		if (titleField.getText().contains(" ") || titleField.getText().isEmpty()) {
+    			titleField.setText("");
     			titleField.setPromptText("Need title");
     			hasFailed = true;;
     		}
