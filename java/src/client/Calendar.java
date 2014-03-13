@@ -52,6 +52,7 @@ public class Calendar extends Application{
 	public void setSelectedEvent(int eventId) {
 		this.selectedEvent = findEvent(eventId);
 		buttons.setSelectedEvent(selectedEvent);
+		buttons.setParticipant(findEventParticipant(loggedInUser.getUserId(), eventId));
 		buttons.setIsOwner(selectedEvent.getOwnerId() == loggedInUser.getUserId());
 	}
 	
@@ -221,6 +222,15 @@ public class Calendar extends Application{
 		}
 		return null;
 	}
+	
+	public EventParticipant findEventParticipant(int userId, int eventId){
+		for (EventParticipant ep: eventParticipants){
+			if (ep.getEventId() == eventId && ep.getUserId() == userId){
+				return ep;
+			}
+		}
+		return null;
+	}
 
 	
 	public void addEvent(Event event) {
@@ -233,6 +243,19 @@ public class Calendar extends Application{
 		events.remove(event);
 		updateWebScene();
 	}
+	
+	public void addEventParticipant(EventParticipant participant) {
+		eventParticipants.add(participant);
+		updateWebScene();
+	}
+	
+	
+	public void addEventParticipants(ArrayList<EventParticipant> participants){
+		eventParticipants.addAll(participants);
+		updateWebScene();
+	}
+	
+	
 /*
 	public void changeEvent(int eventId, String newEventName,
 			Date newStartTime, Date newEndTime, String newDescription,
@@ -261,12 +284,7 @@ public class Calendar extends Application{
 	
 	
 	@Override
-	public void addEventParticipant(int eventID, EventParticipant participant) {
-		Event e = findEvent(eventID);
-		if (e != null){
-			e.addEventParticipant(participant);
-		}
-	}
+	
 
 	@Override
 	public void removeEventParticipant(int eventID, EventParticipant participant) {

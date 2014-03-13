@@ -5,10 +5,12 @@ import interfaces.PersistencyInterface;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
 import sun.font.LayoutPathImpl.EndType;
 import util.DateHelper;
 import util.Time;
 import Models.Event;
+import Models.EventParticipant;
 import Models.Group;
 import Models.Room;
 import Models.User;
@@ -233,9 +235,18 @@ public class AddEvent implements EventHandler<ActionEvent> {
                 eventModel.setRoomId(roomList.getValue().getId());
             else
                 eventModel.setRoomId(1);
-
-    		if (persistency.addEvent(eventModel, getSelectedParticipantIds())){
+    		
+    		
+    		ArrayList<Integer> selectedParticpantIds = getSelectedParticipantIds();
+    		if (persistency.addEvent(eventModel, selectedParticpantIds)){
     			calendar.addEvent(eventModel);
+    			// EventParticipants are now in database with default values. 
+    			// Create list of default eventParticipants to add to Calendar. 
+    			ArrayList<EventParticipant> participants = new ArrayList<EventParticipant>();
+    			for (int id: selectedParticpantIds){
+    				participants.add(new EventParticipant(eventModel.getEventId(), id));
+    			}
+    			calendar.addEventParticipants(participants);
     			thisStage.close();
     		}
     		else{

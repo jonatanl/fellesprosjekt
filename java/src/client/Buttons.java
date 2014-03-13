@@ -3,6 +3,7 @@ package client;
 import java.util.ArrayList;
 import java.util.Date;
 
+import Models.Alarm;
 import Models.Event;
 import Models.EventParticipant;
 import javafx.event.ActionEvent;
@@ -15,6 +16,7 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 	private Calendar calendar;
 	private boolean isOwner = false;
 	private Event selectedEvent = null;
+	private EventParticipant eventParticipant;
 	
 	public boolean isOwner() {
 		return isOwner;
@@ -33,6 +35,11 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 		b_deleteEvent.setDisable(selectedEvent == null);
 		b_showMore.setDisable(selectedEvent == null);
 		b_alarm.setDisable(selectedEvent == null);
+	}
+	
+	public void setParticipant(EventParticipant ep){
+		eventParticipant = ep;
+		b_alarm.setDisable(eventParticipant == null);
 	}
 	
 	public Buttons(Calendar calendar){
@@ -108,12 +115,17 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 		else if (buttonEvent.getSource() == b_showMore) {
 			new ShowMore(selectedEvent, calendar.getStage());
 		}
-		
 		else if (buttonEvent.getSource() == b_alarm) {
-			
+			//new EditAlarm(calendar.getStage(), selectedEvent.getEventId(), calendar.getLoggedInUser().getUserId());
 		}		
 		else if (buttonEvent.getSource() == b_test){
 			// Add code here for testing.
+			System.out.println("Selected eventId: " + selectedEvent.getEventId());
+			for (EventParticipant e: calendar.getEventParticipants()){
+				if (e.getEventId() == selectedEvent.getEventId()){
+					System.out.println(e);
+				}
+			}
 		}
 	}
 }
