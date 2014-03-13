@@ -1,6 +1,7 @@
 package client;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import Models.Event;
 import Models.Room;
@@ -28,11 +29,33 @@ import javafx.stage.StageStyle;
 public class ShowMore implements EventHandler<ActionEvent> {
     
     private ObservableList<String> items;
-    private String s_title,s_start,s_end,s_description,s_place,s_room,s_alert,s_timeBefore,s_myParticipation;
+    private String s_title,s_date,s_start,s_end,s_description,s_place,s_room,s_alert,s_timeBefore,s_myParticipation;
     
     private Stage parentStage;
     private Stage stage;
     private Event event;
+    
+    public ShowMore(Event event, Stage stage){
+    	try {
+    		this.event = event;
+    		this.parentStage = stage;
+    		setEvent(event.getEventName(), event.getStartTime(), event.getEndTime(), event.getDescription(), event.getLocation(), event.getRoomId());
+    		createStage();
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    }
+    
+    public void setEvent(String title, Date start, Date end, String description, String place, int room){
+    	this.s_title = title;
+    	this.s_start = start.toString();
+    	this.s_end = end.toString();
+    	this.s_description = description;
+    	this.s_place = place;
+    	this.s_room = "" + room;
+    }
+
     
     public void createStage() {
 
@@ -56,17 +79,6 @@ public class ShowMore implements EventHandler<ActionEvent> {
         stage.show();
     }
     
-    public ShowMore(Event event, Stage stage){
-    	try {
-			createStage();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-    	this.event = event;
-    	this.parentStage = stage;
-    	setEvent(event.getEventName(), event.getDescription(), event.getLocation());
-    	
-    }
     
     public VBox getListViewBox(){
     	VBox rightBox = new VBox();
@@ -111,6 +123,7 @@ public class ShowMore implements EventHandler<ActionEvent> {
     
     public VBox getDataBox(){
     	Label eventTitle = new Label (s_title);
+    	Label eventDate = new Label (s_date);
         Label eventStart = new Label (s_start);
         Label eventEnd = new Label (s_end);
         Label eventDescription = new Label (s_description);
@@ -121,17 +134,11 @@ public class ShowMore implements EventHandler<ActionEvent> {
         Label eventMyParticipation = new Label ();
         
         VBox middleBox = new VBox();
-        middleBox.getChildren().addAll(eventTitle,eventStart,eventEnd,eventDescription,eventPlace,eventRoom,eventAlert,eventTimeBefore,eventMyParticipation);
+        middleBox.getChildren().addAll(eventTitle,eventDate,eventStart,eventEnd,eventDescription,eventPlace,eventRoom,eventAlert,eventTimeBefore,eventMyParticipation);
         
         return middleBox;
     }
-    
-    public void setEvent(String title, String description, String place){
-    	this.s_title = title;
-    	this.s_description = description;
-    	this.s_place = place;
-    }
-    
+        
     public HBox getRadioBox(){
     	HBox radioBox = new HBox();
         radioBox.setPadding(new Insets(5, 5, 5, 5));
