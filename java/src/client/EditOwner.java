@@ -1,7 +1,14 @@
 package client;
 
+import interfaces.PersistencyInterface;
+
 import java.util.ArrayList;
 import java.util.Collections;
+
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
+
+import util.DateHelper;
+import util.Persistency;
 
 import Models.Event;
 import Models.EventParticipant;
@@ -22,6 +29,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -52,14 +60,28 @@ public class EditOwner implements EventHandler<ActionEvent>{
     private ArrayList<User> users;
     private ArrayList<Group> groups;
     private ArrayList<EventParticipant> currentParticipants;
+    
+    private ArrayList<EventParticipant> changedParticipants;
+    
+    private ArrayList<EventParticipant> clonedParticipants;
+    
+    private PersistencyInterface persistency;
+    
 	
-	public EditOwner(Event event, Stage parentStage, ArrayList<Room> rooms, ArrayList<User> users, ArrayList<Group> groups, ArrayList<EventParticipant> currentParticipants) {
+	public EditOwner(Event event, Stage parentStage, ArrayList<Room> rooms, ArrayList<User> users, ArrayList<Group> groups, ArrayList<EventParticipant> currentParticipants, PersistencyInterface persistency) {
 		try {
 			this.parentStage = parentStage;
 			this.rooms = rooms;
 			this.users = users;
 			this.groups = groups;
 			this.currentParticipants = currentParticipants;
+			this.persistency = persistency;
+			clonedParticipants = new ArrayList<EventParticipant>();
+			
+			for (EventParticipant ep : currentParticipants) {
+				clonedParticipants.add(new EventParticipant(ep));
+			}
+
 			createStage();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -75,12 +97,12 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		this.eventModel = model;
 		
 		t_title.setText(eventModel.getEventName());
-	
-		//t_start.setText(eventModel.getStartTime());
-		//t_stop.setText(eventModel.getEndTime());
+		t_date.setText(DateHelper.convertToString(eventModel.getStartTime(), DateHelper.FORMAT_GUI).substring(0,10));
+		t_start.setText(DateHelper.convertToString(eventModel.getStartTime(), DateHelper.FORMAT_GUI).substring(12));
+		t_stop.setText(DateHelper.convertToString(eventModel.getEndTime(), DateHelper.FORMAT_GUI).substring(12));
 		t_description.setText(eventModel.getDescription());
 		t_place.setText(eventModel.getLocation());
-//		t_room.setText(eventModel.getRoom().toString());
+		roomList.getSelectionModel().select(eventModel.getRoomId());
 	}
 	
 	public void createStage() {
@@ -94,7 +116,7 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		grid.setHgap(10);
         grid.setVgap(10);
 		
-		Scene scene = new Scene(grid, 600, 300);
+		Scene scene = new Scene(grid, 600, 400);
 		thisStage = new Stage();
 		thisStage.setTitle("Endre Hendelse");
 		thisStage.setScene(scene);
@@ -200,6 +222,8 @@ public class EditOwner implements EventHandler<ActionEvent>{
 	
 	public VBox getListViewBox(){
 		participationGroup = new ToggleGroup();
+		
+
 		VBox rightBox = new VBox(5);
         Label participants = new Label ("Participants");
         
@@ -216,9 +240,31 @@ public class EditOwner implements EventHandler<ActionEvent>{
     	
     	  	
     	going = new RadioButton("Going");
+    	going.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				System.out.println(arg0);
+				EventParticipant ep = getParticipantFromView();
+				
+				ep.setResponse(EventParticipant.going);		
+			}
+		});
 		going.setToggleGroup(participationGroup);
+		
 		notGoing = new RadioButton("Not going");
+		notGoing.setOnAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent arg0) {
+				System.out.println(arg0);
+				EventParticipant ep = getParticipantFromView();
+				ep.setResponse(EventParticipant.notGoing);		
+				
+			}
+		});
 		notGoing.setToggleGroup(participationGroup);
+	
     	
 		populateLists();
 		
@@ -235,6 +281,7 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		usersAndGroups.addAll(groups);
 		
 		ArrayList<Object> participantUsers = new ArrayList<Object>();
+		System.out.println(currentParticipants.size());
 		
 		for (User u: users){
 			for (EventParticipant ep: currentParticipants){
@@ -245,12 +292,18 @@ public class EditOwner implements EventHandler<ActionEvent>{
 			}
 		}
 		
-		for (Group g: groups){
+		if (!participantUsers.isEmpty()) {
+			removePerson.setDisable(false);
+		}
+		
+		/*for (Group g: groups){
 			for (int groupUserId: g.getMembers()){
 				boolean isParticipant = false;
 				for (Object u: participantUsers){
-					if (groupUserId == ((User)u).getUserId()){
-						isParticipant = true;
+					if (u instanceof User) {
+						if (groupUserId == ((User)u).getUserId()){
+							isParticipant = true;
+						}						
 					}
 				}
 				if (!isParticipant){
@@ -259,7 +312,7 @@ public class EditOwner implements EventHandler<ActionEvent>{
 			}
 			usersAndGroups.remove(g);
 			participantUsers.add(g);
-		}
+		}*/
 		
 		
 		
@@ -267,24 +320,59 @@ public class EditOwner implements EventHandler<ActionEvent>{
         selectedPersonsObservableList= FXCollections.observableArrayList(participantUsers);
 
     	allPersonListView = new ListView<Object>();
-    	allPersonListView.setPrefWidth(175);
-    	allPersonListView.setPrefHeight(130);
+    	allPersonListView.setPrefWidth(190);
+    	allPersonListView.setPrefHeight(150);
     	allPersonListView.setItems(allPersonsObservableList);
     	
     	chosenPersonListView = new ListView<Object>();
-    	chosenPersonListView.setPrefWidth(175);
-    	chosenPersonListView.setPrefHeight(130);
+    	chosenPersonListView.setPrefWidth(190);
+    	chosenPersonListView.setPrefHeight(150);
     	chosenPersonListView.setItems(selectedPersonsObservableList);
     	chosenPersonListView.focusedProperty().addListener(new ChangeListener<Boolean>() {
     		
     		@Override
     		public void changed(ObservableValue<? extends Boolean> arg0,
-    				Boolean arg1, Boolean arg2) {
-    			// Noe ble trykket på i listen...
+    				Boolean oldVal, Boolean newVal) {
+    			//disable radiobuttons if deselected
+
     			
+    			EventParticipant ep = getParticipantFromView();
+    			
+    			String response = ep.getResponse();
+    			
+				if (response == EventParticipant.going){
+					updateRadioButtons(true);    						
+				}
+				else if (response == EventParticipant.notGoing) {
+					updateRadioButtons(false);
+				}
+				else {
+					going.setSelected(false);
+					notGoing.setSelected(false);
+				}
     		}
+    			
     		
     	});
+	}
+	
+	public EventParticipant getParticipantFromView() {
+		
+		for (int i = 0; i < clonedParticipants.size(); i++) {		
+			
+			Object u = chosenPersonListView.getSelectionModel().getSelectedItem();
+			
+			if ( u instanceof User && ((User) u).getUserId() == clonedParticipants.get(i).getUserId()) {
+				return clonedParticipants.get(i);
+			}
+		}
+		return null;
+	}
+	
+	public void updateRadioButtons(boolean val) {
+		going.setSelected(val);
+		notGoing.setSelected(!val);
+		
 	}
 	
 	public boolean isValid(){
@@ -324,6 +412,7 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		}
 		else if(event.getSource() == confirm && isValid()){
 			System.out.println("Send update");
+			updateEvent();
 			thisStage.close();
 		}
 		else if(event.getSource() == addPerson){
@@ -356,10 +445,46 @@ public class EditOwner implements EventHandler<ActionEvent>{
     		
     		if (selectedPersonsObservableList.size() == 0){
     			removePerson.setDisable(true);
+    			going.setDisable(true);
+    			notGoing.setDisable(true);
     		}
     		addPerson.setDisable(false);        	
     	}
 		
+	}
+	
+	public void updateEvent() {
+		ArrayList<EventParticipant> changedParticipants = getChangedParticipants();
+		
+		for (EventParticipant cep : changedParticipants) {
+			persistency.changeEventParticipantResponse(cep);
+			System.out.println("changed");
+		}
+		
+		eventModel.setEventName(t_title.getText());
+		eventModel.setStartTime(DateHelper.convertToDate(t_date.getText() + ", " + t_start.getText(), DateHelper.FORMAT_GUI));
+		eventModel.setEndTime(DateHelper.convertToDate(t_date.getText() + ", " + t_stop.getText(), DateHelper.FORMAT_GUI));
+		eventModel.setDescription(t_description.getText());
+		eventModel.setLocation(t_place.getText());
+		//eventModel.setRoomId(roomList.getValue().getId());
+		
+		persistency.changeEvent(eventModel);
+		
+	}
+	
+	public ArrayList<EventParticipant> getChangedParticipants() {
+		ArrayList<EventParticipant> result = new ArrayList<EventParticipant>();
+		
+		for (EventParticipant epo : currentParticipants) {
+			
+			for (EventParticipant epc : clonedParticipants) {
+				if (epo.getUserId() == epc.getUserId()) {
+					result.add(epo);
+					break;
+				}
+			}
+		}
+		return result;
 	}
 
 }

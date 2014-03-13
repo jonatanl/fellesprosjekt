@@ -49,6 +49,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private Text errorMessage;
     
     private ComboBox<Room> roomList;
+    private int nParticipants;
     
     private ListView<Object> allPersonListView, chosenPersonListView;
     private Button addPerson, removePerson, addEvent, cancel;
@@ -70,9 +71,10 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private ArrayList<User> users;
     private ArrayList<Group> groups;
 
-    Room noRoom = new Room();
+    private Room noRoom = new Room();
 
     private int ownerId;
+    private User loggedInUser;
     	
     
     public AddEvent(Calendar calendar, Stage stage, PersistencyInterface persistency, int ownerId, ArrayList<Room> rooms, ArrayList<User> users, ArrayList<Group> groups) {
@@ -84,6 +86,10 @@ public class AddEvent implements EventHandler<ActionEvent> {
         	this.rooms = rooms;
         	this.users = users;
         	this.groups = groups;
+            loggedInUser = users.get(ownerId-1);
+
+            noRoom = rooms.get(0);
+
 			createStage();
 		} catch (Exception e) {
             System.out.println(e.getMessage());
@@ -165,11 +171,9 @@ public class AddEvent implements EventHandler<ActionEvent> {
     }
     
     private void updateRoomComboBox(){
-    	int nParticipants = getSelectedParticipantIds().size();
-    	
-    	Collections.sort(rooms);
-        noRoom = rooms.get(1);
-    	
+    	nParticipants = getSelectedParticipantIds().size();
+        Collections.sort(rooms);
+
     	ArrayList<Room> sortedList = new ArrayList<Room>();
     	ArrayList<Room> goodRooms = new ArrayList<Room>();
     	ArrayList<Room> badRooms = new ArrayList<Room>();
@@ -182,11 +186,9 @@ public class AddEvent implements EventHandler<ActionEvent> {
     			badRooms.add(r);
     		}
     	}
-        sortedList.add(noRoom);
     	sortedList.addAll(goodRooms);
     	sortedList.addAll(badRooms);
-    	
-    	
+
     	ObservableList<Room> sortedObservableList = FXCollections.observableArrayList(sortedList);
     	
     	roomList.setItems(sortedObservableList);
@@ -230,7 +232,6 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		eventModel.setDescription(description.getText());
     		eventModel.setLocation(location.getText());
             eventModel.setOwnerId(ownerId);
-
     		if(roomList.getValue() != noRoom)
                 eventModel.setRoomId(roomList.getValue().getId());
             else
@@ -266,7 +267,11 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		selectedPersonsObservableList.add(allPersonsObservableList.get(id));
     		allPersonsObservableList.remove(id);
     		allPersonListView.getSelectionModel().select(0);
-    		updateRoomComboBox();
+
+            //Refresher roomlist om kapasiteten blir for liten
+            nParticipants = selectedPersonsObservableList.size();
+            if(nParticipants > roomList.getValue().getCapacity())
+                updateRoomComboBox();
     		
     		if (allPersonsObservableList.size() == 0) {
     			addPerson.setDisable(true);
@@ -276,17 +281,15 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	
     	else if(actionEvent.getSource() == removePerson){     
 
-    		
     		int id = chosenPersonListView.getFocusModel().getFocusedIndex();
-    		
+
     		if (id == -1) {
     			id = 0;
     		}
     		allPersonsObservableList.add(selectedPersonsObservableList.get(id));
-    		selectedPersonsObservableList.remove(id);
-    		chosenPersonListView.getSelectionModel().select(0);
-    		updateRoomComboBox();
-    		
+            selectedPersonsObservableList.remove(id);
+            chosenPersonListView.getSelectionModel().select(0);
+
     		if (selectedPersonsObservableList.size() == 0){
     			removePerson.setDisable(true);
     		}
@@ -352,9 +355,9 @@ public class AddEvent implements EventHandler<ActionEvent> {
         
         ArrayList<Object> usersAndGroups = new ArrayList<Object>(users);
         usersAndGroups.addAll(groups);
-        
         allPersonsObservableList = FXCollections.observableArrayList(usersAndGroups);
         selectedPersonsObservableList= FXCollections.observableArrayList();
+        selectedPersonsObservableList.add(loggedInUser); //Eier av event vil default stå som participant
 
     	allPersonListView = new ListView<Object>();
     	allPersonListView.setPrefWidth(175);
@@ -371,7 +374,8 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	
     	removePerson = new Button("Remove");
     	removePerson.setOnAction(this);
-    	removePerson.setDisable(true);
+    	removePerson.setDisable(false
+        );
     	
     	rightBox.getChildren().addAll(participants,allPersonListView,addPerson,chosenPersonListView,removePerson);
     	

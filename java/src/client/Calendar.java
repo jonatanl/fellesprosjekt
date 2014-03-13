@@ -195,7 +195,27 @@ public class Calendar extends Application{
 		return g;
 	}
 	
+	public void changeEvent(int eventID, Event event) {
+		Event original = findEvent(eventID);
+		original = event;
+		event.setEventId(eventID);
+	}
 	
+	public void changeEventParticipantResponse(int eventId, int eventParticipantId,
+			String newResponse, boolean newIsDeleted) {
+		
+	Event e = findEvent(eventId);
+	
+	if (e != null){
+		//EventParticipant ep = e.findEventParticipant(eventParticipantId);
+		//if (ep != null){
+		//	ep.setResponse(newResponse);
+		//	ep.setDeleted(newIsDeleted);
+		}
+	// TODO Inform other EventParticipants that someone changed their response, by setting their 
+	// field 'pendingChange' to true. 
+	}
+
 	
 	// Draws the webScene over again. 
 	public void updateWebScene(){
@@ -241,10 +261,21 @@ public class Calendar extends Application{
 		return null;
 	}
 	
+
+	public Room findRoom(int roomId){
+        for (Room r: rooms){
+            if (r.getId() == roomId)
+                return r;
+
+    }
+        return null;
+    }
+
 	public EventParticipant findEventParticipant(int userId, int eventId){
 		for (EventParticipant ep: eventParticipants){
 			if (ep.getEventId() == eventId && ep.getUserId() == userId){
 				return ep;
+
 			}
 		}
 		return null;
@@ -278,7 +309,8 @@ public class Calendar extends Application{
 	
 	
 	public void removeEvent(Event event) {
-		events.remove(event);
+		System.out.println("index of: " + events.indexOf(event));
+		events.remove(events.indexOf(event));
 		updateWebScene();
 	}
 	
@@ -332,23 +364,7 @@ public class Calendar extends Application{
 		}
 	}
 	
-	public void changeEventParticipantResponse(int eventId, int eventParticipantId,
-			String newResponse, boolean newIsDeleted) {
-		
-		Event e = findEvent(eventId);
-		
-		if (e != null){
-			EventParticipant ep = e.findEventParticipant(eventParticipantId);
-			if (ep != null){
-				ep.setResponse(newResponse);
-				ep.setDeleted(newIsDeleted);
-			}
-		}
-		// TODO Inform other EventParticipants that someone changed their response, by setting their 
-		// field 'pendingChange' to true. 
-		// TODO Inform webView. 
-		
-	}
+	
 	
 	@Override
 	public void addAlarm(EventParticipant participant, Alarm alarm) {
