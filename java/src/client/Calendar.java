@@ -221,6 +221,15 @@ public class Calendar extends Application{
 		}
 		return null;
 	}
+	
+	public Room findRoom(int roomId){
+		for (Room r: rooms){
+			if (r.getId() == roomId){
+				return r;
+			}
+		}
+		return null;
+	}
 
 	
 	public void addEvent(Event event) {
@@ -230,7 +239,8 @@ public class Calendar extends Application{
 	
 	
 	public void removeEvent(Event event) {
-		events.remove(event);
+		System.out.println("index of: " + events.indexOf(event));
+		events.remove(events.indexOf(event));
 		updateWebScene();
 	}
 /*
