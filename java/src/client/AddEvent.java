@@ -10,6 +10,7 @@ import sun.font.LayoutPathImpl.EndType;
 import util.DateHelper;
 import util.Time;
 import Models.Event;
+import Models.EventParticipant;
 import Models.Group;
 import Models.Room;
 import Models.User;
@@ -48,9 +49,10 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private Text errorMessage;
     
     private ComboBox<Room> roomList;
+    private int nParticipants;
     
     private ListView<Object> allPersonListView, chosenPersonListView;
-    private Button addPerson, removePerson, addEvent;
+    private Button addPerson, removePerson, addEvent, cancel;
 
     private Event eventModel;
     
@@ -68,6 +70,9 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private ArrayList<Room> rooms;
     private ArrayList<User> users;
     private ArrayList<Group> groups;
+
+    private Room noRoom = new Room();
+
     private int ownerId;
     	
     
@@ -80,6 +85,9 @@ public class AddEvent implements EventHandler<ActionEvent> {
         	this.rooms = rooms;
         	this.users = users;
         	this.groups = groups;
+
+            noRoom = rooms.get(0);
+
 			createStage();
 		} catch (Exception e) {
             System.out.println(e.getMessage());
@@ -108,7 +116,14 @@ public class AddEvent implements EventHandler<ActionEvent> {
         grid.add(errorMessage, 1, 2);
         
         addEvent = new Button("Add event");
+        addEvent.setOnAction(this);
+        addEvent.setMinHeight(30);
         grid.add(addEvent, 1,3);
+        
+        cancel = new Button("Cancel");
+        cancel.setOnAction(this);
+        cancel.setMinHeight(30);
+        grid.add(cancel, 2, 3);
 
         Scene scene = new Scene(grid, 500, 475);
         thisStage = new Stage();
@@ -119,7 +134,6 @@ public class AddEvent implements EventHandler<ActionEvent> {
 		
         thisStage.show();
 
-        addEvent.setOnAction(this);
         eventModel = new Event();
         
         setHints();
@@ -155,10 +169,9 @@ public class AddEvent implements EventHandler<ActionEvent> {
     }
     
     private void updateRoomComboBox(){
-    	int nParticipants = getSelectedParticipantIds().size();
-    	
-    	Collections.sort(rooms);
-    	
+    	nParticipants = getSelectedParticipantIds().size();
+        Collections.sort(rooms);
+
     	ArrayList<Room> sortedList = new ArrayList<Room>();
     	ArrayList<Room> goodRooms = new ArrayList<Room>();
     	ArrayList<Room> badRooms = new ArrayList<Room>();
@@ -173,11 +186,11 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	}
     	sortedList.addAll(goodRooms);
     	sortedList.addAll(badRooms);
-    	
-    	
+
     	ObservableList<Room> sortedObservableList = FXCollections.observableArrayList(sortedList);
     	
     	roomList.setItems(sortedObservableList);
+        roomList.setValue(noRoom);
     }
     
     public void setHints() {
@@ -216,17 +229,32 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		eventModel.setEndTime(DateHelper.convertToDate(dateField.getText() + ", " + endTime.getText(), DateHelper.FORMAT_GUI));
     		eventModel.setDescription(description.getText());
     		eventModel.setLocation(location.getText());
-    		eventModel.setRoomId(roomList.getValue().getId());
-    		eventModel.setOwnerId(ownerId);
-
-    		if (persistency.addEvent(eventModel, getSelectedParticipantIds())){
+            eventModel.setOwnerId(ownerId);
+    		if(roomList.getValue() != noRoom)
+                eventModel.setRoomId(roomList.getValue().getId());
+            else
+                eventModel.setRoomId(1);
+    		
+    		
+    		ArrayList<Integer> selectedParticpantIds = getSelectedParticipantIds();
+    		if (persistency.addEvent(eventModel, selectedParticpantIds)){
     			calendar.addEvent(eventModel);
+    			// EventParticipants are now in database with default values. 
+    			// Create list of default eventParticipants to add to Calendar. 
+    			ArrayList<EventParticipant> participants = new ArrayList<EventParticipant>();
+    			for (int id: selectedParticpantIds){
+    				participants.add(new EventParticipant(eventModel.getEventId(), id));
+    			}
+    			calendar.addEventParticipants(participants);
     			thisStage.close();
     		}
     		else{
     			// Some error occured at the database.
     			errorMessage.setVisible(true);
     		}
+    	}
+    	else if(actionEvent.getSource() == cancel){
+    		thisStage.close();
     	}
     	else if(actionEvent.getSource() == addPerson){
     		int id = allPersonListView.getFocusModel().getFocusedIndex();
@@ -237,7 +265,11 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		selectedPersonsObservableList.add(allPersonsObservableList.get(id));
     		allPersonsObservableList.remove(id);
     		allPersonListView.getSelectionModel().select(0);
-    		updateRoomComboBox();
+
+            //Refresher roomlist om kapasiteten blir for liten
+            nParticipants = selectedPersonsObservableList.size();
+            if(nParticipants > roomList.getValue().getCapacity())
+                updateRoomComboBox();
     		
     		if (allPersonsObservableList.size() == 0) {
     			addPerson.setDisable(true);
@@ -247,17 +279,15 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	
     	else if(actionEvent.getSource() == removePerson){     
 
-    		
     		int id = chosenPersonListView.getFocusModel().getFocusedIndex();
-    		
+
     		if (id == -1) {
     			id = 0;
     		}
     		allPersonsObservableList.add(selectedPersonsObservableList.get(id));
     		selectedPersonsObservableList.remove(id);
     		chosenPersonListView.getSelectionModel().select(0);
-    		updateRoomComboBox();
-    		
+
     		if (selectedPersonsObservableList.size() == 0){
     			removePerson.setDisable(true);
     		}

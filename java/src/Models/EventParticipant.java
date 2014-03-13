@@ -2,10 +2,9 @@
 package Models;
 
 public class EventParticipant {
-	private int id;
-	private String response;
-	private boolean pendingChange;
-	private boolean isDeleted;
+	private String response = null;
+	private boolean pendingChange = true;
+	private boolean isDeleted = false;
 	private int alarmId;
     private int userId;
     private int eventId;
@@ -25,11 +24,12 @@ public class EventParticipant {
 		this.userId = ep.getUserId();
 		this.eventId = ep.getEventId();
 	}
-	
-	public int getId() {
-		return id;
-	}
-
+    
+    public EventParticipant(int eventId, int userId){
+    	this.eventId  = eventId;
+    	this.userId = userId;
+    }
+    
 	public int getEventId() {
         return eventId;
     }
@@ -66,4 +66,12 @@ public class EventParticipant {
     public void setAlarmId(int alarmId) {
         this.alarmId = alarmId;
     }
+    
+    @Override
+	public String toString() {
+		return "EventParticipant [response=" + response
+				+ ", pendingChange=" + pendingChange + ", isDeleted="
+				+ isDeleted + ", alarmId=" + alarmId + ", userId=" + userId
+				+ ", eventId=" + eventId + "]";
+	}
 }
