@@ -131,15 +131,19 @@
 			}
 
 
-			function addEvent(id, title, startDate, endDate, ownerId) {			
-				app.onClickIDtoJavaFX(id);
+			function addEvent(id, title, startDate, endDate, ownerId) {
+				<!--Do not use callback to indicate that an event was added. Callback should only be used when an event is selected.-->			
+				<!--app.onClickIDtoJavaFX(id);-->
 				var newEvent = createEventSourceObject(id, title, startDate, endDate, ownerId);
 				$('#calendar').fullCalendar('addEventSource', newEvent);
 			}
 
 			function setUserId(id) {
 				userId = id;
-				app.onClickIDtoJavaFX(id)
+				<!--Do not use callback to indicate which user is logged in. Callback should only be used when an event is selected.-->
+				<!--app.onClickIDtoJavaFX(id)-->
+				
+				
 			}
 
 			function removeAllEvents() {
