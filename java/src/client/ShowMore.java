@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import Models.Event;
+import Models.EventParticipant;
 import Models.Room;
-import javafx.application.Application;
+import Models.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -22,9 +23,8 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
+
  
 public class ShowMore implements EventHandler<ActionEvent> {
     
@@ -34,11 +34,19 @@ public class ShowMore implements EventHandler<ActionEvent> {
     private Stage parentStage;
     private Stage stage;
     private Event event;
+    private ArrayList<EventParticipant> participants;
+    private ArrayList<User> users;
+    private ArrayList<Room> rooms;
+    private ArrayList<String> finalParitcipants;
+    private Calendar calendar;
     
-    public ShowMore(Event event, Stage stage){
+    public ShowMore(Event event, Stage stage, ArrayList<EventParticipant> participants, ArrayList<User> users, ArrayList<Room> rooms){
     	try {
     		this.event = event;
     		this.parentStage = stage;
+    		this.participants = participants;
+    		this.users = users;
+    		this.rooms = rooms;
     		setEvent(event.getEventName(), event.getStartTime(), event.getEndTime(), event.getDescription(), event.getLocation(), event.getRoomId());
     		createStage();
     	} catch (Exception e) {
@@ -47,13 +55,32 @@ public class ShowMore implements EventHandler<ActionEvent> {
     	
     }
     
-    public void setEvent(String title, Date start, Date end, String description, String place, int room){
+    public void setEvent(String title, Date start, Date end, String description, String place, int roomId){
     	this.s_title = title;
     	this.s_start = start.toString();
     	this.s_end = end.toString();
     	this.s_description = description;
     	this.s_place = place;
-    	this.s_room = "" + room;
+    	
+    	finalParitcipants = new ArrayList<String>();
+    	
+    	for (int i = 0; i < users.size(); i++) {
+    		for (int j = 0; j < participants.size()-1; j++) {
+    			if(users.get(i).getUserId() == participants.get(j).getUserId()){    				
+    				finalParitcipants.add(users.get(i).toString());
+    			}
+    		}
+			
+		}
+    	
+    	items =FXCollections.observableArrayList(finalParitcipants);
+    	
+    	for (int i = 0; i < rooms.size(); i++) {
+    		if(rooms.get(i).getId()==roomId){
+    			this.s_room = rooms.get(i).toString();
+    		}
+			
+		}
     }
 
     
@@ -85,7 +112,6 @@ public class ShowMore implements EventHandler<ActionEvent> {
         Label participants = new Label ("Participants");
 
     	ListView<String> list = new ListView<String>();
-    	ObservableList<String> items = getList();
     	list.setItems(items);
     	list.setPrefWidth(175);
     	list.setPrefHeight(130);
@@ -156,16 +182,6 @@ public class ShowMore implements EventHandler<ActionEvent> {
     	radioBox.getChildren().addAll(rb1,rb2);
     	
     	return radioBox;
-    }
-    
-    public void addPersonsToList(ArrayList<String> people){
-    	ObservableList<String> items =FXCollections.observableArrayList();
-    	for (int i = 0; i < people.size()-1; i++) {
-			items.add(people.get(i));
-		}
-    }
-    public ObservableList<String> getList(){
-    	return items;
     }
 
 	@Override
