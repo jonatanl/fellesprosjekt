@@ -1,5 +1,7 @@
 package client;
 
+import interfaces.PersistencyInterface;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -94,7 +96,7 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 			}
 			
 			if (isOwner){
-				new EditOwner(selectedEvent, calendar.getStage(), calendar.getRooms(), calendar.getUsers(), calendar.getGroups(), currentParticipants);
+				new EditOwner(selectedEvent, calendar.getStage(), calendar.getRooms(), calendar.getUsers(), calendar.getGroups(), currentParticipants, calendar.getPersistency());
 			}
 			else{
 				new EndreIkkeOwner(selectedEvent, calendar.getStage());

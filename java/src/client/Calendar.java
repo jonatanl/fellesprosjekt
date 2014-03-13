@@ -176,7 +176,27 @@ public class Calendar extends Application{
 		return g;
 	}
 	
+	public void changeEvent(int eventID, Event event) {
+		Event original = findEvent(eventID);
+		original = event;
+		event.setEventId(eventID);
+	}
 	
+	public void changeEventParticipantResponse(int eventId, int eventParticipantId,
+			String newResponse, boolean newIsDeleted) {
+		
+	Event e = findEvent(eventId);
+	
+	if (e != null){
+		//EventParticipant ep = e.findEventParticipant(eventParticipantId);
+		//if (ep != null){
+		//	ep.setResponse(newResponse);
+		//	ep.setDeleted(newIsDeleted);
+		}
+	// TODO Inform other EventParticipants that someone changed their response, by setting their 
+	// field 'pendingChange' to true. 
+	}
+
 	
 	// Draws the webScene over again. 
 	public void updateWebScene(){
@@ -276,23 +296,7 @@ public class Calendar extends Application{
 		}
 	}
 	
-	public void changeEventParticipantResponse(int eventId, int eventParticipantId,
-			String newResponse, boolean newIsDeleted) {
-		
-		Event e = findEvent(eventId);
-		
-		if (e != null){
-			EventParticipant ep = e.findEventParticipant(eventParticipantId);
-			if (ep != null){
-				ep.setResponse(newResponse);
-				ep.setDeleted(newIsDeleted);
-			}
-		}
-		// TODO Inform other EventParticipants that someone changed their response, by setting their 
-		// field 'pendingChange' to true. 
-		// TODO Inform webView. 
-		
-	}
+	
 	
 	@Override
 	public void addAlarm(EventParticipant participant, Alarm alarm) {

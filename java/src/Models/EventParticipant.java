@@ -9,8 +9,28 @@ public class EventParticipant {
 	private int alarmId;
     private int userId;
     private int eventId;
+    
+    public static final String going = "isGoing";
+    public static final String notGoing = "isNotGoing";
+    
+    public EventParticipant() {
+    
+    }
 
-    public int getEventId() {
+    public EventParticipant(EventParticipant ep) {
+		this.response = ep.getResponse();
+		this.pendingChange = ep.isPendingChange();
+		this.isDeleted = ep.isDeleted();
+		this.alarmId = ep.getAlarmId();
+		this.userId = ep.getUserId();
+		this.eventId = ep.getEventId();
+	}
+	
+	public int getId() {
+		return id;
+	}
+
+	public int getEventId() {
         return eventId;
     }
     public void setEventId(int eventId) {
