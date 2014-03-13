@@ -243,17 +243,21 @@ public class Calendar extends Application{
 		return null;
 	}
 	
-<<<<<<< HEAD
+
 	public Room findRoom(int roomId){
-		for (Room r: rooms){
-			if (r.getId() == roomId){
-				return r;
-=======
+        for (Room r: rooms){
+            if (r.getId() == roomId)
+                return r;
+
+    }
+        return null;
+    }
+
 	public EventParticipant findEventParticipant(int userId, int eventId){
 		for (EventParticipant ep: eventParticipants){
 			if (ep.getEventId() == eventId && ep.getUserId() == userId){
 				return ep;
->>>>>>> 6a246515ff2c8d7a6815798f6cbe7962b8825e54
+
 			}
 		}
 		return null;
