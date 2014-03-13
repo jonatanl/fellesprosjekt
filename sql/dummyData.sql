@@ -1,3 +1,4 @@
+insert into room (adress, capacity) values('not chosen', null);
 insert into room (adress, capacity) values('test1', 2);
 insert into room (adress, capacity) values('test2', 3);
 insert into room (adress, capacity) values('test3', 4);

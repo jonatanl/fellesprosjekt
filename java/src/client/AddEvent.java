@@ -68,6 +68,9 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private ArrayList<Room> rooms;
     private ArrayList<User> users;
     private ArrayList<Group> groups;
+
+    Room noRoom = new Room();
+
     private int ownerId;
     	
     
@@ -158,6 +161,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	int nParticipants = getSelectedParticipantIds().size();
     	
     	Collections.sort(rooms);
+        noRoom = rooms.get(1);
     	
     	ArrayList<Room> sortedList = new ArrayList<Room>();
     	ArrayList<Room> goodRooms = new ArrayList<Room>();
@@ -171,6 +175,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     			badRooms.add(r);
     		}
     	}
+        sortedList.add(noRoom);
     	sortedList.addAll(goodRooms);
     	sortedList.addAll(badRooms);
     	
@@ -178,6 +183,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	ObservableList<Room> sortedObservableList = FXCollections.observableArrayList(sortedList);
     	
     	roomList.setItems(sortedObservableList);
+        roomList.setValue(noRoom);
     }
     
     public void setHints() {
@@ -216,8 +222,12 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		eventModel.setEndTime(DateHelper.convertToDate(dateField.getText() + ", " + endTime.getText(), DateHelper.FORMAT_GUI));
     		eventModel.setDescription(description.getText());
     		eventModel.setLocation(location.getText());
-    		eventModel.setRoomId(roomList.getValue().getId());
-    		eventModel.setOwnerId(ownerId);
+            eventModel.setOwnerId(ownerId);
+
+    		if(roomList.getValue() != noRoom)
+                eventModel.setRoomId(roomList.getValue().getId());
+            else
+                eventModel.setRoomId(1);
 
     		if (persistency.addEvent(eventModel, getSelectedParticipantIds())){
     			calendar.addEvent(eventModel);
