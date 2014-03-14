@@ -15,6 +15,8 @@ out/
 .metadata/.plugins/org.eclipse.core.resources/.safetable/org.eclipse.core.resources
 .metadata/.plugins/org.eclipse.core.resources/.snap
 java/.classpath
+.project
+.settings/
 *.log
 *.classpath
 *.classpath
