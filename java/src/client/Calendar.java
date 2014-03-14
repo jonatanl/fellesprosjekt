@@ -6,6 +6,7 @@ import interfaces.PersistencyInterface;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import util.DateHelper;
@@ -211,6 +212,8 @@ public class Calendar extends CalendarLists {
 	public void updateWebScene(){
         calendarView.removeAllEvents();
 
+        // TODO: Temporary fix
+        userObservableList = FXCollections.observableArrayList(loggedInUser);
         
         HashMap visibleUsersHm = new HashMap();
         for (User u : userObservableList) {
