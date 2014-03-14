@@ -15,3 +15,10 @@ Dette bør gjelde for
 - startTime, endTime, description, location eller room har blitt endret. 
 
 Skal det komme opp en alarm på det angitte tidspunktet? 
+
+Romreservasjoner. For å finne ut om rom R er opptatt: bla gjennom alle events som bruker rom R, og se om start og slutttid for eventene overlapper. Overlapper --> Rom R ikke ledig. 
+
+Når jeg velger å slette en event der jeg er participant, må respons forandres til "ikke deltar" og feltet "isDeleted" settes til true. 
+
+Notification-vindu nederst på skjermen. 
+
