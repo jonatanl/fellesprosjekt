@@ -6,6 +6,7 @@ import interfaces.PersistencyInterface;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import util.DateHelper;
@@ -16,6 +17,7 @@ import Models.Group;
 import Models.Room;
 import Models.User;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -210,24 +212,65 @@ public class Calendar extends CalendarLists {
 	public void updateWebScene(){
         calendarView.removeAllEvents();
 
-        HashMap hm = new HashMap();
-        for (EventParticipant ep : eventParticipants) {
-            hm.put(ep.getEventId(), ep);
+        // TODO: Temporary fix
+        userObservableList = FXCollections.observableArrayList(loggedInUser);
+        
+        HashMap visibleUsersHm = new HashMap();
+        for (User u : userObservableList) {
+        	visibleUsersHm.put(u.getUserId(), u);
         }
-
-        EventParticipant ep;
-
+        
         for(Event event : events) {
 
-            ep = (EventParticipant)hm.get(event.getEventId());
-
-            calendarView.addEvent(
-                    "" + event.getEventId(),
-                    event.getEventName(),
-                    DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_JAVASCRIPT),
-                    DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_JAVASCRIPT),
-                    event.getOwnerId(),true,true,true
-            );
+        	boolean drawEvent = false;
+            
+        	boolean changed = false;
+        	boolean attending = false;
+        	boolean myEvent = false;
+            
+            // One of the visible users owns the event
+            if (visibleUsersHm.get(event.getOwnerId()) != null){
+            	drawEvent = true;
+            }
+            
+            // one of the visible users is a participant of the event.
+            for (User u: userObservableList){
+            	EventParticipant ep = findEventParticipant(u.getUserId(), event.getEventId()); 
+            	if (ep != null){
+            		// Do not draw if the participant deleted the event. 
+            		drawEvent = !ep.isDeleted();
+            	}
+            }
+            
+            // If drawEvent is not true at this point, skip the event. 
+            if (!drawEvent){
+            	continue;
+            }
+            
+            // We got to this point --> Add the event!
+            
+            
+            // myEvent, changed, attending (Merk at changed og attending bare er relevante dersom myEvent == true).
+            EventParticipant epLoggedInUser = findEventParticipant(event.getOwnerId(), event.getEventId());
+            if (event.getOwnerId() == loggedInUser.getUserId() || epLoggedInUser != null){
+            	myEvent = true;
+            	if (epLoggedInUser != null){
+            		changed = epLoggedInUser.isPendingChange();
+            		attending = (epLoggedInUser.getResponse() == EventParticipant.going);
+            	}
+            }
+            
+            
+        	calendarView.addEvent(
+        			"" + event.getEventId(), 
+        			event.getEventName(), 
+        			DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_JAVASCRIPT), 
+        			DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_JAVASCRIPT), 
+        			event.getOwnerId(), 
+        			changed, 
+        			attending, 
+        			myEvent);
+        
         }
 
         // No selected event after webscene update. 

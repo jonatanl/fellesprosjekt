@@ -8,8 +8,6 @@ Remove event --> Må fjerne tilhørende alarmer i database og i Calender.
 
 EditIkkeOwner ikke ferdig.
 
-AddEvent - en selv er participant, men bør ikke OGSÅ være i øverste liste.
-
 AddEvent - velg rom. Edit event - ikke samme rom som er valgt her. 
 
 Når en forandring skjer på en event som du er participant på eller eier av, må eventen i webkalenderen markere at en forandring har skjedd.
@@ -19,3 +17,5 @@ Dette bør gjelde for
 - startTime, endTime, description, location eller room har blitt endret. 
 
 WebKalenderen må bare vise events som du enten eier eller er participant på.
+
+Skal det komme opp en alarm på det angitte tidspunktet? 
