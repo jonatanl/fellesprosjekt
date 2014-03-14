@@ -5,6 +5,8 @@ import interfaces.PersistencyInterface;
 
 import java.util.ArrayList;
 
+import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
 import util.DateHelper;
 import Models.Alarm;
 import Models.Event;
@@ -36,6 +38,9 @@ public class Calendar extends CalendarLists {
 	private Text title;
 	private Buttons buttons;
 	private CalendarView calendarView;
+
+    private ListView<User> userListView;
+    private ObservableList<User> userObservableList;
 
 	public Event getSelectedEvent() {
 		return selectedEvent;
@@ -115,7 +120,7 @@ public class Calendar extends CalendarLists {
         root.add(buttons, 0, 1);
         root.add(calendarView.getContentForScene(), 1, 1);
 
-		Scene scene = new Scene(root, 900, 700);
+		Scene scene = new Scene(root, 1000, 700);
 		
 		stage.setScene(scene);
 		stage.show();
