@@ -14,6 +14,7 @@ import Models.Group;
 import Models.Room;
 import Models.User;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -205,24 +206,37 @@ public class Calendar extends CalendarLists {
 	public void updateWebScene(){
         calendarView.removeAllEvents();
 
+        /*
         HashMap hm = new HashMap();
         for (EventParticipant ep : eventParticipants) {
             hm.put(ep.getEventId(), ep);
         }
-
+         */
         EventParticipant ep;
-
+        
         for(Event event : events) {
+            ep = new EventParticipant();// (EventParticipant)hm.get(event.getEventId());
 
-            ep = (EventParticipant)hm.get(event.getEventId());
-
-            calendarView.addEvent(
-                    "" + event.getEventId(),
-                    event.getEventName(),
-                    DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_JAVASCRIPT),
-                    DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_JAVASCRIPT),
-                    event.getOwnerId()
-            );
+            // Legg til event i webkalenderen hvis brukeren er owner eller participant av eventen.
+            // TODO: Her må det sjekkes mot alle brukere en har valgt skal vises, ikke bare loggedInUser. 
+            if (event.getOwnerId() == loggedInUser.getUserId() || ep != null){
+            	boolean changed = false;
+            	if (ep != null)
+            		changed = ep.isPendingChange();
+            	boolean attending = (ep != null);
+            	// myEvent == true if user owns event or is a participant. 
+            	boolean myEvent = event.getOwnerId() == loggedInUser.getUserId() || attending;
+            	
+            	calendarView.addEvent(
+            			"" + event.getEventId(), 
+            			event.getEventName(), 
+            			DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_JAVASCRIPT), 
+            			DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_JAVASCRIPT), 
+            			event.getOwnerId(), 
+            			changed, 
+            			attending, 
+            			myEvent);
+            }
         }
 
         // No selected event after webscene update. 
