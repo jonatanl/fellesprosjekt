@@ -124,7 +124,7 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 					currentParticipants.add(ep);
 				}
 			}
-			new ShowMore(selectedEvent, calendar.getStage(), currentParticipants, calendar.getUsers(), calendar.getRooms());
+			new ShowMore(calendar, selectedEvent, calendar.getStage(), currentParticipants, calendar.getUsers(), calendar.getRooms());
 		}
 		else if (buttonEvent.getSource() == b_alarm) {
 			new EditAlarm(calendar.getPersistency(), calendar, calendar.getStage(),calendar.findAlarm(selectedEvent.getEventId(), calendar.getLoggedInUser().getUserId()), 
