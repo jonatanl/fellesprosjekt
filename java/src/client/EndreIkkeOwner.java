@@ -110,8 +110,7 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 		
 		for (Node text : rightBox.getChildren()) {
 			TextField textf = (TextField) text;
-			textf.setEditable(false);
-			textf.setDisable(false);
+			textf.setDisable(true);
 		}
 		
 		HBox participation = new HBox();
