@@ -34,6 +34,8 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 	private Stage thisStage;
 	private Stage parentStage;
 	private Calendar calendar;
+	private RadioButton going;
+	private RadioButton notGoing;	
 
 
 	
@@ -92,9 +94,9 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 		confirm = new Button("Ok");
 		confirm.setOnAction(this);
 		
-		RadioButton going = new RadioButton("Skal");
+		going = new RadioButton("Skal");
 		going.setToggleGroup(participationGroup);
-		RadioButton notGoing = new RadioButton("Skal ikke");
+		notGoing = new RadioButton("Skal ikke");
 		notGoing.setToggleGroup(participationGroup);
 		
 		
@@ -126,8 +128,6 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 		confirmation.getChildren().add(confirm);
 		confirmation.setPadding(new Insets(10,10,10,100));
 		
-		
-		
 		VBox root = new VBox();
 		root.getChildren().addAll(container, participation, confirmation);
 		
@@ -146,9 +146,10 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 
 
 	@Override
-	public void handle(ActionEvent arg0) {
-		thisStage.close();
-		
+	public void handle(ActionEvent actionEvent) {
+		if(actionEvent.getSource() == confirm){
+			thisStage.close();
+		}
 	}
 
 }
