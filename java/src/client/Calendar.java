@@ -221,6 +221,7 @@ public class Calendar extends CalendarLists {
         }
         
         for(Event event : events) {
+
         	boolean drawEvent = false;
             
         	boolean changed = false;
