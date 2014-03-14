@@ -6,16 +6,20 @@ import interfaces.PersistencyInterface;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.scene.control.FocusModel;
 import javafx.scene.control.ListView;
-import util.DateHelper;
+import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.control.SelectionMode;
 import Models.Alarm;
 import Models.Event;
 import Models.EventParticipant;
 import Models.Group;
-import Models.Room;
 import Models.User;
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -110,6 +114,22 @@ public class Calendar extends CalendarLists {
         calendarView = new CalendarView(this);
         calendarView.setUserId(loggedInUser.getUserId());
 
+        userListView = new ListView<>();
+        userObservableList = FXCollections.observableList(users);
+        userListView.setItems(userObservableList);
+        userListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        userListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<User>() {
+            @Override
+            public void changed(ObservableValue<? extends User> observableValue, User user, User user2) {
+                selectedUsers = new ArrayList<>();
+                for (User u : userListView.getSelectionModel().getSelectedItems()) {
+                    selectedUsers.add(u);
+                    System.out.println(user.getUsername());
+                }
+            }
+        });
+
         GridPane root = new GridPane();
         root.setAlignment(Pos.CENTER);
         root.setHgap(10);
@@ -120,6 +140,7 @@ public class Calendar extends CalendarLists {
         root.add(title, 0, 0, 2, 1);
         root.add(buttons, 0, 1);
         root.add(calendarView.getContentForScene(), 1, 1);
+        root.add(userListView, 2, 0);
 
 		Scene scene = new Scene(root, 1000, 700);
 		
@@ -221,13 +242,13 @@ public class Calendar extends CalendarLists {
 
             ep = (EventParticipant)hm.get(event.getEventId());
 
-            calendarView.addEvent(
+            /*calendarView.addEvent(
                     "" + event.getEventId(),
                     event.getEventName(),
                     DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_JAVASCRIPT),
                     DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_JAVASCRIPT),
                     event.getOwnerId()
-            );
+            );*/
         }
 
         // No selected event after webscene update. 
