@@ -4,11 +4,7 @@ HTML-kalenderen bør støtte at man deselecter eventer, altså klikker et sted der 
 
 Nytt krav (se itslearning): Inviter eksterne kontakter til møtet via e-post.
 
-Remove event --> Må fjerne tilhørende alarmer i database og i Calender.
-
 EditIkkeOwner ikke ferdig.
-
-AddEvent - en selv er participant, men bør ikke OGSÅ være i øverste liste.
 
 AddEvent - velg rom. Edit event - ikke samme rom som er valgt her. 
 
@@ -18,4 +14,4 @@ Dette bør gjelde for
 - Noen av participants har endret respons. 
 - startTime, endTime, description, location eller room har blitt endret. 
 
-WebKalenderen må bare vise events som du enten eier eller er participant på.
+Skal det komme opp en alarm på det angitte tidspunktet? 
