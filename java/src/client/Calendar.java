@@ -134,7 +134,7 @@ public class Calendar extends CalendarLists {
         root.add(title, 0, 0, 2, 1);
         root.add(buttons, 0, 1);
         root.add(calendarView.getContentForScene(), 1, 1);
-        root.add(userListView, 2, 0);
+        root.add(userListView, 2, 1);
 
 		Scene scene = new Scene(root, 1000, 700);
 		
