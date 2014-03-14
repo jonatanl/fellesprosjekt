@@ -61,7 +61,7 @@
 		</script>
 		<script type="text/javascript">
 			
-			function createEventSourceObject(id, title, startDate, endDate, ownerId) {
+			function createEventSourceObject(id, title, startDate, endDate, ownerId, changed, attending, myEvent) {
 				if (ownerId == userId) {
 					var event = [{
 								id: id,
@@ -86,8 +86,8 @@
 			}
 
 
-			function addEvent(id, title, startDate, endDate, ownerId) {
-				var newEvent = createEventSourceObject(id, title, startDate, endDate, ownerId);
+			function addEvent(id, title, startDate, endDate, ownerId, changed, attending, myEvent) {
+				var newEvent = createEventSourceObject(id, title, startDate, endDate, ownerId, changed, attending, myEvent);
 				$('#calendar').fullCalendar('addEventSource', newEvent);
 			}
 

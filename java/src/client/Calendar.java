@@ -4,6 +4,7 @@ import client.calendar.CalendarView;
 import interfaces.PersistencyInterface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import util.DateHelper;
 import Models.Alarm;
@@ -152,7 +153,25 @@ public class Calendar extends Application{
 			addSubGroupMembers(g);
 		}
 		
-		//alarms = persistency.getAllAlarms();
+		alarms = persistency.getAllAlarms();
+	}
+	
+	public void setAlarm(Alarm a, int userId, int eventId){
+		EventParticipant ep = findEventParticipant(userId, eventId);
+		if (a == null){
+			// Remove alarm.
+			ep.setAlarmId(-1);
+		}
+		else if (ep.getAlarmId() == -1){
+			// No alarm set yet. 
+			alarms.add(a);
+			ep.setAlarmId(a.getAlarmID());
+		}
+		else{
+			// Update alarm. 
+			Alarm original = findAlarm(eventId, userId);
+			original.setTime(a.getTime());
+		}
 	}
 	
 	private Group addSubGroupMembers(Group g){
@@ -204,7 +223,17 @@ public class Calendar extends Application{
 	public void updateWebScene(){
         calendarView.removeAllEvents();
 
+        HashMap hm = new HashMap();
+        for (EventParticipant ep : eventParticipants) {
+            hm.put(ep.getEventId(), ep);
+        }
+
+        EventParticipant ep;
+
         for(Event event : events) {
+
+            ep = (EventParticipant)hm.get(event.getEventId());
+
             calendarView.addEvent(
                     "" + event.getEventId(),
                     event.getEventName(),
@@ -245,11 +274,11 @@ public class Calendar extends Application{
 	
 
 	public Room findRoom(int roomId){
-		for (Room r: rooms){
-			if (r.getId() == roomId){
-				return r;
-            }
-        }
+        for (Room r: rooms){
+            if (r.getId() == roomId)
+                return r;
+
+    }
         return null;
     }
 
@@ -258,6 +287,26 @@ public class Calendar extends Application{
 			if (ep.getEventId() == eventId && ep.getUserId() == userId){
 				return ep;
 
+			}
+		}
+		return null;
+	}
+	
+	public Alarm findAlarm(int eventId, int userId){
+		EventParticipant ep = findEventParticipant(userId, eventId);
+		if (ep != null){
+			if (ep.getAlarmId() == -1){
+				return null;
+			}
+			return findAlarm(ep.getAlarmId());
+		}
+		return null;
+	}
+	
+	public Alarm findAlarm(int alarmId){
+		for (Alarm a: alarms){
+			if (a.getAlarmID() == alarmId){
+				return a;
 			}
 		}
 		return null;

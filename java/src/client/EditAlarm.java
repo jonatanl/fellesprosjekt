@@ -10,6 +10,7 @@ import javax.swing.event.ChangeListener;
 import com.sun.glass.ui.Pixels.Format;
 
 import util.DateHelper;
+import util.Persistency;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -23,6 +24,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -35,22 +37,28 @@ import util.DateHelper;
 public class EditAlarm implements EventHandler<ActionEvent> {
 
 	private CheckBox alarmCheckBox;
-	private TextField timeBeforeField;
+	private TextField alarmTimeField;
 	private Button saveButton;
 	private Button cancelButton;
+	private Text errorMessage;
 	
 	private Stage thisStage;
     private Stage parentStage;
     private Alarm alarm;
+    private Calendar calendar;
     private int userId, eventId;
+    private boolean alarmExistedBefore;
     private PersistencyInterface persistency;
     
-    public EditAlarm(Stage stage, Alarm alarm, int eventId, int userId) {
+    public EditAlarm(PersistencyInterface p, Calendar calendar, Stage stage, Alarm alarm, int eventId, int userId) {
     	try {
+    		this.persistency = p;
     		this.userId = userId;
+        	alarmExistedBefore = (alarm != null);
         	this.alarm = alarm;
         	this.eventId = eventId;
         	this.parentStage = stage;
+        	this.calendar = calendar;
         	createStage();
 		} catch (Exception e) {
             System.out.println(e.getMessage());
@@ -58,15 +66,15 @@ public class EditAlarm implements EventHandler<ActionEvent> {
     }
 
     public boolean isValid(){
-    	if (timeBeforeField.getText().length() != 17 
-    			&& timeBeforeField.getText().substring(0, 2).matches("[0-9]+") 
-    			&& timeBeforeField.getText().substring(3, 5).matches("[0-9]+") 
-    			&& timeBeforeField.getText().substring(6, 10).matches("[0-9]+")
-    			&& timeBeforeField.getText().substring(12, 14).matches("[0-9]+")
-    			&& timeBeforeField.getText().substring(15, 17).matches("[0-9]+")) {
+    	if (alarmTimeField.getText().length() == 17 
+    			&& alarmTimeField.getText().substring(0, 2).matches("[0-9]+") 
+    			&& alarmTimeField.getText().substring(3, 5).matches("[0-9]+") 
+    			&& alarmTimeField.getText().substring(6, 10).matches("[0-9]+")
+    			&& alarmTimeField.getText().substring(12, 14).matches("[0-9]+")
+    			&& alarmTimeField.getText().substring(15, 17).matches("[0-9]+")) {
     		return true;
     	}
-    	timeBeforeField.setPromptText("dd-MM-yyyy, HH:mm");
+    	alarmTimeField.setPromptText("dd-MM-yyyy, HH:mm");
     	return false;
     }
     
@@ -74,18 +82,40 @@ public class EditAlarm implements EventHandler<ActionEvent> {
     	if (actionEvent.getSource() == saveButton) {
     		if(isValid()){
     			System.out.println("Send info to database");
-    			
-    			alarm.setAlarmID(eventId);
-    			alarm.setTime(DateHelper.convertToDate(timeBeforeField.getText(), DateHelper.FORMAT_GUI));
-    			
-    			//persistency.addAlarm(participant, alarm);;
+    			if (alarmExistedBefore){
+    				if (!alarmCheckBox.isSelected()){
+    					// Remove the alarm
+    					if (persistency.removeAlarm(alarm)){
+    						calendar.setAlarm(null, userId, eventId);
+    					}
+    				}
+    				else{
+    					// Update the alarm
+    					alarm.setTime(DateHelper.convertToDate(alarmTimeField.getText(), DateHelper.FORMAT_GUI));
+    					if (persistency.changeAlarm(alarm)){
+    						calendar.setAlarm(alarm, userId, eventId);
+    					}
+    				}
+    			}
+    			else{
+    				if (alarmCheckBox.isSelected()){
+    					// Create new alarm.
+    					alarm = new Alarm();
+    					alarm.setTime(DateHelper.convertToDate(alarmTimeField.getText(), DateHelper.FORMAT_GUI));
+    					
+    					EventParticipant ep = calendar.findEventParticipant(userId, eventId);
+    					
+    					if (persistency.addAlarm(calendar.findEventParticipant(userId, eventId), alarm)){
+    						calendar.setAlarm(alarm, userId, eventId);
+    					}
+    				}
+    			}
     			
     			thisStage.close();
     		}
     		else{
     			System.out.println("Invalid input");
-    			timeBeforeField.clear();
-    			timeBeforeField.setPromptText("Set an integer");
+    			errorMessage.setText("Feil. Bruk formatet dd:MM:yyyy, HH:mm");
     		}
 			
 		}
@@ -94,10 +124,10 @@ public class EditAlarm implements EventHandler<ActionEvent> {
     	}
     	
     	if(alarmCheckBox.isSelected()){
-			timeBeforeField.setEditable(true);
+			alarmTimeField.setEditable(true);
 		}
 		else{
-			timeBeforeField.setEditable(false);
+			alarmTimeField.setEditable(false);
 		}
     }
 	
@@ -118,18 +148,23 @@ public class EditAlarm implements EventHandler<ActionEvent> {
         
         grid.add(new Text("Alarm time:"), 0, 2);
        
-        timeBeforeField = new TextField();
-        timeBeforeField.setEditable(false);
-        timeBeforeField.setPromptText("dd:MM:yyyy, HH:mm");
-        grid.add(timeBeforeField, 1, 2);
+        alarmTimeField = new TextField();
+        alarmTimeField.setEditable(false);
+        alarmTimeField.setPromptText("dd:MM:yyyy, HH:mm");
+        alarmTimeField.setText(DateHelper.convertToString(calendar.getSelectedEvent().getStartTime(), DateHelper.FORMAT_GUI));
+        grid.add(alarmTimeField, 1, 2);
+        
+        errorMessage = new Text();
+        errorMessage.setFill(Color.FIREBRICK);
+        grid.add(errorMessage, 0, 3);
         
         saveButton = new Button("Save");
         saveButton.setOnAction(this);
-        grid.add(saveButton, 0, 3);
+        grid.add(saveButton, 0, 4);
         
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(this);
-        grid.add(cancelButton, 1, 3);
+        grid.add(cancelButton, 1, 4);
         
         Scene scene = new Scene(grid, 400, 200);
         thisStage = new Stage();

@@ -74,6 +74,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private Room noRoom = new Room();
 
     private int ownerId;
+    private User loggedInUser;
     	
     
     public AddEvent(Calendar calendar, Stage stage, PersistencyInterface persistency, int ownerId, ArrayList<Room> rooms, ArrayList<User> users, ArrayList<Group> groups) {
@@ -85,6 +86,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
         	this.rooms = rooms;
         	this.users = users;
         	this.groups = groups;
+            loggedInUser = users.get(ownerId-1);
 
             noRoom = rooms.get(0);
 
@@ -285,8 +287,8 @@ public class AddEvent implements EventHandler<ActionEvent> {
     			id = 0;
     		}
     		allPersonsObservableList.add(selectedPersonsObservableList.get(id));
-    		selectedPersonsObservableList.remove(id);
-    		chosenPersonListView.getSelectionModel().select(0);
+            selectedPersonsObservableList.remove(id);
+            chosenPersonListView.getSelectionModel().select(0);
 
     		if (selectedPersonsObservableList.size() == 0){
     			removePerson.setDisable(true);
@@ -353,9 +355,9 @@ public class AddEvent implements EventHandler<ActionEvent> {
         
         ArrayList<Object> usersAndGroups = new ArrayList<Object>(users);
         usersAndGroups.addAll(groups);
-        
         allPersonsObservableList = FXCollections.observableArrayList(usersAndGroups);
         selectedPersonsObservableList= FXCollections.observableArrayList();
+        selectedPersonsObservableList.add(loggedInUser); //Eier av event vil default stå som participant
 
     	allPersonListView = new ListView<Object>();
     	allPersonListView.setPrefWidth(175);
@@ -372,7 +374,8 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	
     	removePerson = new Button("Remove");
     	removePerson.setOnAction(this);
-    	removePerson.setDisable(true);
+    	removePerson.setDisable(false
+        );
     	
     	rightBox.getChildren().addAll(participants,allPersonListView,addPerson,chosenPersonListView,removePerson);
     	

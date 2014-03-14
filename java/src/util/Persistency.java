@@ -108,7 +108,7 @@ public class Persistency extends PersistencyGetMethods implements PersistencyInt
 
         return success;
     }
-
+    
     @Override
     public boolean removeAlarm(Alarm alarm) {
     	boolean success = false;

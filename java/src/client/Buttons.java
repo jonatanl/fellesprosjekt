@@ -5,12 +5,14 @@ import interfaces.PersistencyInterface;
 import java.util.ArrayList;
 import java.util.Date;
 
+import util.Persistency;
 import Models.Alarm;
 import Models.Event;
 import Models.EventParticipant;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 
 public class Buttons extends VBox implements EventHandler<ActionEvent> {
@@ -41,7 +43,7 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 	
 	public void setParticipant(EventParticipant ep){
 		eventParticipant = ep;
-		b_alarm.setDisable(eventParticipant == null);
+		b_alarm.setDisable(ep == null);
 	}
 	
 	public Buttons(Calendar calendar){
@@ -125,7 +127,8 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 			new ShowMore(selectedEvent, calendar.getStage(), currentParticipants, calendar.getUsers(), calendar.getRooms());
 		}
 		else if (buttonEvent.getSource() == b_alarm) {
-			//new EditAlarm(calendar.getStage(), selectedEvent.getEventId(), calendar.getLoggedInUser().getUserId());
+			new EditAlarm(calendar.getPersistency(), calendar, calendar.getStage(),calendar.findAlarm(selectedEvent.getEventId(), calendar.getLoggedInUser().getUserId()), 
+					selectedEvent.getEventId(), calendar.getLoggedInUser().getUserId());
 		}		
 		else if (buttonEvent.getSource() == b_test){
 			// Add code here for testing.

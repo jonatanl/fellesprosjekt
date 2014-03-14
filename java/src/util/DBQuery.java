@@ -89,7 +89,10 @@ public class DBQuery extends DBQueryGetMethods {
 
         ResultSet result = statement.getGeneratedKeys();
         result.next();
-        alarm.setAlarmID(result.getInt("alarmID"));
+
+        alarm.setAlarmID(result.getInt(1));
+
+
 
         query = "UPDATE eventParticipant SET alarmID=? WHERE userID=? AND eventID=?";
         statement = connection.prepareStatement(query);

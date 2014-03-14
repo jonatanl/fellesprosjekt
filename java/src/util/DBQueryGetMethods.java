@@ -125,6 +125,8 @@ public abstract class DBQueryGetMethods extends DBConnection{
             participant = new EventParticipant();
 
             participant.setAlarmId(result.getInt("alarmID"));
+            if (participant.getAlarmId() == 0)
+            	participant.setAlarmId(-1);
             participant.setEventId(result.getInt("eventID"));
             participant.setUserId(result.getInt("userID"));
             participant.setDeleted(result.getBoolean("isDeleted"));
