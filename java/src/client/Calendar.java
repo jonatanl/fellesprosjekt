@@ -145,7 +145,8 @@ public class Calendar extends Application{
         rooms = persistency.getAllRooms();
 		eventParticipants = persistency.getAllEventParticipants();
 		groups = persistency.getAllGroups();
-		// Add members of subgroups to groups, so that groups contain own and subgroup's members. 
+
+		// Add members of subgroups to groups, so that groups contain own and subgroup's members.
 		for (Group g: groups)
 		{
 			addSubGroupMembers(g);
@@ -212,7 +213,6 @@ public class Calendar extends Application{
                     event.getOwnerId()
             );
         }
-        System.out.println("-------------------------------------------------");
 	}
 	
 	
@@ -243,17 +243,21 @@ public class Calendar extends Application{
 		return null;
 	}
 	
-<<<<<<< HEAD
+
 	public Room findRoom(int roomId){
 		for (Room r: rooms){
 			if (r.getId() == roomId){
 				return r;
-=======
+            }
+        }
+        return null;
+    }
+
 	public EventParticipant findEventParticipant(int userId, int eventId){
 		for (EventParticipant ep: eventParticipants){
 			if (ep.getEventId() == eventId && ep.getUserId() == userId){
 				return ep;
->>>>>>> 6a246515ff2c8d7a6815798f6cbe7962b8825e54
+
 			}
 		}
 		return null;
