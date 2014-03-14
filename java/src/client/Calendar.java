@@ -4,6 +4,7 @@ import client.calendar.CalendarView;
 import interfaces.PersistencyInterface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
@@ -133,7 +134,8 @@ public class Calendar extends CalendarLists {
         rooms = persistency.getAllRooms();
 		eventParticipants = persistency.getAllEventParticipants();
 		groups = persistency.getAllGroups();
-		// Add members of subgroups to groups, so that groups contain own and subgroup's members. 
+
+		// Add members of subgroups to groups, so that groups contain own and subgroup's members.
 		for (Group g: groups)
 		{
 			addSubGroupMembers(g);
@@ -208,7 +210,17 @@ public class Calendar extends CalendarLists {
 	public void updateWebScene(){
         calendarView.removeAllEvents();
 
+        HashMap hm = new HashMap();
+        for (EventParticipant ep : eventParticipants) {
+            hm.put(ep.getEventId(), ep);
+        }
+
+        EventParticipant ep;
+
         for(Event event : events) {
+
+            ep = (EventParticipant)hm.get(event.getEventId());
+
             calendarView.addEvent(
                     "" + event.getEventId(),
                     event.getEventName(),
@@ -217,9 +229,9 @@ public class Calendar extends CalendarLists {
                     event.getOwnerId()
             );
         }
+
         // No selected event after webscene update. 
         setSelectedEvent(-1);
-        System.out.println("-------------------------------------------------");
 	}
 
 	public void addEvent(Event event) {
