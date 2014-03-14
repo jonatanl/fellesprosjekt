@@ -23,23 +23,15 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 //Main class of the calendar system. 
-public class Calendar extends Application{
-	
-	
+public class Calendar extends CalendarLists {
+
 	private Stage stage;
-	
-	private ArrayList<Event> events;
-	private ArrayList<User> users;
-	private ArrayList<Group> groups;
-	private ArrayList<Room> rooms;
-	private ArrayList<EventParticipant> eventParticipants;
-	private ArrayList<Alarm> alarms;
-	
+
 	private User loggedInUser;
 	private Event selectedEvent;
 
 	private PersistencyInterface persistency;
-	
+
 	// Visible elements
 	private Text title;
 	private Buttons buttons;
@@ -64,31 +56,11 @@ public class Calendar extends Application{
 			buttons.setIsOwner(selectedEvent.getOwnerId() == loggedInUser.getUserId());
 		}
 	}
-	
-	public ArrayList<User> getUsers() {
-		return users;
-	}
-	
-	public ArrayList<Alarm> getAlarms(){
-		return alarms;
-	}
-
-	public ArrayList<Group> getGroups() {
-		return groups;
-	}
-
-	public ArrayList<Room> getRooms() {
-		return rooms;
-	}
-
-	public ArrayList<EventParticipant> getEventParticipants() {
-		return eventParticipants;
-	}
 
 	public static void main(String[] args)  {
 		launch(args);
 	}
-	
+
 	public User getLoggedInUser() {
 		return loggedInUser;
 	}
@@ -100,8 +72,6 @@ public class Calendar extends Application{
 	public Stage getStage(){
 		return stage;
 	}
-	
-	
 
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -228,7 +198,6 @@ public class Calendar extends Application{
 	// TODO Inform other EventParticipants that someone changed their response, by setting their 
 	// field 'pendingChange' to true. 
 	}
-
 	
 	// Draws the webScene over again. 
 	public void updateWebScene(){
@@ -247,169 +216,26 @@ public class Calendar extends Application{
         setSelectedEvent(-1);
         System.out.println("-------------------------------------------------");
 	}
-	
-	
-	public User findUser(int userID){
-		for (User u: users){
-			if (u.getUserId() == userID){
-				return u;
-			}
-		}
-		return null;
-	}
-	
-	public Event findEvent(int eventId){
-		for (Event e: events){
-			if (e.getEventId() == eventId){
-				return e;
-			}
-		}
-		return null;
-	}
-	
-	public Group findGroup(int groupId){
-		for (Group g: groups){
-			if (g.getGroupId() == groupId){
-				return g;
-			}
-		}
-		return null;
-	}
-	
 
-	public Room findRoom(int roomId){
-        for (Room r: rooms){
-            if (r.getId() == roomId)
-                return r;
-
-    }
-        return null;
-    }
-
-	public EventParticipant findEventParticipant(int userId, int eventId){
-		for (EventParticipant ep: eventParticipants){
-			if (ep.getEventId() == eventId && ep.getUserId() == userId){
-				return ep;
-
-			}
-		}
-		return null;
-	}
-	
-	public Alarm findAlarm(int eventId, int userId){
-		EventParticipant ep = findEventParticipant(userId, eventId);
-		if (ep != null){
-			if (ep.getAlarmId() == -1){
-				return null;
-			}
-			return findAlarm(ep.getAlarmId());
-		}
-		return null;
-	}
-	
-	public Alarm findAlarm(int alarmId){
-		for (Alarm a: alarms){
-			if (a.getAlarmID() == alarmId){
-				return a;
-			}
-		}
-		return null;
-	}
-
-	
 	public void addEvent(Event event) {
 		events.add(event);
         updateWebScene();
 	}
-	
-	
+
 	public void removeEvent(Event event) {
 		System.out.println("index of: " + events.indexOf(event));
 		events.remove(events.indexOf(event));
 		updateWebScene();
 	}
-	
+
 	public void addEventParticipant(EventParticipant participant) {
 		eventParticipants.add(participant);
 		updateWebScene();
 	}
 	
-	
 	public void addEventParticipants(ArrayList<EventParticipant> participants){
 		eventParticipants.addAll(participants);
 		updateWebScene();
 	}
-	
-	
-/*
-	public void changeEvent(int eventId, String newEventName,
-			Date newStartTime, Date newEndTime, String newDescription,
-			String newLocation, Room newRoom) {
-		Event e = findEvent(eventId);
-		e.setEventName(newEventName);
-		e.setStartTime(newStartTime);
-		e.setEndTime(newEndTime);
-		e.setDescription(newDescription);
-		e.setLocation(newLocation);
-		//e.setRoom(newRoom);
-		
-		// TODO Update webview. 
-		
-	}
-	
-	public Event findEvent(int eventID){
-		for (Event e: events){
-			if (e.getEventId() == eventID){
-				return e;
-			}
-		}
-		return null;
-	}
-
-	
-	
-	@Override
-	
-
-	@Override
-	public void removeEventParticipant(int eventID, EventParticipant participant) {
-		Event e = findEvent(eventID);
-		if (e != null){
-			e.removeEventParticipant(participant);
-		}
-	}
-	
-	
-	
-	@Override
-	public void addAlarm(EventParticipant participant, Alarm alarm) {
-		//participant.setAlarm(alarm);
-		// TODO Inform webView
-	}
-	
-	@Override
-	public void removeAlarm(EventParticipant participant) {
-		//participant.setAlarm(null);
-		// TODO inform webView.
-		
-	}
-
-	@Override
-	public void changeAlarm(EventParticipant participant, Date newAlarmTime) {
-		//participant.setAlarm(new Alarm(newAlarmTime));
-		// TODO inform webView.
-	}
-	
-	public void addRoom(Room room){
-		rooms.add(room);
-	}
-	
-	public void removeRoom(Room room){
-		rooms.remove(room);
-	}
-*/
-	
-
-
 	
 }
