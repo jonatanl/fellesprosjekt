@@ -17,3 +17,5 @@ out/
 java/.classpath
 *.log
 *.classpath
+*.classpath
+*.classpath

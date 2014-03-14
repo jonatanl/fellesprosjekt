@@ -132,11 +132,8 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 		}		
 		else if (buttonEvent.getSource() == b_test){
 			// Add code here for testing.
-			System.out.println("Selected eventId: " + selectedEvent.getEventId());
-			for (EventParticipant e: calendar.getEventParticipants()){
-				if (e.getEventId() == selectedEvent.getEventId()){
-					System.out.println(e);
-				}
+			for (Alarm a: calendar.getAlarms()){
+				System.out.println(a.getAlarmID() + " " + a.getTime());
 			}
 		}
 	}

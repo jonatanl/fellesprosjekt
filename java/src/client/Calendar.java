@@ -50,14 +50,27 @@ public class Calendar extends Application{
 	}
 
 	public void setSelectedEvent(int eventId) {
-		this.selectedEvent = findEvent(eventId);
-		buttons.setSelectedEvent(selectedEvent);
-		buttons.setParticipant(findEventParticipant(loggedInUser.getUserId(), eventId));
-		buttons.setIsOwner(selectedEvent.getOwnerId() == loggedInUser.getUserId());
+		if (eventId == -1){
+			// No event selected.
+			this.selectedEvent = null;
+			buttons.setSelectedEvent(null);
+			buttons.setParticipant(null);
+			buttons.setIsOwner(false);
+		}
+		else{
+			this.selectedEvent = findEvent(eventId);
+			buttons.setSelectedEvent(selectedEvent);
+			buttons.setParticipant(findEventParticipant(loggedInUser.getUserId(), eventId));
+			buttons.setIsOwner(selectedEvent.getOwnerId() == loggedInUser.getUserId());
+		}
 	}
 	
 	public ArrayList<User> getUsers() {
 		return users;
+	}
+	
+	public ArrayList<Alarm> getAlarms(){
+		return alarms;
 	}
 
 	public ArrayList<Group> getGroups() {
@@ -230,6 +243,8 @@ public class Calendar extends Application{
                     event.getOwnerId()
             );
         }
+        // No selected event after webscene update. 
+        setSelectedEvent(-1);
         System.out.println("-------------------------------------------------");
 	}
 	
