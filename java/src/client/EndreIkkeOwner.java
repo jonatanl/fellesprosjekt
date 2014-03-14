@@ -5,6 +5,7 @@ package client;
 
 
 
+import util.DateHelper;
 import Models.Event;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -32,17 +33,19 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 	private Event eventModel;
 	private Stage thisStage;
 	private Stage parentStage;
+	private Calendar calendar;
 
 
 	
-	public EndreIkkeOwner(Event event, Stage parentStage) {
+	public EndreIkkeOwner(Calendar calendar, Event event, Stage parentStage) {
 		try {
 			createStage();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		setModel(event);
 		this.parentStage = parentStage;
+		this.calendar = calendar;
+		setModel(event);
 
 	}
 
@@ -50,14 +53,19 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 	
 	public void setModel(Event model) {
 		this.eventModel = model;
+		String[] startDate = DateHelper.convertToString(model.getStartTime(),DateHelper.FORMAT_GUI).split(", ");
+		String[] endDate = DateHelper.convertToString(model.getEndTime(),DateHelper.FORMAT_GUI).split(", ");
+		String date = startDate[0];
+		String startTime = startDate[1];
+		String endTime = endDate[1];		
 		
 		t_title.setText(model.getEventName());
-		//t_date.setText(model.getDate());
-		//t_start.setText(model.getStartTime());
-		//t_stop.setText(model.getEndTime());
+		t_date.setText(date);
+		t_start.setText(startTime);
+		t_stop.setText(endTime);
 		t_description.setText(model.getDescription());
 		t_place.setText(model.getLocation());
-		//t_room.setText(model.getRoom().toString());
+		t_room.setText(calendar.findRoom(model.getRoomId()).toString());
 	}
 	
 	public void createStage() {

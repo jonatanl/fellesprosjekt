@@ -226,7 +226,7 @@ public class Calendar extends CalendarLists {
                     event.getEventName(),
                     DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_JAVASCRIPT),
                     DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_JAVASCRIPT),
-                    event.getOwnerId()
+                    event.getOwnerId(),true,true,true
             );
         }
 
