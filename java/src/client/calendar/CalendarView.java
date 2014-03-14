@@ -17,8 +17,15 @@ public class CalendarView {
         calendar = new Browser();
     }
 
-    public void addEvent(String id, String title, String startDate, String endDate, int ownerId) {
-        calendar.callJavaScript("addEvent(" + id + ", \'" + title + "\', \'" + startDate + "\', \'" + endDate + "\', \'" + ownerId + "\')");
+    public void addEvent(String id, String title, String startDate, String endDate, int ownerId, boolean changed, boolean attending, boolean myEvent) {
+        calendar.callJavaScript("addEvent(" + id
+                                   + ", \'" + title
+                                 + "\', \'" + startDate
+                                 + "\', \'" + endDate
+                                 + "\', \'" + ownerId
+                                 + "\', \'" + changed
+                                 + "\', \'" + attending
+                                 + "\', \'" + myEvent + "\')");
     }
 
     public void removeAllEvents() {

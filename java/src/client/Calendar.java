@@ -4,7 +4,10 @@ import client.calendar.CalendarView;
 import interfaces.PersistencyInterface;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
 import util.DateHelper;
 import Models.Alarm;
 import Models.Event;
@@ -36,6 +39,9 @@ public class Calendar extends CalendarLists {
 	private Text title;
 	private Buttons buttons;
 	private CalendarView calendarView;
+
+    private ListView<User> userListView;
+    private ObservableList<User> userObservableList;
 
 	public Event getSelectedEvent() {
 		return selectedEvent;
@@ -115,7 +121,7 @@ public class Calendar extends CalendarLists {
         root.add(buttons, 0, 1);
         root.add(calendarView.getContentForScene(), 1, 1);
 
-		Scene scene = new Scene(root, 900, 700);
+		Scene scene = new Scene(root, 1000, 700);
 		
 		stage.setScene(scene);
 		stage.show();
@@ -128,7 +134,8 @@ public class Calendar extends CalendarLists {
         rooms = persistency.getAllRooms();
 		eventParticipants = persistency.getAllEventParticipants();
 		groups = persistency.getAllGroups();
-		// Add members of subgroups to groups, so that groups contain own and subgroup's members. 
+
+		// Add members of subgroups to groups, so that groups contain own and subgroup's members.
 		for (Group g: groups)
 		{
 			addSubGroupMembers(g);
@@ -203,7 +210,17 @@ public class Calendar extends CalendarLists {
 	public void updateWebScene(){
         calendarView.removeAllEvents();
 
+        HashMap hm = new HashMap();
+        for (EventParticipant ep : eventParticipants) {
+            hm.put(ep.getEventId(), ep);
+        }
+
+        EventParticipant ep;
+
         for(Event event : events) {
+
+            ep = (EventParticipant)hm.get(event.getEventId());
+
             calendarView.addEvent(
                     "" + event.getEventId(),
                     event.getEventName(),
@@ -212,9 +229,9 @@ public class Calendar extends CalendarLists {
                     event.getOwnerId()
             );
         }
+
         // No selected event after webscene update. 
         setSelectedEvent(-1);
-        System.out.println("-------------------------------------------------");
 	}
 
 	public void addEvent(Event event) {

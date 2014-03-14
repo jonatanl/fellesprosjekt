@@ -61,7 +61,7 @@
 		</script>
 		<script type="text/javascript">
 			
-			function createEventSourceObject(id, title, startDate, endDate, ownerId) {
+			function createEventSourceObject(id, title, startDate, endDate, ownerId, changed, attending, myEvent) {
 				if (ownerId == userId) {
 					var event = [{
 								id: id,
@@ -86,19 +86,13 @@
 			}
 
 
-			function addEvent(id, title, startDate, endDate, ownerId) {
-				<!--Do not use callback to indicate that an event was added. Callback should only be used when an event is selected.-->			
-				<!--app.onClickIDtoJavaFX(id);-->
-				var newEvent = createEventSourceObject(id, title, startDate, endDate, ownerId);
+			function addEvent(id, title, startDate, endDate, ownerId, changed, attending, myEvent) {
+				var newEvent = createEventSourceObject(id, title, startDate, endDate, ownerId, changed, attending, myEvent);
 				$('#calendar').fullCalendar('addEventSource', newEvent);
 			}
 
 			function setUserId(id) {
 				userId = id;
-				<!--Do not use callback to indicate which user is logged in. Callback should only be used when an event is selected.-->
-				<!--app.onClickIDtoJavaFX(id)-->
-				
-				
 			}
 
 			function removeAllEvents() {
