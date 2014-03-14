@@ -31,7 +31,7 @@ import javafx.stage.Stage;
 public class ShowMore implements EventHandler<ActionEvent> {
     
     private ObservableList<String> items;
-    private String s_title,s_start,s_end,s_description,s_place,s_room,s_alarm,s_myParticipation;
+    private String s_title, s_owner, s_start,s_end,s_description,s_place,s_room,s_alarm,s_myParticipation;
     
     private Stage parentStage;
     private Stage stage;
@@ -68,6 +68,7 @@ public class ShowMore implements EventHandler<ActionEvent> {
     	this.s_end = DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_GUI);
     	this.s_description = event.getDescription();
     	this.s_place = event.getLocation();
+    	this.s_owner = "" + calendar.findUser(event.getOwnerId()).getUsername();
     	
     	finalParitcipants = new ArrayList<String>();
     	
@@ -142,6 +143,7 @@ public class ShowMore implements EventHandler<ActionEvent> {
     
     public VBox getLeftBox(){
     	Label title = new Label ("Title");
+    	Label owner = new Label ("Owner");
         Label start = new Label ("Start");
         Label end = new Label ("End");
         Label description = new Label ("Description");
@@ -152,13 +154,14 @@ public class ShowMore implements EventHandler<ActionEvent> {
         
         
         VBox leftBox = new VBox();
-        leftBox.getChildren().addAll(title,start,end,description,place,room,alarm,myParticipation);
+        leftBox.getChildren().addAll(title,owner,start,end,description,place,room,alarm,myParticipation);
         
         return leftBox;
     }
     
     public VBox getDataBox(){
     	Label eventTitle = new Label (s_title);
+    	Label eventOwner = new Label (s_owner);
         Label eventStart = new Label (s_start);
         Label eventEnd = new Label (s_end);
         Label eventDescription = new Label (s_description);
@@ -168,7 +171,7 @@ public class ShowMore implements EventHandler<ActionEvent> {
         Label eventMyParticipation = new Label ();
         
         VBox middleBox = new VBox();
-        middleBox.getChildren().addAll(eventTitle,eventStart,eventEnd,eventDescription,eventPlace,eventRoom,eventAlarm,eventMyParticipation);
+        middleBox.getChildren().addAll(eventTitle,eventOwner,eventStart,eventEnd,eventDescription,eventPlace,eventRoom,eventAlarm,eventMyParticipation);
         
         return middleBox;
     }
