@@ -356,6 +356,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
         ArrayList<Object> usersAndGroups = new ArrayList<Object>(users);
         usersAndGroups.addAll(groups);
         allPersonsObservableList = FXCollections.observableArrayList(usersAndGroups);
+        allPersonsObservableList.remove(loggedInUser);
         selectedPersonsObservableList= FXCollections.observableArrayList();
         selectedPersonsObservableList.add(loggedInUser); //Eier av event vil default stå som participant
 

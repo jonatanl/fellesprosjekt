@@ -123,12 +123,12 @@ public class EditAlarm implements EventHandler<ActionEvent> {
     		thisStage.close();
     	}
     	
-    	if(alarmCheckBox.isSelected()){
-			alarmTimeField.setEditable(true);
-		}
-		else{
-			alarmTimeField.setEditable(false);
-		}
+    	enableAlarm(alarmCheckBox.isSelected());
+    }
+    
+    private void enableAlarm(boolean enable){
+    	alarmCheckBox.setSelected(enable);
+    	alarmTimeField.setDisable(!enable);
     }
 	
     public void createStage() throws Exception {
@@ -144,14 +144,19 @@ public class EditAlarm implements EventHandler<ActionEvent> {
         
         alarmCheckBox = new CheckBox("Alarm");
         alarmCheckBox.setOnAction(this);
+        
         grid.add(alarmCheckBox, 0, 1);
         
         grid.add(new Text("Alarm time:"), 0, 2);
        
         alarmTimeField = new TextField();
-        alarmTimeField.setEditable(false);
         alarmTimeField.setPromptText("dd:MM:yyyy, HH:mm");
-        alarmTimeField.setText(DateHelper.convertToString(calendar.getSelectedEvent().getStartTime(), DateHelper.FORMAT_GUI));
+        if (alarmExistedBefore){
+        	alarmTimeField.setText(DateHelper.convertToString(alarm.getTime(), DateHelper.FORMAT_GUI));
+        }
+        else{
+        	alarmTimeField.setText(DateHelper.convertToString(calendar.getSelectedEvent().getStartTime(), DateHelper.FORMAT_GUI));
+        }
         grid.add(alarmTimeField, 1, 2);
         
         errorMessage = new Text();
@@ -165,6 +170,10 @@ public class EditAlarm implements EventHandler<ActionEvent> {
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(this);
         grid.add(cancelButton, 1, 4);
+        
+        
+        
+        enableAlarm(alarmExistedBefore);
         
         Scene scene = new Scene(grid, 400, 200);
         thisStage = new Stage();
