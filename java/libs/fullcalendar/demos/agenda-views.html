@@ -12,6 +12,7 @@
 		<script>
 
 			$(document).ready(function() {
+				var clicked;
 				var lastClicked;
 				var userId;
 
@@ -34,18 +35,35 @@
 					allDaySlot: false,
 
 					eventClick: function(calEvent, jsEvent, view) {
+						clicked = this;
 
 				        //Remove old selections box shadow
 				        if ('null' != lastClicked) {
 				        	$(lastClicked).css('box-shadow','');
 				        }
 
-				        //On eventClick set box shadow for current selection
-				        $(this).css({
-				        	'box-shadow' : '7px 7px 5px 0px #888'
+				        //Changes events that have a changed notice when selected
+				        if(calEvent.changed == 'true' && calEvent.myEvent == 'true') {
+				        	if(calEvent.ownerId == calEvent.userId) {
+				        		ownerIdStyle(calEvent);
+				        	} else {
+				        		calEvent = normalStyle(calEvent);
+				        	}
+				        	console.log(calEvent)
+				        	calEvent.changed = 'false';
+				        	//app.changedEventClicktoJavaFX(calEvent.id);
+				        }
 
+
+				        //On eventClick set box shadow for current selection
+				        $(clicked).css({
+				        	'box-shadow' : '7px 7px 5px 0px #888'
 				        });
+
+						//$('#calendar').fullCalendar( 'rerenderEvents' );
+				        
 				        lastClicked = this;
+
 
 				        //CallBack to JavaFX with event ID
 				        app.onClickIDtoJavaFX(calEvent.id);
@@ -61,25 +79,40 @@
 		</script>
 		<script type="text/javascript">
 			
+			//addEvent('33', 'lol', 'March 14, 2014 12:00:00', 'March 14, 2014 13:00:00', '1', 'true', 'true', 'true');
 			function createEventSourceObject(id, title, startDate, endDate, ownerId, changed, attending, myEvent) {
-				if (ownerId == userId) {
-					var event = [{
-								id: id,
-								title: title,
-								start: startDate,
-								end: endDate,
-								allDay: false,
-								backgroundColor: '#EAB7AD',
-								borderColor: '#E88B79'
-							}];
-				} else {
-					var event = [{
+				
+				var event = [{
 								id: id,
 								title: title,
 								start: startDate,
 								end: endDate,
 								allDay: false
 							}];
+
+				event[0].changed = changed;
+				event[0].ownerId = ownerId;
+				event[0].attending = attending;
+				event[0].myEvent = myEvent;
+				event[0].userId = userId;
+
+				event[0] = normalStyle(event[0]);
+
+				if (myEvent == 'false') {
+					event[0] = notMyEventStyle(event[0]);
+
+				} else {
+					if (ownerId == userId) {
+						event[0] = ownerIdStyle(event[0]);
+					}
+
+					if (changed == 'true') {
+						event[0] = changedStyle(event[0]);
+					}
+
+					if (attending == 'true') {
+						event[0] = attendingStyle(event[0]);
+					}
 				}
 
 				return event;
@@ -90,7 +123,7 @@
 				var newEvent = createEventSourceObject(id, title, startDate, endDate, ownerId, changed, attending, myEvent);
 				$('#calendar').fullCalendar('addEventSource', newEvent);
 			}
-
+			
 			function setUserId(id) {
 				userId = id;
 			}
@@ -99,11 +132,37 @@
 				$('#calendar').fullCalendar('removeEvents');
 			}
 
+			function attendingStyle(event) {
+				event.borderColor = '#14DE61';
+				return event;
+			}
+
+			function changedStyle(event) {
+				event.backgroundColor = '#FA6525';
+				return event;
+			}
+
+			function notMyEventStyle(event) {
+				event.backgroundColor = '#D1D1D1';
+				event.borderColor = '#787878';
+				return event;
+			}
+
+			function ownerIdStyle(event) {
+				event.backgroundColor = '#F79797';
+				return event;
+			}
+
+			function normalStyle(event) {
+				event.backgroundColor = '#97F7F7';
+				return event;
+			}
+
 		</script>
 		<style>
 
 			body {
-				margin-top: 40px;
+				margin-top: 20px;
 				text-align: center;
 				font-size: 14px;
 				font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
