@@ -80,6 +80,7 @@ public class Calendar extends CalendarLists {
 	public void start(Stage stage) throws Exception {
 		persistency = new util.Persistency();
 		this.stage = stage;
+		ParticipantCell.setCalendar(this);
 		
 		Login login = new Login(this, persistency);
 		login.createStage();
@@ -208,17 +209,12 @@ public class Calendar extends CalendarLists {
 		event.setEventId(eventID);
 	}
 	
-	public void changeEventParticipantResponse(int eventId, int eventParticipantId,
+	public void changeEventParticipantResponse(int eventId, int userId,
 			String newResponse, boolean newIsDeleted) {
+		EventParticipant ep = findEventParticipant(userId, eventId);
+		ep.setResponse(newResponse);
+		ep.setDeleted(newIsDeleted);
 		
-	Event e = findEvent(eventId);
-	
-	if (e != null){
-		//EventParticipant ep = e.findEventParticipant(eventParticipantId);
-		//if (ep != null){
-		//	ep.setResponse(newResponse);
-		//	ep.setDeleted(newIsDeleted);
-		}
 	// TODO Inform other EventParticipants that someone changed their response, by setting their 
 	// field 'pendingChange' to true. 
 	}
@@ -305,6 +301,11 @@ public class Calendar extends CalendarLists {
 	
 	public void addEventParticipants(ArrayList<EventParticipant> participants){
 		eventParticipants.addAll(participants);
+		updateWebScene();
+	}
+	
+	public void removeEventParticipant(EventParticipant ep){
+		eventParticipants.remove(ep);
 		updateWebScene();
 	}
 	

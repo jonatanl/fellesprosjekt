@@ -5,8 +5,10 @@ package client;
 
 
 
+import interfaces.PersistencyInterface;
 import util.DateHelper;
 import Models.Event;
+import Models.EventParticipant;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -37,10 +39,16 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 	private RadioButton going;
 	private RadioButton notGoing;	
 
+	private EventParticipant eventParticipant;
+	EventParticipant eventParticipantClone;
+	private PersistencyInterface persistency;
 
 	
-	public EndreIkkeOwner(Calendar calendar, Event event, Stage parentStage) {
+	public EndreIkkeOwner(Calendar calendar, Event event, Stage parentStage, PersistencyInterface p) {
 		try {
+			eventParticipant = calendar.findEventParticipant(calendar.getLoggedInUser().getUserId(), event.getEventId());
+			eventParticipantClone = new EventParticipant(eventParticipant);
+			persistency = p;
 			createStage();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -99,6 +107,11 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 		notGoing = new RadioButton("Skal ikke");
 		notGoing.setToggleGroup(participationGroup);
 		
+		if (eventParticipant.getResponse() != null){
+			going.setSelected(eventParticipant.getResponse().equals(EventParticipant.going));
+			notGoing.setSelected(eventParticipant.getResponse().equals(EventParticipant.notGoing));
+		}
+		
 		
 		VBox leftBox = new VBox();
 		leftBox.getChildren().addAll(l_title,l_date,l_start,l_stop,l_description,l_place,l_room);
@@ -148,6 +161,22 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 	@Override
 	public void handle(ActionEvent actionEvent) {
 		if(actionEvent.getSource() == confirm){
+			
+			if (going.isSelected()){
+				eventParticipantClone.setResponse(EventParticipant.going);
+			}
+			else if (notGoing.isSelected()){
+				eventParticipantClone.setResponse(EventParticipant.notGoing);
+			}
+			
+			// Update if there is a change.
+			if (eventParticipant.getResponse()!= eventParticipantClone.getResponse()){
+				persistency.changeEventParticipantResponse(eventParticipantClone);
+				calendar.changeEventParticipantResponse(eventModel.getEventId(), 
+						eventParticipant.getUserId(), 
+						eventParticipantClone.getResponse(), 
+						eventParticipantClone.isDeleted());
+			}
 			thisStage.close();
 		}
 	}

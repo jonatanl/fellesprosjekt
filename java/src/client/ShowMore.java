@@ -19,6 +19,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
@@ -26,11 +27,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
  
 public class ShowMore implements EventHandler<ActionEvent> {
     
-    private ObservableList<String> items;
+    private ObservableList<Object> items;
     private String s_title, s_owner, s_start,s_end,s_description,s_place,s_room,s_alarm,s_myParticipation;
     
     private Stage parentStage;
@@ -39,7 +41,7 @@ public class ShowMore implements EventHandler<ActionEvent> {
     private ArrayList<EventParticipant> participants;
     private ArrayList<User> users;
     private ArrayList<Room> rooms;
-    private ArrayList<String> finalParitcipants;
+    private ArrayList<Object> finalParitcipants;
     private Calendar calendar;
     private boolean alarmExistedBefore;
     private Alarm alarm;
@@ -70,12 +72,12 @@ public class ShowMore implements EventHandler<ActionEvent> {
     	this.s_place = event.getLocation();
     	this.s_owner = "" + calendar.findUser(event.getOwnerId()).getUsername();
     	
-    	finalParitcipants = new ArrayList<String>();
+    	finalParitcipants = new ArrayList<Object>();
     	
     	for (int i = 0; i < users.size(); i++) {
     		for (int j = 0; j < participants.size(); j++) {
     			if(users.get(i).getUserId() == participants.get(j).getUserId()){    				
-    				finalParitcipants.add(users.get(i).toString());
+    				finalParitcipants.add(users.get(i));
     			}
     		}
 			
@@ -124,10 +126,18 @@ public class ShowMore implements EventHandler<ActionEvent> {
     	VBox rightBox = new VBox();
         Label participants = new Label ("Participants");
 
-    	ListView<String> list = new ListView<String>();
+    	ListView<Object> list = new ListView<Object>();
     	list.setItems(items);
     	list.setPrefWidth(175);
     	list.setPrefHeight(130);
+    	list.setCellFactory(new Callback<ListView<Object>, ListCell<Object>>() {
+			
+			@Override
+			public ListCell<Object> call(ListView<Object> arg0) {
+				// TODO Auto-generated method stub
+				return new ParticipantCell(event);
+			}
+		});
     	
     	rightBox.getChildren().addAll(participants,list);
     	
@@ -184,11 +194,13 @@ public class ShowMore implements EventHandler<ActionEvent> {
     	
     	RadioButton rb1 = new RadioButton("Going");
     	rb1.setToggleGroup(group);
-    	rb1.setSelected(true);
+    	EventParticipant ep = calendar.findEventParticipant(calendar.getLoggedInUser().getUserId(), event.getEventId());
+    	rb1.setSelected(ep.getResponse().equals(EventParticipant.going));
     	rb1.setDisable(true);
 
     	RadioButton rb2 = new RadioButton("Not going");
     	rb2.setToggleGroup(group);
+    	rb2.setSelected((ep.getResponse().equals(EventParticipant.notGoing)));
     	rb2.setDisable(true);
     	radioBox.getChildren().addAll(rb1,rb2);
     	
