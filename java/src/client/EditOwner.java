@@ -238,6 +238,7 @@ public class EditOwner implements EventHandler<ActionEvent>{
     	
     	  	
     	going = new RadioButton("Going");
+    	going.setDisable(true);
     	going.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
@@ -249,6 +250,7 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		going.setToggleGroup(participationGroup);
 		
 		notGoing = new RadioButton("Not going");
+		notGoing.setDisable(true);
 		notGoing.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
@@ -306,7 +308,7 @@ public class EditOwner implements EventHandler<ActionEvent>{
     		@Override
     		public void changed(ObservableValue<? extends Boolean> arg0,
     				Boolean oldVal, Boolean newVal) {
-    			System.out.println(getEventParticipantFromView().getResponse());
+    			//System.out.println(getEventParticipantFromView().getResponse());
     			if (newVal) {
     				setRadioButtons();
     			}
@@ -346,8 +348,10 @@ public class EditOwner implements EventHandler<ActionEvent>{
 			}
 		}
 		else {
+			going.setSelected(false);
 			going.setDisable(true);
-			notGoing.setDisable(true);			
+			notGoing.setDisable(true);
+			notGoing.setSelected(false);
 		}
 		
 	}

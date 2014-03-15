@@ -2,6 +2,7 @@ package client;
 
 import Models.Event;
 import Models.EventParticipant;
+import Models.Group;
 import Models.User;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -28,14 +29,21 @@ public class ParticipantCell extends ListCell<Object> {
 			Label l = new Label();
 			l.setText(((User) item).getUsername());
 			EventParticipant ep = calendar.findEventParticipant(((User) item).getUserId(), event.getEventId());
-			if (ep.getResponse() != null){
-				if (ep.getResponse().equals(EventParticipant.going)){
-					l.setTextFill(Color.GREEN);
-				}
-				else if (ep.getResponse().equals(EventParticipant.notGoing)){
-					l.setTextFill(Color.RED);
+			if (ep != null){
+				if (ep.getResponse() != null){
+					if (ep.getResponse().equals(EventParticipant.going)){
+						l.setTextFill(Color.GREEN);
+					}
+					else if (ep.getResponse().equals(EventParticipant.notGoing)){
+						l.setTextFill(Color.RED);
+					}
 				}
 			}
+			setGraphic(l);
+		}
+		else if (item instanceof Group){
+			Label l = new Label();
+			l.setText(((Group) item).getName());
 			setGraphic(l);
 		}
 	}

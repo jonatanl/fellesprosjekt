@@ -195,14 +195,17 @@ public class ShowMore implements EventHandler<ActionEvent> {
     	RadioButton rb1 = new RadioButton("Going");
     	rb1.setToggleGroup(group);
     	EventParticipant ep = calendar.findEventParticipant(calendar.getLoggedInUser().getUserId(), event.getEventId());
-    	rb1.setSelected(ep.getResponse().equals(EventParticipant.going));
     	rb1.setDisable(true);
 
     	RadioButton rb2 = new RadioButton("Not going");
     	rb2.setToggleGroup(group);
-    	rb2.setSelected((ep.getResponse().equals(EventParticipant.notGoing)));
     	rb2.setDisable(true);
     	radioBox.getChildren().addAll(rb1,rb2);
+    	
+    	if (ep.getResponse() != null){
+    		rb1.setSelected(ep.getResponse().equals(EventParticipant.going));
+    		rb2.setSelected((ep.getResponse().equals(EventParticipant.notGoing)));
+    	}
     	
     	return radioBox;
     }

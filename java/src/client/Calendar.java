@@ -305,7 +305,8 @@ public class Calendar extends CalendarLists {
 	}
 	
 	public void removeEventParticipant(EventParticipant ep){
-		eventParticipants.remove(ep);
+		EventParticipant epOriginal = findEventParticipant(ep.getUserId(), ep.getEventId());
+		eventParticipants.remove(epOriginal);
 		updateWebScene();
 	}
 	
