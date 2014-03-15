@@ -73,7 +73,7 @@ public class ShowMore implements EventHandler<ActionEvent> {
     	finalParitcipants = new ArrayList<String>();
     	
     	for (int i = 0; i < users.size(); i++) {
-    		for (int j = 0; j < participants.size()-1; j++) {
+    		for (int j = 0; j < participants.size(); j++) {
     			if(users.get(i).getUserId() == participants.get(j).getUserId()){    				
     				finalParitcipants.add(users.get(i).toString());
     			}
