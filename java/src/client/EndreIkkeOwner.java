@@ -5,6 +5,7 @@ package client;
 
 
 
+import util.DateHelper;
 import Models.Event;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -32,17 +33,21 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 	private Event eventModel;
 	private Stage thisStage;
 	private Stage parentStage;
+	private Calendar calendar;
+	private RadioButton going;
+	private RadioButton notGoing;	
 
 
 	
-	public EndreIkkeOwner(Event event, Stage parentStage) {
+	public EndreIkkeOwner(Calendar calendar, Event event, Stage parentStage) {
 		try {
 			createStage();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		setModel(event);
 		this.parentStage = parentStage;
+		this.calendar = calendar;
+		setModel(event);
 
 	}
 
@@ -50,14 +55,19 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 	
 	public void setModel(Event model) {
 		this.eventModel = model;
+		String[] startDate = DateHelper.convertToString(model.getStartTime(),DateHelper.FORMAT_GUI).split(", ");
+		String[] endDate = DateHelper.convertToString(model.getEndTime(),DateHelper.FORMAT_GUI).split(", ");
+		String date = startDate[0];
+		String startTime = startDate[1];
+		String endTime = endDate[1];		
 		
 		t_title.setText(model.getEventName());
-		//t_date.setText(model.getDate());
-		//t_start.setText(model.getStartTime());
-		//t_stop.setText(model.getEndTime());
+		t_date.setText(date);
+		t_start.setText(startTime);
+		t_stop.setText(endTime);
 		t_description.setText(model.getDescription());
 		t_place.setText(model.getLocation());
-		//t_room.setText(model.getRoom().toString());
+		t_room.setText(calendar.findRoom(model.getRoomId()).toString());
 	}
 	
 	public void createStage() {
@@ -84,9 +94,9 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 		confirm = new Button("Ok");
 		confirm.setOnAction(this);
 		
-		RadioButton going = new RadioButton("Skal");
+		going = new RadioButton("Skal");
 		going.setToggleGroup(participationGroup);
-		RadioButton notGoing = new RadioButton("Skal ikke");
+		notGoing = new RadioButton("Skal ikke");
 		notGoing.setToggleGroup(participationGroup);
 		
 		
@@ -102,8 +112,7 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 		
 		for (Node text : rightBox.getChildren()) {
 			TextField textf = (TextField) text;
-			textf.setEditable(false);
-			textf.setDisable(false);
+			textf.setDisable(true);
 		}
 		
 		HBox participation = new HBox();
@@ -118,8 +127,6 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 		VBox confirmation = new VBox();
 		confirmation.getChildren().add(confirm);
 		confirmation.setPadding(new Insets(10,10,10,100));
-		
-		
 		
 		VBox root = new VBox();
 		root.getChildren().addAll(container, participation, confirmation);
@@ -139,9 +146,10 @@ public class EndreIkkeOwner implements EventHandler<ActionEvent>{
 
 
 	@Override
-	public void handle(ActionEvent arg0) {
-		thisStage.close();
-		
+	public void handle(ActionEvent actionEvent) {
+		if(actionEvent.getSource() == confirm){
+			thisStage.close();
+		}
 	}
 
 }

@@ -3,6 +3,8 @@ package client;
 import java.util.ArrayList;
 import java.util.Date;
 
+import util.DateHelper;
+import Models.Alarm;
 import Models.Event;
 import Models.EventParticipant;
 import Models.Room;
@@ -29,7 +31,7 @@ import javafx.stage.Stage;
 public class ShowMore implements EventHandler<ActionEvent> {
     
     private ObservableList<String> items;
-    private String s_title,s_date,s_start,s_end,s_description,s_place,s_room,s_alert,s_timeBefore,s_myParticipation;
+    private String s_title, s_owner, s_start,s_end,s_description,s_place,s_room,s_alarm,s_myParticipation;
     
     private Stage parentStage;
     private Stage stage;
@@ -39,15 +41,20 @@ public class ShowMore implements EventHandler<ActionEvent> {
     private ArrayList<Room> rooms;
     private ArrayList<String> finalParitcipants;
     private Calendar calendar;
+    private boolean alarmExistedBefore;
+    private Alarm alarm;
     
-    public ShowMore(Event event, Stage stage, ArrayList<EventParticipant> participants, ArrayList<User> users, ArrayList<Room> rooms){
+    public ShowMore(Calendar calendar, Event event, Stage stage, ArrayList<EventParticipant> participants, ArrayList<User> users, ArrayList<Room> rooms){
     	try {
+    		this.calendar = calendar;
     		this.event = event;
     		this.parentStage = stage;
     		this.participants = participants;
     		this.users = users;
     		this.rooms = rooms;
-    		setEvent(event.getEventName(), event.getStartTime(), event.getEndTime(), event.getDescription(), event.getLocation(), event.getRoomId());
+    		this.alarm = calendar.findAlarm(event.getEventId(), calendar.getLoggedInUser().getUserId());
+    		alarmExistedBefore = (alarm != null);
+    		setEvent(event);
     		createStage();
     	} catch (Exception e) {
     		e.printStackTrace();
@@ -55,17 +62,18 @@ public class ShowMore implements EventHandler<ActionEvent> {
     	
     }
     
-    public void setEvent(String title, Date start, Date end, String description, String place, int roomId){
-    	this.s_title = title;
-    	this.s_start = start.toString();
-    	this.s_end = end.toString();
-    	this.s_description = description;
-    	this.s_place = place;
+    public void setEvent(Event event){
+    	this.s_title = event.getEventName();
+    	this.s_start = DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_GUI);
+    	this.s_end = DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_GUI);
+    	this.s_description = event.getDescription();
+    	this.s_place = event.getLocation();
+    	this.s_owner = "" + calendar.findUser(event.getOwnerId()).getUsername();
     	
     	finalParitcipants = new ArrayList<String>();
     	
     	for (int i = 0; i < users.size(); i++) {
-    		for (int j = 0; j < participants.size()-1; j++) {
+    		for (int j = 0; j < participants.size(); j++) {
     			if(users.get(i).getUserId() == participants.get(j).getUserId()){    				
     				finalParitcipants.add(users.get(i).toString());
     			}
@@ -76,11 +84,16 @@ public class ShowMore implements EventHandler<ActionEvent> {
     	items =FXCollections.observableArrayList(finalParitcipants);
     	
     	for (int i = 0; i < rooms.size(); i++) {
-    		if(rooms.get(i).getId()==roomId){
+    		if(rooms.get(i).getId()==event.getRoomId()){
     			this.s_room = rooms.get(i).toString();
     		}
 			
 		}
+    	
+    	s_alarm = "No alarm";
+    	if (alarmExistedBefore){
+    		this.s_alarm = DateHelper.convertToString(alarm.getTime() , DateHelper.FORMAT_GUI);
+    	}
     }
 
     
@@ -130,37 +143,35 @@ public class ShowMore implements EventHandler<ActionEvent> {
     
     public VBox getLeftBox(){
     	Label title = new Label ("Title");
-    	Label date = new Label ("Date");
+    	Label owner = new Label ("Owner");
         Label start = new Label ("Start");
         Label end = new Label ("End");
         Label description = new Label ("Description");
         Label place = new Label ("Place");
         Label room = new Label ("Room");
-        Label alert = new Label ("Alert");
-        Label timeBefore = new Label ("Time befor");
+        Label alarm = new Label ("Alarm");
         Label myParticipation = new Label ("My participance");
         
         
         VBox leftBox = new VBox();
-        leftBox.getChildren().addAll(title,date,start,end,description,place,room,alert,timeBefore,myParticipation);
+        leftBox.getChildren().addAll(title,owner,start,end,description,place,room,alarm,myParticipation);
         
         return leftBox;
     }
     
     public VBox getDataBox(){
     	Label eventTitle = new Label (s_title);
-    	Label eventDate = new Label (s_date);
+    	Label eventOwner = new Label (s_owner);
         Label eventStart = new Label (s_start);
         Label eventEnd = new Label (s_end);
         Label eventDescription = new Label (s_description);
         Label eventPlace = new Label (s_place);
         Label eventRoom = new Label (s_room);
-        Label eventAlert = new Label ();
-        Label eventTimeBefore = new Label ();
+        Label eventAlarm = new Label (s_alarm);
         Label eventMyParticipation = new Label ();
         
         VBox middleBox = new VBox();
-        middleBox.getChildren().addAll(eventTitle,eventDate,eventStart,eventEnd,eventDescription,eventPlace,eventRoom,eventAlert,eventTimeBefore,eventMyParticipation);
+        middleBox.getChildren().addAll(eventTitle,eventOwner,eventStart,eventEnd,eventDescription,eventPlace,eventRoom,eventAlarm,eventMyParticipation);
         
         return middleBox;
     }

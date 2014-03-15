@@ -1,27 +1,26 @@
 package client;
 
+import Models.*;
 import client.calendar.CalendarView;
 import interfaces.PersistencyInterface;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import util.DateHelper;
-import Models.Alarm;
-import Models.Event;
-import Models.EventParticipant;
-import Models.Group;
-import Models.Room;
-import Models.User;
-import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import util.DateHelper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 //Main class of the calendar system. 
 public class Calendar extends CalendarLists {
@@ -37,6 +36,9 @@ public class Calendar extends CalendarLists {
 	private Text title;
 	private Buttons buttons;
 	private CalendarView calendarView;
+
+    private ListView<User> userListView;
+    private ObservableList<User> userObservableList;
 
 	public Event getSelectedEvent() {
 		return selectedEvent;
@@ -104,6 +106,25 @@ public class Calendar extends CalendarLists {
         buttons = new Buttons(this);
         calendarView = new CalendarView(this);
         calendarView.setUserId(loggedInUser.getUserId());
+        selectedUsers = new ArrayList<>();
+
+        userListView = new ListView<>();
+        userObservableList = FXCollections.observableList(users);
+        userListView.setItems(userObservableList);
+        userListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+        userListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<User>() {
+            @Override
+            public void changed(ObservableValue<? extends User> observableValue, User user, User user2) {
+                selectedUsers = new ArrayList<>();
+                for (User u : userListView.getSelectionModel().getSelectedItems()) {
+                    selectedUsers.add(u);
+                    updateWebScene();
+                }
+            }
+        });
+        
+        userListView.getSelectionModel().select(loggedInUser);
 
         GridPane root = new GridPane();
         root.setAlignment(Pos.CENTER);
@@ -115,8 +136,9 @@ public class Calendar extends CalendarLists {
         root.add(title, 0, 0, 2, 1);
         root.add(buttons, 0, 1);
         root.add(calendarView.getContentForScene(), 1, 1);
+        root.add(userListView, 2, 1);
 
-		Scene scene = new Scene(root, 900, 700);
+		Scene scene = new Scene(root, 1000, 700);
 		
 		stage.setScene(scene);
 		stage.show();
@@ -205,24 +227,60 @@ public class Calendar extends CalendarLists {
 	public void updateWebScene(){
         calendarView.removeAllEvents();
 
-        HashMap hm = new HashMap();
-        for (EventParticipant ep : eventParticipants) {
-            hm.put(ep.getEventId(), ep);
+        HashMap visibleUsersHm = new HashMap();
+        for (User u : selectedUsers) {
+        	visibleUsersHm.put(u.getUserId(), u);
         }
-
-        EventParticipant ep;
-
+        
         for(Event event : events) {
-
-            ep = (EventParticipant)hm.get(event.getEventId());
-
-            calendarView.addEvent(
-                    "" + event.getEventId(),
-                    event.getEventName(),
-                    DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_JAVASCRIPT),
-                    DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_JAVASCRIPT),
-                    event.getOwnerId()
-            );
+        	boolean drawEvent = false;
+            
+        	boolean changed = false;
+        	boolean attending = false;
+        	boolean myEvent = false;
+            
+            // One of the visible users owns the event
+            if (visibleUsersHm.get(event.getOwnerId()) != null){
+            	drawEvent = true;
+            }
+            
+            // one of the visible users is a participant of the event.
+            for (User u: selectedUsers){
+            	EventParticipant ep = findEventParticipant(u.getUserId(), event.getEventId()); 
+            	if (ep != null){
+            		// Do not draw if the participant deleted the event. 
+            		drawEvent = !ep.isDeleted();
+            	}
+            }
+            
+            // If drawEvent is not true at this point, skip the event. 
+            if (!drawEvent){
+            	continue;
+            }
+            
+            // We got to this point --> Add the event!
+            
+            
+            // myEvent, changed, attending (Merk at changed og attending bare er relevante dersom myEvent == true).
+            EventParticipant epLoggedInUser = findEventParticipant(event.getOwnerId(), event.getEventId());
+            if (event.getOwnerId() == loggedInUser.getUserId() || epLoggedInUser != null){
+            	myEvent = true;
+            	if (epLoggedInUser != null){
+            		changed = epLoggedInUser.isPendingChange();
+            		attending = (epLoggedInUser.getResponse() == EventParticipant.going);
+            	}
+            }
+            
+            
+        	calendarView.addEvent(
+        			"" + event.getEventId(), 
+        			event.getEventName(), 
+        			DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_JAVASCRIPT), 
+        			DateHelper.convertToString(event.getEndTime(), DateHelper.FORMAT_JAVASCRIPT),
+        			event.getOwnerId(), 
+        			changed, 
+        			attending, 
+        			myEvent);
         }
 
         // No selected event after webscene update. 
