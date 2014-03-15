@@ -123,6 +123,8 @@ public class Calendar extends CalendarLists {
                 }
             }
         });
+        
+        userListView.getSelectionModel().select(loggedInUser);
 
         GridPane root = new GridPane();
         root.setAlignment(Pos.CENTER);
