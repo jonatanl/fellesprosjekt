@@ -61,9 +61,14 @@ public class Browser extends Region{
     }
 
     public static class CallBack {
+
         public void onClickIDtoJavaFX(int id) {
             calendar.setSelectedEvent(id);
             System.out.println("CallBack called with id: " + id);
+        }
+
+        public void changedEventClicktoJavaFX(int id) {
+            //On callback change related pendingChange in EventParticipant.
         }
     }
 }
