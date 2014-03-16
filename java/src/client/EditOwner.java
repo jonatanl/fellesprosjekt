@@ -7,7 +7,6 @@ import java.util.Collections;
 
 import util.DateHelper;
 import util.Persistency;
-
 import Models.Event;
 import Models.EventParticipant;
 import Models.Group;
@@ -24,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
@@ -34,6 +34,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class EditOwner implements EventHandler<ActionEvent>{
 	
@@ -59,27 +60,31 @@ public class EditOwner implements EventHandler<ActionEvent>{
     private ArrayList<Group> groups;
     private ArrayList<EventParticipant> currentParticipants;
     
-    private ArrayList<EventParticipant> changedParticipants;
+    private ArrayList<EventParticipant> clonedParticipants = new ArrayList<EventParticipant>();
     
-    private ArrayList<EventParticipant> clonedParticipants;
-    
+    ArrayList<EventParticipant> newParticipants = new ArrayList<EventParticipant>();
+    ArrayList<EventParticipant> removedParticipants = new ArrayList<EventParticipant>();
+    ArrayList<Group> newGroups = new ArrayList<Group>();
+
     private PersistencyInterface persistency;
     
+    private Calendar calendar;
+    
 	
-	public EditOwner(Event event, Stage parentStage, ArrayList<Room> rooms, ArrayList<User> users, ArrayList<Group> groups, ArrayList<EventParticipant> currentParticipants, PersistencyInterface persistency) {
+	public EditOwner(Event event, Stage parentStage, ArrayList<Room> rooms, ArrayList<User> users, ArrayList<Group> groups, ArrayList<EventParticipant> currentParticipants, PersistencyInterface persistency, Calendar calendar) {
 		try {
+			this.calendar = calendar;
 			this.parentStage = parentStage;
 			this.rooms = rooms;
 			this.users = users;
 			this.groups = groups;
 			this.currentParticipants = currentParticipants;
 			this.persistency = persistency;
-			clonedParticipants = new ArrayList<EventParticipant>();
 			
 			for (EventParticipant ep : currentParticipants) {
 				clonedParticipants.add(new EventParticipant(ep));
 			}
-
+			this.eventModel = event;
 			createStage();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -221,16 +226,11 @@ public class EditOwner implements EventHandler<ActionEvent>{
 	public VBox getListViewBox(){
 		participationGroup = new ToggleGroup();
 		
-
 		VBox rightBox = new VBox(5);
         Label participants = new Label ("Participants");
-        
-       
     	
     	addPerson = new Button("Add");
     	addPerson.setOnAction(this);
-
-    	
     	
     	removePerson = new Button("Remove");
     	removePerson.setOnAction(this);
@@ -238,27 +238,25 @@ public class EditOwner implements EventHandler<ActionEvent>{
     	
     	  	
     	going = new RadioButton("Going");
+    	going.setDisable(true);
     	going.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
 			public void handle(ActionEvent arg0) {
-				System.out.println(arg0);
-				EventParticipant ep = getParticipantFromView();
-				
-				ep.setResponse(EventParticipant.going);		
+				EventParticipant ep = getEventParticipantFromView();
+				ep.setResponse(EventParticipant.going);
 			}
 		});
 		going.setToggleGroup(participationGroup);
 		
 		notGoing = new RadioButton("Not going");
+		notGoing.setDisable(true);
 		notGoing.setOnAction(new EventHandler<ActionEvent>() {
 			
 			@Override
-			public void handle(ActionEvent arg0) {
-				System.out.println(arg0);
-				EventParticipant ep = getParticipantFromView();
-				ep.setResponse(EventParticipant.notGoing);		
-				
+			public void handle(ActionEvent arg0) {	
+				EventParticipant ep = getEventParticipantFromView();
+				ep.setResponse(EventParticipant.notGoing);
 			}
 		});
 		notGoing.setToggleGroup(participationGroup);
@@ -279,7 +277,6 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		usersAndGroups.addAll(groups);
 		
 		ArrayList<Object> participantUsers = new ArrayList<Object>();
-		System.out.println(currentParticipants.size());
 		
 		for (User u: users){
 			for (EventParticipant ep: currentParticipants){
@@ -293,27 +290,7 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		if (!participantUsers.isEmpty()) {
 			removePerson.setDisable(false);
 		}
-		
-		/*for (Group g: groups){
-			for (int groupUserId: g.getMembers()){
-				boolean isParticipant = false;
-				for (Object u: participantUsers){
-					if (u instanceof User) {
-						if (groupUserId == ((User)u).getUserId()){
-							isParticipant = true;
-						}						
-					}
-				}
-				if (!isParticipant){
-					break;
-				}
-			}
-			usersAndGroups.remove(g);
-			participantUsers.add(g);
-		}*/
-		
-		
-		
+			
         allPersonsObservableList = FXCollections.observableArrayList(usersAndGroups);
         selectedPersonsObservableList= FXCollections.observableArrayList(participantUsers);
 
@@ -331,41 +308,69 @@ public class EditOwner implements EventHandler<ActionEvent>{
     		@Override
     		public void changed(ObservableValue<? extends Boolean> arg0,
     				Boolean oldVal, Boolean newVal) {
-    			//disable radiobuttons if deselected
-
-    			
-    			EventParticipant ep = getParticipantFromView();
-    			
-    			String response = ep.getResponse();
-    			
-				if (response == EventParticipant.going){
-					updateRadioButtons(true);    						
-				}
-				else if (response == EventParticipant.notGoing) {
-					updateRadioButtons(false);
-				}
-				else {
-					going.setSelected(false);
-					notGoing.setSelected(false);
-				}
+    			//System.out.println(getEventParticipantFromView().getResponse());
+    			if (newVal) {
+    				setRadioButtons();
+    			}
     		}
-    			
-    		
     	});
+    	chosenPersonListView.setCellFactory(new Callback<ListView<Object>, ListCell<Object>>() {
+			
+			@Override
+			public ListCell<Object> call(ListView<Object> arg0) {
+				// TODO Auto-generated method stub
+				return new ParticipantCell(eventModel);
+			}
+		});
 	}
 	
-	public EventParticipant getParticipantFromView() {
+	public void setRadioButtons() {
+		going.setDisable(false);
+		notGoing.setDisable(false);	
 		
-		for (int i = 0; i < clonedParticipants.size(); i++) {		
-			
-			Object u = chosenPersonListView.getSelectionModel().getSelectedItem();
-			
-			if ( u instanceof User && ((User) u).getUserId() == clonedParticipants.get(i).getUserId()) {
-				return clonedParticipants.get(i);
+		EventParticipant ep = getEventParticipantFromView();
+
+		if (ep != null) {
+			//System.out.println(ep.getResponse() + " == " +EventParticipant.going);
+			//System.out.println(ep.getResponse().equals(EventParticipant.going));
+			if (ep.getResponse() == null){
+				going.setSelected(false);
+				notGoing.setSelected(false);
+			}
+			else if (ep.getResponse().equals(EventParticipant.going)) {
+				System.out.println("setter knapper");
+				going.setSelected(true);
+				notGoing.setSelected(false);
+			}
+			else if (ep.getResponse().equals(EventParticipant.notGoing)) {
+				going.setSelected(false);
+				notGoing.setSelected(true);
+			}
+		}
+		else {
+			going.setSelected(false);
+			going.setDisable(true);
+			notGoing.setDisable(true);
+			notGoing.setSelected(false);
+		}
+		
+	}
+	
+	public EventParticipant getEventParticipantFromView() {
+		Object o = chosenPersonListView.getSelectionModel().getSelectedItem();
+		if (o instanceof User) {
+			User u = (User) o;
+			ArrayList<EventParticipant> allParticipants = new ArrayList<EventParticipant>(clonedParticipants);
+			allParticipants.addAll(newParticipants);
+			for (EventParticipant ep : allParticipants) {
+				if (ep.getUserId() == u.getUserId()) {
+					return ep;
+				}
 			}
 		}
 		return null;
 	}
+
 	
 	public void updateRadioButtons(boolean val) {
 		going.setSelected(val);
@@ -410,25 +415,41 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		}
 		else if(event.getSource() == confirm && isValid()){
 			System.out.println("Send update");
+			
 			updateEvent();
+			
 			thisStage.close();
 		}
+		
 		else if(event.getSource() == addPerson){
 			int id = allPersonListView.getFocusModel().getFocusedIndex();
-    		System.out.println(id);
     		if (id == -1) {
     			id = 0;
     		}
     		selectedPersonsObservableList.add(allPersonsObservableList.get(id));
+    		
+    		Object o = allPersonsObservableList.get(id);
+    		
+    		if (o instanceof User) {
+    			System.out.println(((User)o).getUsername());
+    			newParticipants.add(new EventParticipant(eventModel.getEventId(), ((User)o).getUserId()));
+    		}
+    		else if (o instanceof Group) {
+    			System.out.println(((Group)o).getName());
+    			newGroups.add((Group)o);
+    		}
+
     		allPersonsObservableList.remove(id);
-    		allPersonListView.getSelectionModel().select(0);
     		updateRoomComboBox();
     		
     		if (allPersonsObservableList.size() == 0) {
     			addPerson.setDisable(true);
     		}
     		removePerson.setDisable(false);      	
+    		allPersonListView.getSelectionModel().select(0);
     	}
+		
+		
     	
     	else if(event.getSource() == removePerson){        	
     		int id = chosenPersonListView.getFocusModel().getFocusedIndex();
@@ -437,8 +458,45 @@ public class EditOwner implements EventHandler<ActionEvent>{
     			id = 0;
     		}
     		allPersonsObservableList.add(selectedPersonsObservableList.get(id));
+    		
+    		//if the removed participant was originally in the event, add to removedParticipants, if not, just remove it from newParticipants
+    		Object o = selectedPersonsObservableList.get(id);
+    		
+    		if (o instanceof User) {
+    			User u = (User)o;
+    			System.out.println(u.getUsername());
+    			System.out.println("newlist: " + newParticipants.size());
+    			System.out.println("cloned: " + clonedParticipants.size());
+    			for (int i = 0; i < newParticipants.size(); i++) {
+    				if (newParticipants.get(i).getUserId() == u.getUserId()) {
+    					newParticipants.remove(i);
+    					break;
+    				}
+    			}
+    			for (int i = 0; i < clonedParticipants.size(); i++) {
+    				if (clonedParticipants.get(i).getUserId() == u.getUserId()) {
+    					removedParticipants.add(clonedParticipants.get(i));
+    					clonedParticipants.remove(i);
+    					break;
+    				}
+    			}
+    			System.out.println("----------------");
+    			System.out.println("newlist: " + newParticipants.size());
+    			System.out.println("cloned: " + clonedParticipants.size());
+    			
+    			
+    		}
+    		else if (o instanceof Group) {
+    			Group g = (Group)o;
+    			System.out.println("Groups: " + newGroups.size());
+    			if (newGroups.contains(g)) {
+    				newGroups.remove(g);
+    			}
+    			System.out.println("-------------");
+    			System.out.println("Groups: " + newGroups.size());
+    		}
+    		
     		selectedPersonsObservableList.remove(id);
-    		chosenPersonListView.getSelectionModel().select(0);
     		updateRoomComboBox();
     		
     		if (selectedPersonsObservableList.size() == 0){
@@ -448,15 +506,51 @@ public class EditOwner implements EventHandler<ActionEvent>{
     		}
     		addPerson.setDisable(false);        	
     	}
+		chosenPersonListView.getSelectionModel().select(0);
 		
 	}
 	
+	
 	public void updateEvent() {
-		ArrayList<EventParticipant> changedParticipants = getChangedParticipants();
-		
-		for (EventParticipant cep : changedParticipants) {
+
+		for (EventParticipant cep : clonedParticipants) {
 			persistency.changeEventParticipantResponse(cep);
-			System.out.println("changed");
+			calendar.changeEventParticipantResponse(eventModel.getEventId(), cep.getUserId(), cep.getResponse(), cep.isDeleted());
+
+		}
+		
+		// Update all new participants
+		for (EventParticipant nep : newParticipants) {
+			persistency.addEventParticipant(eventModel.getEventId(), nep.getUserId());
+			calendar.addEventParticipant(nep);
+		}
+		
+		// remove all original participants that has been removed
+		for (EventParticipant rep: removedParticipants) {
+			persistency.removeEventParticipant(eventModel.getEventId(), rep.getUserId());
+			calendar.removeEventParticipant(rep);
+		}
+		
+		
+		for (Group g : newGroups) {
+			ArrayList<Integer> members = g.getMembers();
+			ArrayList<EventParticipant> allParticipants = new ArrayList<EventParticipant>(newParticipants);
+			allParticipants.addAll(clonedParticipants);
+			
+			for (int i : members) {
+				boolean contains = false;
+				for (EventParticipant ep : allParticipants) {
+					if (ep.getUserId() == i) {
+						contains = true;
+					}
+				}
+				if (!contains) {
+					System.out.println("new participant: " + i);
+					persistency.addEventParticipant(eventModel.getEventId(), i);
+					calendar.addEventParticipant(new EventParticipant(eventModel.getEventId(), i));					
+				}
+				
+			}
 		}
 		
 		eventModel.setEventName(t_title.getText());
@@ -469,20 +563,6 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		persistency.changeEvent(eventModel);
 		
 	}
-	
-	public ArrayList<EventParticipant> getChangedParticipants() {
-		ArrayList<EventParticipant> result = new ArrayList<EventParticipant>();
-		
-		for (EventParticipant epo : currentParticipants) {
-			
-			for (EventParticipant epc : clonedParticipants) {
-				if (epo.getUserId() == epc.getUserId()) {
-					result.add(epo);
-					break;
-				}
-			}
-		}
-		return result;
-	}
+
 
 }

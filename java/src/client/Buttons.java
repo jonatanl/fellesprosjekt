@@ -119,10 +119,10 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 			}
 			
 			if (isOwner){
-				new EditOwner(selectedEvent, calendar.getStage(), calendar.getRooms(), calendar.getUsers(), calendar.getGroups(), currentParticipants, calendar.getPersistency());
+				new EditOwner(selectedEvent, calendar.getStage(), calendar.getRooms(), calendar.getUsers(), calendar.getGroups(), currentParticipants, calendar.getPersistency(), calendar);
 			}
 			else{
-				new EndreIkkeOwner(calendar, selectedEvent, calendar.getStage());
+				new EndreIkkeOwner(calendar, selectedEvent, calendar.getStage(), calendar.getPersistency());
 			}
 		}
 		else if (buttonEvent.getSource() == b_deleteEvent){
