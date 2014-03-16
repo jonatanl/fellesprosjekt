@@ -105,7 +105,8 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		t_stop.setText(DateHelper.convertToString(eventModel.getEndTime(), DateHelper.FORMAT_GUI).substring(12));
 		t_description.setText(eventModel.getDescription());
 		t_place.setText(eventModel.getLocation());
-		roomList.getSelectionModel().select(eventModel.getRoomId());
+		updateRoomComboBox();
+		roomList.getSelectionModel().select(calendar.findRoom(eventModel.getRoomId()));
 	}
 	
 	public void createStage() {
@@ -158,6 +159,7 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		t_description = new TextField();
 		t_place = new TextField();
 		roomList = new ComboBox<>();
+		roomList.setMinWidth(200);
 		
 		box.getChildren().addAll(t_title,t_date,t_start,t_stop,t_description,t_place,roomList);
 		box.setPadding(new Insets(10,0,0,0));
@@ -268,7 +270,7 @@ public class EditOwner implements EventHandler<ActionEvent>{
     	rightBox.getChildren().addAll(going,notGoing);
     	
     	
-    	updateRoomComboBox();
+    	
     	return rightBox;
     }
 	
@@ -514,9 +516,11 @@ public class EditOwner implements EventHandler<ActionEvent>{
 	public void updateEvent() {
 
 		for (EventParticipant cep : clonedParticipants) {
-			persistency.changeEventParticipantResponse(cep);
-			calendar.changeEventParticipantResponse(eventModel.getEventId(), cep.getUserId(), cep.getResponse(), cep.isDeleted());
-
+			if ((cep.getResponse() != null) &&
+			 (!cep.getResponse().equals(calendar.findEventParticipant(cep.getUserId(), cep.getEventId()).getResponse()))){
+				persistency.changeEventParticipantResponse(cep);
+				calendar.changeEventParticipantResponse(eventModel.getEventId(), cep.getUserId(), cep.getResponse(), cep.isDeleted());
+			}
 		}
 		
 		// Update all new participants
@@ -553,14 +557,40 @@ public class EditOwner implements EventHandler<ActionEvent>{
 			}
 		}
 		
-		eventModel.setEventName(t_title.getText());
-		eventModel.setStartTime(DateHelper.convertToDate(t_date.getText() + ", " + t_start.getText(), DateHelper.FORMAT_GUI));
-		eventModel.setEndTime(DateHelper.convertToDate(t_date.getText() + ", " + t_stop.getText(), DateHelper.FORMAT_GUI));
-		eventModel.setDescription(t_description.getText());
-		eventModel.setLocation(t_place.getText());
-		//eventModel.setRoomId(roomList.getValue().getId());
+		boolean eventIsChanged = false;
+		if (!eventModel.getEventName().equals(t_title.getText())){
+			eventModel.setEventName(t_title.getText());
+			eventIsChanged = true;
+		}
+		String newStartTime = t_date.getText() + ", " + t_start.getText();
+		if (!DateHelper.convertToString(eventModel.getStartTime(), DateHelper.FORMAT_GUI).equals(newStartTime)){
+			eventModel.setStartTime(DateHelper.convertToDate(newStartTime, DateHelper.FORMAT_GUI));
+			eventIsChanged = true;
+		}
+		String newEndTime = t_date.getText() + ", " + t_stop.getText();
+		if (!DateHelper.convertToString(eventModel.getEndTime(), DateHelper.FORMAT_GUI).equals(newEndTime)){
+			eventModel.setEndTime(DateHelper.convertToDate(newEndTime, DateHelper.FORMAT_GUI));
+			eventIsChanged = true;
+		}
+		if (!eventModel.getDescription().equals(t_description.getText())){
+			eventModel.setDescription(t_description.getText());
+			eventIsChanged = true;
+		}
+		if (!eventModel.getLocation().equals(t_place.getText())){
+			eventModel.setLocation(t_place.getText());
+			eventIsChanged = true;
+		}
+		Room selectedRoom = roomList.getValue();
+		if (eventModel.getRoomId() != selectedRoom.getId()){
+			eventModel.setRoomId(roomList.getValue().getId());
+			eventIsChanged = true;
+		}
 		
-		persistency.changeEvent(eventModel);
+		if (eventIsChanged){
+			persistency.changeEvent(eventModel);
+			calendar.changeEvent(eventModel.getEventId(), eventModel);
+		}
+		
 		
 	}
 

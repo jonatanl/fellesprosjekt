@@ -22,3 +22,4 @@ Når jeg velger å slette en event der jeg er participant, må respons forandres ti
 
 Notification-vindu nederst på skjermen. 
 
+legg til participant --> krasj
