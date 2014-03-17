@@ -301,11 +301,15 @@ public class Calendar extends CalendarLists {
             if (visibleUsersHm.get(loggedInUser.getUserId()) != null && (event.getOwnerId() == loggedInUser.getUserId() || epLoggedInUser != null)){
             	myEvent = true;
             	if (epLoggedInUser != null){
-            		changed = epLoggedInUser.isPendingChange();
-            		attending = true;//(epLoggedInUser.getResponse() == EventParticipant.going);
+                    changed = epLoggedInUser.isPendingChange();
+                    if (epLoggedInUser.getUserId() == event.getOwnerId()) {
+                        attending = true;
+                    } else {
+                        attending = epLoggedInUser.getResponse().equals(EventParticipant.going);
+                    }
             	}
             }
-            
+
             
         	calendarView.addEvent(
         			"" + event.getEventId(), 
