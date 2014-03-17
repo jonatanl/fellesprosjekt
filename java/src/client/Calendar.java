@@ -156,6 +156,7 @@ public class Calendar extends CalendarLists {
 		Scene scene = new Scene(root, 1000, 700);
 		
 		stage.setScene(scene);
+		stage.setTitle("Skalender");
 		stage.show();
 		updateNotifications();
         updateWebScene();

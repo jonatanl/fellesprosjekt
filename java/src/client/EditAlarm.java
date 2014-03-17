@@ -177,6 +177,8 @@ public class EditAlarm implements EventHandler<ActionEvent> {
         
         Scene scene = new Scene(grid, 400, 200);
         thisStage = new Stage();
+        thisStage.setResizable(false);
+        thisStage.setTitle("Edit Alarm");
         thisStage.setScene(scene);
         thisStage.show();
 		

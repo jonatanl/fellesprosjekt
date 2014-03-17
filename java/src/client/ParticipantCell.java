@@ -37,6 +37,8 @@ public class ParticipantCell extends ListCell<Object> {
 					else if (ep.getResponse().equals(EventParticipant.notGoing)){
 						l.setTextFill(Color.RED);
 					}
+				} else {
+					l.setTextFill(Color.ORANGE);
 				}
 			}
 			setGraphic(l);

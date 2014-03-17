@@ -128,6 +128,8 @@ public class AddEvent implements EventHandler<ActionEvent> {
 
         Scene scene = new Scene(grid, 500, 475);
         thisStage = new Stage();
+        thisStage.setResizable(false);
+        thisStage.setTitle("Add Event");
         thisStage.setScene(scene);
         
         thisStage.initModality(Modality.APPLICATION_MODAL);

@@ -110,12 +110,13 @@ public class ShowMore implements EventHandler<ActionEvent> {
         grid.add(getLeftBox(), 0, 0);
         grid.add(getDataBox(), 1, 0);
         grid.add(getListViewBox(), 2, 0);
-        grid.add(getRadioBox(), 0, 1);
+        //grid.add(getRadioBox(), 0, 1);
         grid.add(getOkButton(), 0, 2);
         
-        Scene scene = new Scene(grid, 500, 300);
+        Scene scene = new Scene(grid, 600, 300);
         
         stage = new Stage();
+        stage.setResizable(false);
         stage.setTitle("Show more");
         stage.setScene(scene);
         stage.show();
@@ -189,6 +190,7 @@ public class ShowMore implements EventHandler<ActionEvent> {
     public HBox getRadioBox(){
     	HBox radioBox = new HBox();
         radioBox.setPadding(new Insets(5, 5, 5, 5));
+        
         
         ToggleGroup group = new ToggleGroup();
     	
