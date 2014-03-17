@@ -2,8 +2,6 @@ package client;
 
 import interfaces.PersistencyInterface;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import util.DateHelper;
@@ -13,11 +11,8 @@ import Models.EventParticipant;
 import Models.Group;
 import Models.Room;
 import Models.User;
-import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -29,6 +24,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -49,23 +45,19 @@ public class AddEvent implements EventHandler<ActionEvent> {
     
     private ComboBox<Room> roomList;
     private int nParticipants;
-    
+
     private ListView<Object> allPersonListView, chosenPersonListView;
-    private Button addPerson, removePerson, addEvent, cancel;
+    private Button addPerson, removePerson, addEvent, cancel, inviteParticipants;
 
     private Event eventModel;
     
     // The Observable lists contain both users and groups. 
     private ObservableList<Object> allPersonsObservableList;
     private ObservableList<Object> selectedPersonsObservableList;
-    private ArrayList<String> persons;
     private Stage thisStage;
     private Stage parentStage;
     private Calendar calendar;
     private PersistencyInterface persistency;
-    
-    private ObservableList<Room> allRoomsObservableList;
-    
     private ArrayList<Room> rooms;
     private ArrayList<User> users;
     private ArrayList<Group> groups;
@@ -109,24 +101,15 @@ public class AddEvent implements EventHandler<ActionEvent> {
         grid.add(createLabels(),0,1);
         grid.add(createFields(),1,1);
         grid.add(createListViewBox(),2,1);
+        grid.add(createButtons(), 1, 3);
         
         errorMessage = new Text("Error: Unable to add event.");
         errorMessage.setFill(Color.FIREBRICK);
         errorMessage.setVisible(false);
 
         grid.add(errorMessage, 1, 2);
-        
-        addEvent = new Button("Add event");
-        addEvent.setOnAction(this);
-        addEvent.setMinHeight(30);
-        grid.add(addEvent, 1,3);
-        
-        cancel = new Button("Cancel");
-        cancel.setOnAction(this);
-        cancel.setMinHeight(30);
-        grid.add(cancel, 2, 3);
 
-        Scene scene = new Scene(grid, 500, 475);
+        Scene scene = new Scene(grid, 600, 475);
         thisStage = new Stage();
         thisStage.setScene(scene);
         
@@ -140,6 +123,29 @@ public class AddEvent implements EventHandler<ActionEvent> {
         setHints();
     }
 
+    private HBox createButtons(){
+        HBox box = new HBox();
+
+        addEvent = new Button("Add event");
+        addEvent.setOnAction(this);
+        addEvent.setMinHeight(30);
+        addEvent.setMinWidth(75);
+
+        cancel = new Button("Cancel");
+        cancel.setOnAction(this);
+        cancel.setMinHeight(30);
+        cancel.setMinWidth(75);
+
+        inviteParticipants = new Button("Invite externals");
+        inviteParticipants.setOnAction(this);
+        inviteParticipants.setMinHeight(30);
+        inviteParticipants.setMinWidth(100);
+
+        box.setSpacing(5);
+        box.setAlignment(Pos.CENTER_LEFT);
+        box.getChildren().addAll(addEvent, cancel, inviteParticipants);
+        return box;
+    }
 
     private VBox createLabels(){
         VBox box = new VBox();
@@ -221,21 +227,25 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	
     }
 
+    public void CreateModel(){
+        if (validInput()) {
+            eventModel.setEventName(titleField.getText());
+            eventModel.setStartTime(DateHelper.convertToDate(dateField.getText() + ", " + startTime.getText(), DateHelper.FORMAT_GUI));
+            eventModel.setEndTime(DateHelper.convertToDate(dateField.getText() + ", " + endTime.getText(), DateHelper.FORMAT_GUI));
+            eventModel.setDescription(description.getText());
+            eventModel.setLocation(location.getText());
+            eventModel.setOwnerId(ownerId);
+            if(roomList.getValue() != noRoom)
+                eventModel.setRoomId(roomList.getValue().getId());
+            else
+                eventModel.setRoomId(1);
+        }
+    }
 
     @Override
     public void handle(ActionEvent actionEvent) {
     	if (actionEvent.getSource() == addEvent && validInput()) {
-    		eventModel.setEventName(titleField.getText());
-    		eventModel.setStartTime(DateHelper.convertToDate(dateField.getText() + ", " + startTime.getText(), DateHelper.FORMAT_GUI));
-    		eventModel.setEndTime(DateHelper.convertToDate(dateField.getText() + ", " + endTime.getText(), DateHelper.FORMAT_GUI));
-    		eventModel.setDescription(description.getText());
-    		eventModel.setLocation(location.getText());
-            eventModel.setOwnerId(ownerId);
-    		if(roomList.getValue() != noRoom)
-                eventModel.setRoomId(roomList.getValue().getId());
-            else
-                eventModel.setRoomId(1);
-    		
+    		CreateModel();
     		
     		ArrayList<Integer> selectedParticpantIds = getSelectedParticipantIds();
     		if (persistency.addEvent(eventModel, selectedParticpantIds)){
@@ -277,7 +287,6 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		}
     		removePerson.setDisable(false);
     	}
-    	
     	else if(actionEvent.getSource() == removePerson){     
 
     		int id = chosenPersonListView.getFocusModel().getFocusedIndex();
@@ -294,6 +303,10 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		}
     		addPerson.setDisable(false);
     	}
+        else if (actionEvent.getSource() == inviteParticipants){
+            CreateModel();
+            new SendMail(thisStage, eventModel);
+        }
     }
     
     private ArrayList<Integer> getSelectedParticipantIds(){
@@ -344,10 +357,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	}
     	return !hasFailed;
     }
-    
-    
-        
-    
+
     public VBox createListViewBox(){
     	VBox rightBox = new VBox(5);
         Label participants = new Label ("Participants");
@@ -374,8 +384,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	
     	removePerson = new Button("Remove");
     	removePerson.setOnAction(this);
-    	removePerson.setDisable(false
-        );
+    	removePerson.setDisable(false);
     	
     	rightBox.getChildren().addAll(participants,allPersonListView,addPerson,chosenPersonListView,removePerson);
     	
