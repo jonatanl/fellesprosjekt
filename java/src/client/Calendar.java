@@ -373,4 +373,9 @@ public class Calendar extends CalendarLists {
 		updateWebScene();
 	}
 	
+	public void removeEventNotOwner(int eventID, int participantID, String status, boolean ans){
+		changeEventParticipantResponse(eventID, participantID, status, ans);
+		updateWebScene();
+	}
+	
 }
