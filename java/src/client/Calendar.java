@@ -267,7 +267,6 @@ public class Calendar extends CalendarLists {
         
         for(Event event : events) {
         	boolean drawEvent = false;
-            
         	boolean changed = false;
         	boolean attending = false;
         	boolean myEvent = false;
