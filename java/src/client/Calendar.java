@@ -36,6 +36,7 @@ public class Calendar extends CalendarLists {
 	private Text title;
 	private Buttons buttons;
 	private CalendarView calendarView;
+	private Notifications notifications;
 
     private ListView<User> userListView;
     private ObservableList<User> userObservableList;
@@ -57,6 +58,17 @@ public class Calendar extends CalendarLists {
 			buttons.setSelectedEvent(selectedEvent);
 			buttons.setParticipant(findEventParticipant(loggedInUser.getUserId(), eventId));
 			buttons.setIsOwner(selectedEvent.getOwnerId() == loggedInUser.getUserId());
+			
+			// Fjern eventuelle notifications.
+			EventParticipant ep = findEventParticipant(loggedInUser.getUserId(), selectedEvent.getEventId());
+			if (ep != null && ep.isPendingChange()){
+				ep.setPendingChange(false);
+				persistency.changeEventParticipantResponse(ep);
+				updateNotifications();
+				updateWebScene();
+			}
+			
+			
 		}
 	}
 
@@ -124,8 +136,9 @@ public class Calendar extends CalendarLists {
                 }
             }
         });
-        
         userListView.getSelectionModel().select(loggedInUser);
+        
+        //notifications = new Notifications();
 
         GridPane root = new GridPane();
         root.setAlignment(Pos.CENTER);
@@ -138,12 +151,18 @@ public class Calendar extends CalendarLists {
         root.add(buttons, 0, 1);
         root.add(calendarView.getContentForScene(), 1, 1);
         root.add(userListView, 2, 1);
+        //root.add(notifications, 0,3);
 
 		Scene scene = new Scene(root, 1000, 700);
 		
 		stage.setScene(scene);
 		stage.show();
+		updateNotifications();
         updateWebScene();
+	}
+	
+	public Notifications getNotifications(){
+		return notifications;
 	}
 	
 	private void getAllFromDatabase(){
@@ -203,10 +222,20 @@ public class Calendar extends CalendarLists {
 		return g;
 	}
 	
-	public void changeEvent(int eventID, Event event) {
-		Event original = findEvent(eventID);
-		original = event;
-		event.setEventId(eventID);
+	public void changeEvent(int eventId, Event newEventInfo) {
+		Event original = findEvent(eventId);
+		original = newEventInfo;
+		newEventInfo.setEventId(eventId);
+		
+		// Update isPendingChange on all the OTHER participants.
+				for (EventParticipant epOther: eventParticipants){
+					if (epOther.getEventId() == eventId && 
+							(epOther.getUserId() != loggedInUser.getUserId())
+							){
+						epOther.setPendingChange(true);
+						persistency.changeEventParticipantResponse(epOther);
+					}
+				}
 	}
 	
 	public void changeEventParticipantResponse(int eventId, int userId,
@@ -215,8 +244,16 @@ public class Calendar extends CalendarLists {
 		ep.setResponse(newResponse);
 		ep.setDeleted(newIsDeleted);
 		
-	// TODO Inform other EventParticipants that someone changed their response, by setting their 
-	// field 'pendingChange' to true. 
+		// Update isPendingChange on all the OTHER participants.
+		for (EventParticipant epOther: eventParticipants){
+			if (epOther.getEventId() == eventId && 
+					((userId == loggedInUser.getUserId() && epOther != ep) ||
+					(userId != loggedInUser.getUserId() && epOther.getUserId() != loggedInUser.getUserId()))
+					){
+				epOther.setPendingChange(true);
+				persistency.changeEventParticipantResponse(epOther);
+			}
+		}
 	}
 	
 	// Draws the webScene over again. 
@@ -246,6 +283,8 @@ public class Calendar extends CalendarLists {
             	if (ep != null){
             		// Do not draw if the participant deleted the event. 
             		drawEvent = !ep.isDeleted();
+            		if (drawEvent)
+            			break;
             	}
             }
             
@@ -258,14 +297,16 @@ public class Calendar extends CalendarLists {
             
             
             // myEvent, changed, attending (Merk at changed og attending bare er relevante dersom myEvent == true).
-            EventParticipant epLoggedInUser = findEventParticipant(event.getOwnerId(), event.getEventId());
-            if (event.getOwnerId() == loggedInUser.getUserId() || epLoggedInUser != null){
+            EventParticipant epLoggedInUser = findEventParticipant(loggedInUser.getUserId(), event.getEventId());
+            if (visibleUsersHm.get(loggedInUser.getUserId()) != null && (event.getOwnerId() == loggedInUser.getUserId() || epLoggedInUser != null)){
             	myEvent = true;
             	if (epLoggedInUser != null){
             		changed = epLoggedInUser.isPendingChange();
+
                     System.out.println(epLoggedInUser.getResponse());
                     System.out.println(EventParticipant.going);
                     attending = epLoggedInUser.getResponse().equals(EventParticipant.going);
+
             	}
             }
             
@@ -298,12 +339,33 @@ public class Calendar extends CalendarLists {
 
 	public void addEventParticipant(EventParticipant participant) {
 		eventParticipants.add(participant);
+		updateNotifications();
 		updateWebScene();
 	}
 	
 	public void addEventParticipants(ArrayList<EventParticipant> participants){
+		for (EventParticipant ep: participants){
+			if (ep.getUserId() == loggedInUser.getUserId()){
+				ep.setPendingChange(false);
+				persistency.changeEventParticipantResponse(ep);
+			}
+		}
 		eventParticipants.addAll(participants);
+		updateNotifications();
 		updateWebScene();
+	}
+	
+	private void updateNotifications(){
+		return;
+		// Remove all notifications and add again.
+		/*
+		notifications.removeAll();
+		for (EventParticipant ep: eventParticipants){
+			if (ep.isPendingChange() && ep.getUserId() == loggedInUser.getUserId()){
+				notifications.addNotification(new Notification(ep.getUserId(),findEvent(ep.getEventId())));
+			}
+		}
+		*/
 	}
 	
 	public void removeEventParticipant(EventParticipant ep){

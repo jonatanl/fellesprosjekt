@@ -9,6 +9,7 @@ import util.Persistency;
 import Models.Alarm;
 import Models.Event;
 import Models.EventParticipant;
+import Models.Notification;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -146,9 +147,6 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 		}		
 		else if (buttonEvent.getSource() == b_test){
 			// Add code here for testing.
-			for (Alarm a: calendar.getAlarms()){
-				System.out.println(a.getAlarmID() + " " + a.getTime());
-			}
 		}
 		
 		else if (buttonEvent.getSource() == b_logout){

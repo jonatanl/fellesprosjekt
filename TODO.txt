@@ -4,21 +4,9 @@ HTML-kalenderen bør støtte at man deselecter eventer, altså klikker et sted der 
 
 Nytt krav (se itslearning): Inviter eksterne kontakter til møtet via e-post.
 
-EditIkkeOwner ikke ferdig.
-
-AddEvent - velg rom. Edit event - ikke samme rom som er valgt her. 
-
-Når en forandring skjer på en event som du er participant på eller eier av, må eventen i webkalenderen markere at en forandring har skjedd.
-Dette bør gjelde for
-- Du har blitt lagt til som participant
-- Noen av participants har endret respons. 
-- startTime, endTime, description, location eller room har blitt endret. 
-
 Skal det komme opp en alarm på det angitte tidspunktet? 
 
 Romreservasjoner. For å finne ut om rom R er opptatt: bla gjennom alle events som bruker rom R, og se om start og slutttid for eventene overlapper. Overlapper --> Rom R ikke ledig. 
 
-Når jeg velger å slette en event der jeg er participant, må respons forandres til "ikke deltar" og feltet "isDeleted" settes til true. 
-
-Notification-vindu nederst på skjermen. 
+Notification-vindu nederst på skjermen. Skal vi droppe dette? Fargen på eventkalenderen indikerer om noe er forandret.
 
