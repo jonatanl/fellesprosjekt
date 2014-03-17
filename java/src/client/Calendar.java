@@ -153,7 +153,7 @@ public class Calendar extends CalendarLists {
         root.add(userListView, 2, 1);
         //root.add(notifications, 0,3);
 
-		Scene scene = new Scene(root, 1000, 700);
+		Scene scene = new Scene(root, 1150, 700);
 		
 		stage.setScene(scene);
 		stage.setTitle("Skalender");
