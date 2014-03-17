@@ -268,7 +268,6 @@ public class Calendar extends CalendarLists {
         
         for(Event event : events) {
         	boolean drawEvent = false;
-            
         	boolean changed = false;
         	boolean attending = false;
         	boolean myEvent = false;
@@ -302,11 +301,15 @@ public class Calendar extends CalendarLists {
             if (visibleUsersHm.get(loggedInUser.getUserId()) != null && (event.getOwnerId() == loggedInUser.getUserId() || epLoggedInUser != null)){
             	myEvent = true;
             	if (epLoggedInUser != null){
-            		changed = epLoggedInUser.isPendingChange();
-            		attending = true;//(epLoggedInUser.getResponse() == EventParticipant.going);
+                    changed = epLoggedInUser.isPendingChange();
+                    if (epLoggedInUser.getUserId() == event.getOwnerId()) {
+                        attending = true;
+                    } else {
+                        attending = epLoggedInUser.getResponse().equals(EventParticipant.going);
+                    }
             	}
             }
-            
+
             
         	calendarView.addEvent(
         			"" + event.getEventId(), 
@@ -368,6 +371,11 @@ public class Calendar extends CalendarLists {
 	public void removeEventParticipant(EventParticipant ep){
 		EventParticipant epOriginal = findEventParticipant(ep.getUserId(), ep.getEventId());
 		eventParticipants.remove(epOriginal);
+		updateWebScene();
+	}
+	
+	public void removeEventNotOwner(int eventID, int participantID, String status, boolean ans){
+		changeEventParticipantResponse(eventID, participantID, status, ans);
 		updateWebScene();
 	}
 	
