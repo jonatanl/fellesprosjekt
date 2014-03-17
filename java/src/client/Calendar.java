@@ -263,7 +263,9 @@ public class Calendar extends CalendarLists {
             	myEvent = true;
             	if (epLoggedInUser != null){
             		changed = epLoggedInUser.isPendingChange();
-            		attending = (epLoggedInUser.getResponse() == EventParticipant.going);
+                    System.out.println(epLoggedInUser.getResponse());
+                    System.out.println(EventParticipant.going);
+                    attending = epLoggedInUser.getResponse().equals(EventParticipant.going);
             	}
             }
             
