@@ -110,11 +110,12 @@ public class SendMail implements EventHandler<ActionEvent> {
     }
     
     public void createMailText(){
-    	title = model.getEventName();
+
+    	title = "" + model.getEventName();
     	startTime = "" + model.getStartTime();
     	endTime = "" + model.getEndTime();
-    	description = model.getDescription();
-    	location = model.getLocation();
+    	description = "" + model.getDescription();
+    	location = "" + model.getLocation();
     	
     	mailText = "You are invited to the event: " + title + ".\n\nStart time: " + startTime +
     			"\nEnd time: " + endTime +  "\nDescription: " + description + "\nLocation: " +
@@ -124,10 +125,12 @@ public class SendMail implements EventHandler<ActionEvent> {
 	@Override
 	public void handle(ActionEvent actionEvent) {
 		if (actionEvent.getSource() == addButton) {
-			receivers.add(mailField.getText());
-			mailField.clear();
-			addedPersonsView.setItems(receivers);
-            sendButton.setDisable(false);
+            if(!mailField.getText().equals("")){
+			    receivers.add(mailField.getText());
+			    mailField.clear();
+			    addedPersonsView.setItems(receivers);
+                sendButton.setDisable(false);
+            }
 		}
 		else if(actionEvent.getSource() == removeButton){
             if(!receivers.isEmpty())
