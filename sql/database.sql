@@ -76,7 +76,7 @@ CREATE TABLE calendar.eventParticipant (
 	userID int,
 	isDeleted tinyint(1) DEFAULT 0,
 	pendingChange tinyint(1) DEFAULT 1,
-	response varchar(10),
+	response varchar(10) DEFAULT 'isNotGoing',
 
 	PRIMARY KEY (userID, eventID),
 	FOREIGN KEY (alarmID) REFERENCES alarm(alarmID) ON DELETE SET NULL,
