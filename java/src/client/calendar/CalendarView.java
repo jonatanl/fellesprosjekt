@@ -17,7 +17,7 @@ public class CalendarView {
         calendar = new Browser();
     }
 
-    public void addEvent(String id, String title, String startDate, String endDate, int ownerId, boolean changed, boolean attending, boolean myEvent) {
+    public void addEvent(String id, String title, String startDate, String endDate, int ownerId, boolean changed, boolean attending, boolean myEvent, String status) {
         calendar.callJavaScript("addEvent(" + id
                                    + ", \'" + title
                                  + "\', \'" + startDate
@@ -25,7 +25,8 @@ public class CalendarView {
                                  + "\', \'" + ownerId
                                  + "\', \'" + changed
                                  + "\', \'" + attending
-                                 + "\', \'" + myEvent + "\')");
+                                 + "\', \'" + myEvent
+                                 + "\', \'" + status + "\')");
     }
 
     public void removeAllEvents() {

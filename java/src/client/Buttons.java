@@ -48,6 +48,8 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 	public void setParticipant(EventParticipant ep){
 		eventParticipant = ep;
 		b_alarm.setDisable(ep == null);
+		b_editEvent.setDisable(ep == null);
+		b_deleteEvent.setDisable(ep==null);
 	}
 	
 	public Buttons(Calendar calendar){
