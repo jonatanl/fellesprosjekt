@@ -235,14 +235,15 @@ public class Calendar extends CalendarLists {
 		newEventInfo.setEventId(eventId);
 		
 		// Update isPendingChange on all the OTHER participants.
-				for (EventParticipant epOther: eventParticipants){
-					if (epOther.getEventId() == eventId && 
-							(epOther.getUserId() != loggedInUser.getUserId())
-							){
-						epOther.setPendingChange(true);
-						persistency.changeEventParticipantResponse(epOther);
-					}
-				}
+		for (EventParticipant epOther: eventParticipants){
+			if (epOther.getEventId() == eventId && 
+					(epOther.getUserId() != loggedInUser.getUserId())
+					){
+				epOther.setPendingChange(true);
+				persistency.changeEventParticipantResponse(epOther);
+			}
+		}
+		updateWebScene();	
 	}
 	
 	public void changeEventParticipantResponse(int eventId, int userId,
