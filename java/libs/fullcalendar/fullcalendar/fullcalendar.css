@@ -262,7 +262,7 @@ html .fc,
 	}
 	 
 .fc-event {
-	border: 1px solid #3a87ad; /* default BORDER color */
+	border: 10px solid #3a87ad; /* default BORDER color */
 	background-color: #3a87ad; /* default BACKGROUND color */
 	color: #fff;               /* default TEXT color */
 	font-size: .85em;
@@ -526,17 +526,17 @@ table.fc-border-separate {
 ------------------------------------------------------------------------*/
 
 .fc-event-vert {
-	border-width: 0 1px;
+	border-width: 0 2px; /* changed from 1px to 3px */
 	}
 
 .fc-event-vert.fc-event-start {
-	border-top-width: 1px;
+	border-top-width: 2px; /* changed from 1px to 3px */
 	border-top-left-radius: 3px;
 	border-top-right-radius: 3px;
 	}
 
 .fc-event-vert.fc-event-end {
-	border-bottom-width: 1px;
+	border-bottom-width: 2px; /* changed from 1px to 3px */
 	border-bottom-left-radius: 3px;
 	border-bottom-right-radius: 3px;
 	}

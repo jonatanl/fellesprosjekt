@@ -19,7 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class Buttons extends VBox implements EventHandler<ActionEvent> {
-	private Button b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alarm, b_test, b_logout;
+	private Button b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alarm, b_logout;
 	private Label extraSpaceText1, extraSpaceText2;
 	private Calendar calendar;
 	private boolean isOwner = false;
@@ -48,6 +48,8 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 	public void setParticipant(EventParticipant ep){
 		eventParticipant = ep;
 		b_alarm.setDisable(ep == null);
+		b_editEvent.setDisable(ep == null);
+		b_deleteEvent.setDisable(ep==null);
 	}
 	
 	public Buttons(Calendar calendar){
@@ -81,12 +83,7 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 		b_alarm.setOnAction(this);
 		b_alarm.setMinWidth(80);
 		b_alarm.setMinHeight(30);
-		
-		b_test = new Button("Test");
-		b_test.setOnAction(this);
-		b_test.setMinWidth(80);
-		b_test.setMinHeight(30);
-		
+
 		extraSpaceText2 = new Label();
 		extraSpaceText2.setMinHeight(50);
 		
@@ -95,7 +92,7 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 		b_logout.setMinWidth(80);
 		b_logout.setMinHeight(30);
 		
-		this.getChildren().addAll(extraSpaceText1, b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alarm, b_test, extraSpaceText2, b_logout);
+		this.getChildren().addAll(extraSpaceText1, b_createEvent, b_editEvent, b_deleteEvent, b_showMore, b_alarm, extraSpaceText2, b_logout);
 		this.setSpacing(10);
 		
 		setSelectedEvent(null);
@@ -128,6 +125,7 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 			if (isOwner){
 				new DeleteEventOwner(calendar, selectedEvent, calendar.getStage(), calendar.getPersistency());
 			}
+			else new DeleteEventNotOwner(selectedEvent, calendar.findEventParticipant(calendar.getLoggedInUser().getUserId(), selectedEvent.getEventId()) ,calendar.getStage(), calendar);
 		}
 		
 		else if (buttonEvent.getSource() == b_showMore) {
@@ -142,11 +140,7 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 		else if (buttonEvent.getSource() == b_alarm) {
 			new EditAlarm(calendar.getPersistency(), calendar, calendar.getStage(),calendar.findAlarm(selectedEvent.getEventId(), calendar.getLoggedInUser().getUserId()), 
 					selectedEvent.getEventId(), calendar.getLoggedInUser().getUserId());
-		}		
-		else if (buttonEvent.getSource() == b_test){
-			// Add code here for testing.
 		}
-		
 		else if (buttonEvent.getSource() == b_logout){
 			calendar.getStage().close();
 			

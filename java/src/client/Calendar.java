@@ -22,6 +22,8 @@ import util.DateHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.mail.Part;
+
 //Main class of the calendar system. 
 public class Calendar extends CalendarLists {
 
@@ -136,7 +138,13 @@ public class Calendar extends CalendarLists {
                 }
             }
         });
-        userListView.getSelectionModel().select(loggedInUser);
+        for (User u:userListView.getItems()){
+        	if (u.getUserId() == loggedInUser.getUserId()){
+        		userListView.getSelectionModel().select(u);
+        		break;
+        	}
+        }
+        //userListView.getSelectionModel().select(loggedInUser);
         
         //notifications = new Notifications();
 
@@ -153,9 +161,10 @@ public class Calendar extends CalendarLists {
         root.add(userListView, 2, 1);
         //root.add(notifications, 0,3);
 
-		Scene scene = new Scene(root, 1000, 700);
+		Scene scene = new Scene(root, 1150, 700);
 		
 		stage.setScene(scene);
+		stage.setTitle("Skalender");
 		stage.show();
 		updateNotifications();
         updateWebScene();
@@ -267,10 +276,10 @@ public class Calendar extends CalendarLists {
         
         for(Event event : events) {
         	boolean drawEvent = false;
-            
         	boolean changed = false;
         	boolean attending = false;
         	boolean myEvent = false;
+        	String participitationStatusAll = "green";
             
             // One of the visible users owns the event
             if (visibleUsersHm.get(event.getOwnerId()) != null){
@@ -293,20 +302,39 @@ public class Calendar extends CalendarLists {
             	continue;
             }
             
-            // We got to this point --> Add the event!
+            // We got to this point --> Add and draw the event!
             
             
-            // myEvent, changed, attending (Merk at changed og attending bare er relevante dersom myEvent == true).
+            // myEvent, changed, attending (Merk at changed og attending og participitationStatusAll bare er relevante dersom myEvent == true).
             EventParticipant epLoggedInUser = findEventParticipant(loggedInUser.getUserId(), event.getEventId());
             if (visibleUsersHm.get(loggedInUser.getUserId()) != null && (event.getOwnerId() == loggedInUser.getUserId() || epLoggedInUser != null)){
             	myEvent = true;
             	if (epLoggedInUser != null){
-            		changed = epLoggedInUser.isPendingChange();
-            		attending = true;//(epLoggedInUser.getResponse() == EventParticipant.going);
+                    changed = epLoggedInUser.isPendingChange();
+                    if (epLoggedInUser.getUserId() == event.getOwnerId()) {
+                        attending = true;
+                    } else {
+                        attending = epLoggedInUser.getResponse().equals(EventParticipant.going);
+                    }
+            	}
+            	//participitationStatusAll
+            	ArrayList<EventParticipant> par = new ArrayList<EventParticipant>();
+            	for (EventParticipant ep: eventParticipants){
+            		if (ep.getEventId() == event.getEventId()){
+            			if (ep.getResponse() == null){
+            				participitationStatusAll = "yellow";
+            			}
+            			else if (ep.getResponse().equals("")){
+            				participitationStatusAll = "yellow";
+            			}
+            			else if (ep.getResponse().equals(EventParticipant.notGoing)){
+            				participitationStatusAll = "red";
+            				break;
+            			}
+            		}
             	}
             }
-            
-            
+
         	calendarView.addEvent(
         			"" + event.getEventId(), 
         			event.getEventName(), 
@@ -315,7 +343,7 @@ public class Calendar extends CalendarLists {
         			event.getOwnerId(), 
         			changed, 
         			attending, 
-        			myEvent);
+        			myEvent, participitationStatusAll);
         }
 
         // No selected event after webscene update. 
@@ -367,6 +395,11 @@ public class Calendar extends CalendarLists {
 	public void removeEventParticipant(EventParticipant ep){
 		EventParticipant epOriginal = findEventParticipant(ep.getUserId(), ep.getEventId());
 		eventParticipants.remove(epOriginal);
+		updateWebScene();
+	}
+	
+	public void removeEventNotOwner(int eventID, int participantID, String status, boolean ans){
+		changeEventParticipantResponse(eventID, participantID, status, ans);
 		updateWebScene();
 	}
 	

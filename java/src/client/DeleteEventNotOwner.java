@@ -28,12 +28,13 @@ public class DeleteEventNotOwner {
     CalendarInterface participant;
     private int eventID;
     private int participantID;
+    private Calendar calendar;
     
 	private Stage thisStage;
     private Stage parentStage;
     
-    public DeleteEventNotOwner(Event event, EventParticipant user, Stage parentStage, CalendarInterface ci) {
-    	this.participant = ci;
+    public DeleteEventNotOwner(Event event, EventParticipant user, Stage parentStage, Calendar calendar) {
+    	this.calendar = calendar;
     	this.participantID = user.getUserId();
     	this.eventID = event.getEventId();
     	
@@ -79,7 +80,7 @@ public class DeleteEventNotOwner {
         ok_btn.setOnAction(new EventHandler<ActionEvent>() {
         	public void handle(ActionEvent actionEvent) {
         		System.out.println("Event removed");
-        		participant.changeEventParticipantResponse(eventID, participantID, "Deleted", true);
+        		calendar.removeEventNotOwner(eventID, participantID, "Deleted", true);
         		thisStage.close();
             }
 		});

@@ -26,6 +26,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -110,12 +111,16 @@ public class ShowMore implements EventHandler<ActionEvent> {
         grid.add(getLeftBox(), 0, 0);
         grid.add(getDataBox(), 1, 0);
         grid.add(getListViewBox(), 2, 0);
-        grid.add(getRadioBox(), 0, 1);
+        //grid.add(getRadioBox(), 0, 1);
         grid.add(getOkButton(), 0, 2);
         
-        Scene scene = new Scene(grid, 500, 300);
+        Scene scene = new Scene(grid, 600, 300);
         
         stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+		stage.initOwner(parentStage);
+        
+        stage.setResizable(false);
         stage.setTitle("Show more");
         stage.setScene(scene);
         stage.show();
@@ -160,11 +165,10 @@ public class ShowMore implements EventHandler<ActionEvent> {
         Label place = new Label ("Place");
         Label room = new Label ("Room");
         Label alarm = new Label ("Alarm");
-        Label myParticipation = new Label ("My participance");
         
         
         VBox leftBox = new VBox();
-        leftBox.getChildren().addAll(title,owner,start,end,description,place,room,alarm,myParticipation);
+        leftBox.getChildren().addAll(title,owner,start,end,description,place,room,alarm);
         
         return leftBox;
     }
@@ -189,6 +193,7 @@ public class ShowMore implements EventHandler<ActionEvent> {
     public HBox getRadioBox(){
     	HBox radioBox = new HBox();
         radioBox.setPadding(new Insets(5, 5, 5, 5));
+        
         
         ToggleGroup group = new ToggleGroup();
     	

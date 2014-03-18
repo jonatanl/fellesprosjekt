@@ -43,7 +43,7 @@ public class EditOwner implements EventHandler<ActionEvent>{
 	private ComboBox<Room> roomList;
 	
 	private ToggleGroup participationGroup;
-	private Button confirm, cancel, addPerson, removePerson;
+	private Button confirm, cancel, addPerson, removePerson, inviteParticipants;
 	private RadioButton going, notGoing;
 	private ListView<Object> allPersonListView, chosenPersonListView;
 	private Event eventModel;
@@ -54,6 +54,8 @@ public class EditOwner implements EventHandler<ActionEvent>{
     private ObservableList<Object> selectedPersonsObservableList;
     
     private ObservableList<Room> allRoomsObservableList;
+    
+    private Room noRoom;
     
     private ArrayList<Room> rooms;
     private ArrayList<User> users;
@@ -73,6 +75,8 @@ public class EditOwner implements EventHandler<ActionEvent>{
 	
 	public EditOwner(Event event, Stage parentStage, ArrayList<Room> rooms, ArrayList<User> users, ArrayList<Group> groups, ArrayList<EventParticipant> currentParticipants, PersistencyInterface persistency, Calendar calendar) {
 		try {
+			noRoom = new Room();
+			noRoom.setAdress("No Room");
 			this.calendar = calendar;
 			this.parentStage = parentStage;
 			this.rooms = rooms;
@@ -115,13 +119,16 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		grid.add(getLabels(), 1, 1);
 		grid.add(getFields(), 2, 1);
 		grid.add(getListViewBox(), 3, 1);
-		grid.add(getButtons(), 1, 2);
+		//grid.add(getButtons(), 1, 2);
+	
+		//grid.add(vb, 2,1);
 		
-		grid.setHgap(10);
-        grid.setVgap(10);
+		grid.setHgap(15);
+        grid.setVgap(15);
 		
 		Scene scene = new Scene(grid, 600, 400);
 		thisStage = new Stage();
+		thisStage.setResizable(false);
 		thisStage.setTitle("Endre Hendelse");
 		thisStage.setScene(scene);
 		
@@ -142,7 +149,9 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		l_place = new Label("Place");
 		l_room = new Label("Room");
 		
-		box.getChildren().addAll(l_title,l_date,l_start,l_stop,l_description,l_place,l_room);
+		HBox vb = getButtons();
+		
+		box.getChildren().addAll(l_title,l_date,l_start,l_stop,l_description,l_place,l_room, vb);
 		box.setSpacing(10);
 		box.setPadding(new Insets(10,10,10,10));
 		
@@ -161,7 +170,18 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		roomList = new ComboBox<>();
 		roomList.setMinWidth(200);
 		
-		box.getChildren().addAll(t_title,t_date,t_start,t_stop,t_description,t_place,roomList);
+		VBox vb = new VBox();
+		inviteParticipants = new Button("Invite Externals");
+		inviteParticipants.setOnAction(this);
+		Label l = new Label(" ");
+		l.setMinHeight(153);
+		vb.getChildren().addAll(l, inviteParticipants);
+		
+		
+		
+	
+		
+		box.getChildren().addAll(t_title,t_date,t_start,t_stop,t_description,t_place,roomList, vb);
 		box.setPadding(new Insets(10,0,0,0));
 		box.setSpacing(3);
 		
@@ -170,10 +190,10 @@ public class EditOwner implements EventHandler<ActionEvent>{
 	}
 	
 	private void updateRoomComboBox(){
-    	int nParticipants = getSelectedParticipantIds().size();
-    	
-    	Collections.sort(rooms);
-    	
+		Room curRoom = roomList.getValue();
+		int nParticipants = getSelectedParticipantIds().size();
+        Collections.sort(rooms);
+
     	ArrayList<Room> sortedList = new ArrayList<Room>();
     	ArrayList<Room> goodRooms = new ArrayList<Room>();
     	ArrayList<Room> badRooms = new ArrayList<Room>();
@@ -188,32 +208,18 @@ public class EditOwner implements EventHandler<ActionEvent>{
     	}
     	sortedList.addAll(goodRooms);
     	sortedList.addAll(badRooms);
-    	
-    	
+    	sortedList.add(noRoom);
+
     	ObservableList<Room> sortedObservableList = FXCollections.observableArrayList(sortedList);
     	
     	roomList.setItems(sortedObservableList);
+        roomList.setValue(curRoom);
     }
 	
-	private ArrayList<Integer> getSelectedParticipantIds(){
-    	ArrayList<Integer> result = new ArrayList<Integer>();
-    	for (Object o: selectedPersonsObservableList){
-    		if (o instanceof User){
-    			result.add(((User)o).getUserId());
-    		}
-    		else if (o instanceof Group){
-    			for (Integer u:((Group)o).getMembers()){
-    				if (!result.contains(u)){
-    					result.add(u);
-    				}
-    			}
-    		}
-    	}
-    	return result;
-    }
+	
 	
 	public HBox getButtons(){
-		HBox box = new HBox();
+		HBox box = new HBox(8);
 		
 		confirm = new Button("Save");
 		confirm.setOnAction(this);
@@ -221,6 +227,7 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		cancel.setOnAction(this);
 		
 		box.getChildren().addAll(confirm,cancel);
+		box.setPadding(new Insets(145,0, 0,0));
 		
 		return box;
 	}
@@ -267,7 +274,10 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		populateLists();
 		
     	rightBox.getChildren().addAll(participants,allPersonListView,addPerson,chosenPersonListView,removePerson);
-    	rightBox.getChildren().addAll(going,notGoing);
+    	HBox hb = new HBox(8);
+    	hb.setPadding(new Insets(10,10,10,0));
+    	hb.getChildren().addAll(going, notGoing);
+    	rightBox.getChildren().add(hb);
     	
     	
     	
@@ -412,7 +422,11 @@ public class EditOwner implements EventHandler<ActionEvent>{
 
 	@Override
 	public void handle(ActionEvent event) {
-		if(event.getSource() == cancel){
+		if (event.getSource() == inviteParticipants) {
+			new SendMail(thisStage, eventModel);
+		}
+		
+		else if(event.getSource() == cancel){
 			thisStage.close();			
 		}
 		else if(event.getSource() == confirm && isValid()){
@@ -442,7 +456,11 @@ public class EditOwner implements EventHandler<ActionEvent>{
     		}
 
     		allPersonsObservableList.remove(id);
-    		updateRoomComboBox();
+    		
+    		int nParticipants = selectedPersonsObservableList.size();
+            if(nParticipants > roomList.getValue().getCapacity())
+                updateRoomComboBox();
+    		
     		
     		if (allPersonsObservableList.size() == 0) {
     			addPerson.setDisable(true);
@@ -557,6 +575,13 @@ public class EditOwner implements EventHandler<ActionEvent>{
 			}
 		}
 		
+		updateModels();
+		
+		
+		
+	}
+	
+	public void updateModels() {
 		boolean eventIsChanged = false;
 		if (!eventModel.getEventName().equals(t_title.getText())){
 			eventModel.setEventName(t_title.getText());
@@ -591,8 +616,27 @@ public class EditOwner implements EventHandler<ActionEvent>{
 			calendar.changeEvent(eventModel.getEventId(), eventModel);
 		}
 		
-		
 	}
+	
+	
+	  private ArrayList<Integer> getSelectedParticipantIds(){
+	    	ArrayList<Integer> result = new ArrayList<Integer>();
+	    	for (Object o: selectedPersonsObservableList){
+	    		if (o instanceof User){
+	    			if (!result.contains(((User)o).getUserId())){
+	    				result.add(((User)o).getUserId());
+	    			}
+	    		}
+	    		else if (o instanceof Group){
+	    			for (Integer u:((Group)o).getMembers()){
+	    				if (!result.contains(u)){
+	    					result.add(u);
+	    				}
+	    			}
+	    		}
+	    	}
+	    	return result;
+	    }
 
 
 }

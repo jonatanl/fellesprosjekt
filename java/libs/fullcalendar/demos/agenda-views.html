@@ -10,11 +10,11 @@
 		<script src='../lib/jquery-ui.custom.min.js'></script>
 		<script src='../fullcalendar/fullcalendar.min.js'></script>
 		<script>
-
+			var userId;
+			
 			$(document).ready(function() {
 				var clicked;
 				var lastClicked;
-				var userId;
 
 
 				var date = new Date();
@@ -51,7 +51,7 @@
 				        	}
 				        	console.log(calEvent)
 				        	calEvent.changed = 'false';
-				        	//app.changedEventClicktoJavaFX(calEvent.id);
+				        	app.changedEventClicktoJavaFX(calEvent.id);
 				        }
 
 
@@ -76,9 +76,6 @@
 				$('#calendar').fullCalendar('changeView', 'agendaWeek');
 			});
 
-		</script>
-		<script type="text/javascript">
-			
 			//addEvent('33', 'lol', 'March 14, 2014 12:00:00', 'March 14, 2014 13:00:00', '1', 'true', 'true', 'true');
 			function createEventSourceObject(id, title, startDate, endDate, ownerId, changed, attending, myEvent) {
 				
@@ -126,6 +123,7 @@
 			
 			function setUserId(id) {
 				userId = id;
+				app.changedEventClicktoJavaFX(userId);
 			}
 
 			function removeAllEvents() {
@@ -133,12 +131,12 @@
 			}
 
 			function attendingStyle(event) {
-				event.borderColor = '#14DE61';
+				event.borderColor = '#63AD4E';
 				return event;
 			}
 
 			function changedStyle(event) {
-				event.backgroundColor = '#FA6525';
+				event.backgroundColor = '#AD8F4E';
 				return event;
 			}
 
@@ -149,12 +147,12 @@
 			}
 
 			function ownerIdStyle(event) {
-				event.backgroundColor = '#F79797';
+				event.backgroundColor = '#AD5D4E';
 				return event;
 			}
 
 			function normalStyle(event) {
-				event.backgroundColor = '#97F7F7';
+				event.backgroundColor = '#4E9EAD';
 				return event;
 			}
 
