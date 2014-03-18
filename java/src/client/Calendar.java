@@ -310,7 +310,7 @@ public class Calendar extends CalendarLists {
             	}
             }
 
-            
+            String status = "lol"; //String status to be added for product requirement
         	calendarView.addEvent(
         			"" + event.getEventId(), 
         			event.getEventName(), 
@@ -319,7 +319,7 @@ public class Calendar extends CalendarLists {
         			event.getOwnerId(), 
         			changed, 
         			attending, 
-        			myEvent);
+        			myEvent, status);
         }
 
         // No selected event after webscene update. 
