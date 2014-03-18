@@ -22,6 +22,8 @@ import util.DateHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.mail.Part;
+
 //Main class of the calendar system. 
 public class Calendar extends CalendarLists {
 
@@ -277,6 +279,7 @@ public class Calendar extends CalendarLists {
         	boolean changed = false;
         	boolean attending = false;
         	boolean myEvent = false;
+        	String participitationStatusAll = "green";
             
             // One of the visible users owns the event
             if (visibleUsersHm.get(event.getOwnerId()) != null){
@@ -299,10 +302,10 @@ public class Calendar extends CalendarLists {
             	continue;
             }
             
-            // We got to this point --> Add the event!
+            // We got to this point --> Add and draw the event!
             
             
-            // myEvent, changed, attending (Merk at changed og attending bare er relevante dersom myEvent == true).
+            // myEvent, changed, attending (Merk at changed og attending og participitationStatusAll bare er relevante dersom myEvent == true).
             EventParticipant epLoggedInUser = findEventParticipant(loggedInUser.getUserId(), event.getEventId());
             if (visibleUsersHm.get(loggedInUser.getUserId()) != null && (event.getOwnerId() == loggedInUser.getUserId() || epLoggedInUser != null)){
             	myEvent = true;
@@ -313,6 +316,22 @@ public class Calendar extends CalendarLists {
                     } else {
                         attending = epLoggedInUser.getResponse().equals(EventParticipant.going);
                     }
+            	}
+            	//participitationStatusAll
+            	ArrayList<EventParticipant> par = new ArrayList<EventParticipant>();
+            	for (EventParticipant ep: eventParticipants){
+            		if (ep.getEventId() == event.getEventId()){
+            			if (ep.getResponse() == null){
+            				participitationStatusAll = "yellow";
+            			}
+            			else if (ep.getResponse().equals("")){
+            				participitationStatusAll = "yellow";
+            			}
+            			else if (ep.getResponse().equals(EventParticipant.notGoing)){
+            				participitationStatusAll = "red";
+            				break;
+            			}
+            		}
             	}
             }
 
