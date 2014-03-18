@@ -6,8 +6,4 @@ Romreservasjoner. For å finne ut om rom R er opptatt: bla gjennom alle events so
 
 Fargeforklaring
 
-Participant skal kunne slette avtalen sin så den ikke vises lenger.
-
-Tekstfelt som viser hvem du er logget inn som.
-
 Kalenderen må vise om noen har sagt nei, om noen venter eller om alle sier ja.
