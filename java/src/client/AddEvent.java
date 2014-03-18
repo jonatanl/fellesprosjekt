@@ -357,6 +357,19 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		endTime.setPromptText("hh:ss");
     		hasFailed = true;
     	}
+    	
+    	if (!hasFailed) {
+    		int startTimeMinutes = Integer.parseInt(startTime.getText().substring(3, 5));
+    		int stopTimeMinutes = Integer.parseInt(endTime.getText().substring(3, 5));
+    		int startTimeHours = Integer.parseInt(startTime.getText().substring(0, 2));
+    		int stopTimeHours = Integer.parseInt(endTime.getText().substring(0, 2));
+    		System.out.println("startH: " + startTimeHours + "\n" + "startM: " + startTimeMinutes);
+    		if  ((startTimeHours > stopTimeHours) || (startTimeHours == stopTimeHours && startTimeMinutes >= stopTimeMinutes)) {
+    			startTime.setText("");
+    			startTime.setPromptText("Start time cannot be >= stop time. (hh:ss)");
+    			hasFailed = true;
+    		}    		
+    	}
     	return !hasFailed;
     }
 

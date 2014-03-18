@@ -22,6 +22,8 @@ import util.DateHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.mail.Part;
+
 //Main class of the calendar system. 
 public class Calendar extends CalendarLists {
 
@@ -34,6 +36,7 @@ public class Calendar extends CalendarLists {
 
 	// Visible elements
 	private Text title;
+	private Text t_LoggedInUsername;
 	private Buttons buttons;
 	private CalendarView calendarView;
 	private Notifications notifications;
@@ -116,6 +119,9 @@ public class Calendar extends CalendarLists {
 
         title = new Text("Skalender");
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        t_LoggedInUsername = new Text();
+        t_LoggedInUsername.setText("Logged in as " + loggedInUser.getUsername());
+        t_LoggedInUsername.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
         buttons = new Buttons(this);
         calendarView = new CalendarView(this);
         calendarView.setUserId(loggedInUser.getUserId());
@@ -154,6 +160,7 @@ public class Calendar extends CalendarLists {
 
         root.setAlignment(Pos.CENTER);
         root.add(title, 0, 0, 2, 1);
+        root.add(t_LoggedInUsername, 2, 0);
         root.add(buttons, 0, 1);
         root.add(calendarView.getContentForScene(), 1, 1);
         root.add(userListView, 2, 1);
@@ -235,14 +242,15 @@ public class Calendar extends CalendarLists {
 		newEventInfo.setEventId(eventId);
 		
 		// Update isPendingChange on all the OTHER participants.
-				for (EventParticipant epOther: eventParticipants){
-					if (epOther.getEventId() == eventId && 
-							(epOther.getUserId() != loggedInUser.getUserId())
-							){
-						epOther.setPendingChange(true);
-						persistency.changeEventParticipantResponse(epOther);
-					}
-				}
+		for (EventParticipant epOther: eventParticipants){
+			if (epOther.getEventId() == eventId && 
+					(epOther.getUserId() != loggedInUser.getUserId())
+					){
+				epOther.setPendingChange(true);
+				persistency.changeEventParticipantResponse(epOther);
+			}
+		}
+		updateWebScene();	
 	}
 	
 	public void changeEventParticipantResponse(int eventId, int userId,
@@ -277,6 +285,7 @@ public class Calendar extends CalendarLists {
         	boolean changed = false;
         	boolean attending = false;
         	boolean myEvent = false;
+        	String participitationStatusAll = "green";
             
             // One of the visible users owns the event
             if (visibleUsersHm.get(event.getOwnerId()) != null){
@@ -299,10 +308,10 @@ public class Calendar extends CalendarLists {
             	continue;
             }
             
-            // We got to this point --> Add the event!
+            // We got to this point --> Add and draw the event!
             
             
-            // myEvent, changed, attending (Merk at changed og attending bare er relevante dersom myEvent == true).
+            // myEvent, changed, attending (Merk at changed og attending og participitationStatusAll bare er relevante dersom myEvent == true).
             EventParticipant epLoggedInUser = findEventParticipant(loggedInUser.getUserId(), event.getEventId());
             if (visibleUsersHm.get(loggedInUser.getUserId()) != null && (event.getOwnerId() == loggedInUser.getUserId() || epLoggedInUser != null)){
             	myEvent = true;
@@ -314,9 +323,23 @@ public class Calendar extends CalendarLists {
                         attending = epLoggedInUser.getResponse().equals(EventParticipant.going);
                     }
             	}
+            	//participitationStatusAll
+            	for (EventParticipant ep: eventParticipants){
+            		if (ep.getEventId() == event.getEventId()){
+            			if (ep.getResponse() == null){
+            				participitationStatusAll = "yellow";
+            			}
+            			else if (ep.getResponse().equals("")){
+            				participitationStatusAll = "yellow";
+            			}
+            			else if (ep.getResponse().equals(EventParticipant.notGoing)){
+            				participitationStatusAll = "red";
+            				break;
+            			}
+            		}
+            	}
             }
 
-            String status = "lol"; //String status to be added for product requirement
         	calendarView.addEvent(
         			"" + event.getEventId(), 
         			event.getEventName(), 
@@ -325,7 +348,7 @@ public class Calendar extends CalendarLists {
         			event.getOwnerId(), 
         			changed, 
         			attending, 
-        			myEvent, status);
+        			myEvent, participitationStatusAll);
         }
 
         // No selected event after webscene update. 
