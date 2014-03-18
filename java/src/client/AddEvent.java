@@ -69,14 +69,14 @@ public class AddEvent implements EventHandler<ActionEvent> {
     private ArrayList<Room> rooms;
     private ArrayList<User> users;
     private ArrayList<Group> groups;
+    private ArrayList<Event> events;
 
     private Room noRoom = new Room();
 
     private int ownerId;
     private User loggedInUser;
-    	
     
-    public AddEvent(Calendar calendar, Stage stage, PersistencyInterface persistency, int ownerId, ArrayList<Room> rooms, ArrayList<User> users, ArrayList<Group> groups) {
+    public AddEvent(Calendar calendar, Stage stage, PersistencyInterface persistency, int ownerId, ArrayList<Room> rooms, ArrayList<User> users, ArrayList<Group> groups, ArrayList<Event> events) {
     	try {
     		this.calendar = calendar;
     		this.parentStage = stage;
@@ -85,13 +85,14 @@ public class AddEvent implements EventHandler<ActionEvent> {
         	this.rooms = rooms;
         	this.users = users;
         	this.groups = groups;
+            this.events = events;
             loggedInUser = users.get(ownerId-1);
 
             noRoom = rooms.get(0);
 
 			createStage();
 		} catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("noethunsaoethunsao" + e.getMessage());
         }
     }
 
@@ -138,8 +139,8 @@ public class AddEvent implements EventHandler<ActionEvent> {
         eventModel = new Event();
         
         setHints();
+        updateRoomComboBox();
     }
-
 
     private VBox createLabels(){
         VBox box = new VBox();
@@ -173,31 +174,46 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	nParticipants = getSelectedParticipantIds().size();
         Collections.sort(rooms);
 
-    	ArrayList<Room> sortedList = new ArrayList<Room>();
+        ArrayList<Room> freeRooms = getFreeRooms();
     	ArrayList<Room> goodRooms = new ArrayList<Room>();
-    	ArrayList<Room> badRooms = new ArrayList<Room>();
     	
-    	for (Room r:rooms){
-    		if (r.getCapacity() >= nParticipants){
+    	for (Room r:freeRooms){
+    		if (r.getCapacity() >= nParticipants)
     			goodRooms.add(r);
-    		}
-    		else{
-    			badRooms.add(r);
-    		}
-    	}
-    	sortedList.addAll(goodRooms);
-    	sortedList.addAll(badRooms);
 
-    	ObservableList<Room> sortedObservableList = FXCollections.observableArrayList(sortedList);
+    	}
+
+    	ObservableList<Room> sortedObservableList = FXCollections.observableArrayList(goodRooms);
     	
     	roomList.setItems(sortedObservableList);
         roomList.setValue(noRoom);
     }
+
+    private ArrayList<Room> getFreeRooms(){
+        setModel();
+        ArrayList<Room> freeRooms = new ArrayList<>();
+        for (Room r : rooms){
+            boolean isOverlapping = false;
+            for(Event e : events){
+                if (r.getId() == e.getEventId()){
+                    if (eventModel.getStartTime().before(e.getEndTime()) &&
+                            e.getStartTime().before(eventModel.getEndTime())){
+                        isOverlapping = true;
+                        break;
+                    }
+                }
+            }
+
+            // If there is no overlapp add room
+            if (!isOverlapping)
+                freeRooms.add(r);
+        }
+
+        return freeRooms;
+    }
     
     public void setHints() {
     	Date date = new Date();
-    	
-    	
     	
     	String mh = (date.getHours() + ":" + date.getMinutes());
     	if (date.getHours() < 10) {
@@ -218,29 +234,34 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	dateField.setText(ddmmyyyy);
     	
     	endTime.setText((Time.addTimes(mh, "01:00")));
-    	
     }
 
+    private void setModel(){
+        if (eventModel == null)
+            eventModel = new Event();
+
+        eventModel.setEventName(titleField.getText());
+        eventModel.setStartTime(DateHelper.convertToDate(dateField.getText() + ", " + startTime.getText(), DateHelper.FORMAT_GUI));
+        eventModel.setEndTime(DateHelper.convertToDate(dateField.getText() + ", " + endTime.getText(), DateHelper.FORMAT_GUI));
+        eventModel.setDescription(description.getText());
+        eventModel.setLocation(location.getText());
+        eventModel.setOwnerId(ownerId);
+
+        if(roomList.getValue() != null && roomList.getValue() != noRoom)
+            eventModel.setRoomId(roomList.getValue().getId());
+        else
+            eventModel.setRoomId(1);
+    }
 
     @Override
     public void handle(ActionEvent actionEvent) {
     	if (actionEvent.getSource() == addEvent && validInput()) {
-    		eventModel.setEventName(titleField.getText());
-    		eventModel.setStartTime(DateHelper.convertToDate(dateField.getText() + ", " + startTime.getText(), DateHelper.FORMAT_GUI));
-    		eventModel.setEndTime(DateHelper.convertToDate(dateField.getText() + ", " + endTime.getText(), DateHelper.FORMAT_GUI));
-    		eventModel.setDescription(description.getText());
-    		eventModel.setLocation(location.getText());
-            eventModel.setOwnerId(ownerId);
-    		if(roomList.getValue() != noRoom)
-                eventModel.setRoomId(roomList.getValue().getId());
-            else
-                eventModel.setRoomId(1);
-    		
+    		setModel();
     		
     		ArrayList<Integer> selectedParticpantIds = getSelectedParticipantIds();
     		if (persistency.addEvent(eventModel, selectedParticpantIds)){
     			calendar.addEvent(eventModel);
-    			// EventParticipants are now in database with default values. 
+    			// EventParticipants are now in database with default values.
     			// Create list of default eventParticipants to add to Calendar. 
     			ArrayList<EventParticipant> participants = new ArrayList<EventParticipant>();
     			for (int id: selectedParticpantIds){
@@ -322,7 +343,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     		if (titleField.getText().contains(" ") || titleField.getText().isEmpty()) {
     			titleField.setText("");
     			titleField.setPromptText("Need title");
-    			hasFailed = true;;
+    			hasFailed = true;
     		}
     	}
     	// Checks that the date is in the correct format
@@ -344,10 +365,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	}
     	return !hasFailed;
     }
-    
-    
-        
-    
+
     public VBox createListViewBox(){
     	VBox rightBox = new VBox(5);
         Label participants = new Label ("Participants");
@@ -379,10 +397,6 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	
     	rightBox.getChildren().addAll(participants,allPersonListView,addPerson,chosenPersonListView,removePerson);
     	
-    	updateRoomComboBox();
-    	
     	return rightBox;
     }
-
-
 }

@@ -19,6 +19,10 @@ public abstract class CalendarLists extends Application{
 
     protected ArrayList<User> selectedUsers;
 
+    public ArrayList<Event> getEvents() {
+        return events;
+    }
+
     public ArrayList<User> getUsers() {
         return users;
     }
