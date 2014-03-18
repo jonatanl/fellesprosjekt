@@ -36,6 +36,7 @@ public class Calendar extends CalendarLists {
 
 	// Visible elements
 	private Text title;
+	private Text t_LoggedInUsername;
 	private Buttons buttons;
 	private CalendarView calendarView;
 	private Notifications notifications;
@@ -118,6 +119,9 @@ public class Calendar extends CalendarLists {
 
         title = new Text("Skalender");
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        t_LoggedInUsername = new Text();
+        t_LoggedInUsername.setText("Logged in as " + loggedInUser.getUsername());
+        t_LoggedInUsername.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
         buttons = new Buttons(this);
         calendarView = new CalendarView(this);
         calendarView.setUserId(loggedInUser.getUserId());
@@ -156,6 +160,7 @@ public class Calendar extends CalendarLists {
 
         root.setAlignment(Pos.CENTER);
         root.add(title, 0, 0, 2, 1);
+        root.add(t_LoggedInUsername, 2, 0);
         root.add(buttons, 0, 1);
         root.add(calendarView.getContentForScene(), 1, 1);
         root.add(userListView, 2, 1);
