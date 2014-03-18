@@ -136,7 +136,13 @@ public class Calendar extends CalendarLists {
                 }
             }
         });
-        userListView.getSelectionModel().select(loggedInUser);
+        for (User u:userListView.getItems()){
+        	if (u.getUserId() == loggedInUser.getUserId()){
+        		userListView.getSelectionModel().select(u);
+        		break;
+        	}
+        }
+        //userListView.getSelectionModel().select(loggedInUser);
         
         //notifications = new Notifications();
 
