@@ -26,6 +26,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -116,6 +117,9 @@ public class ShowMore implements EventHandler<ActionEvent> {
         Scene scene = new Scene(grid, 600, 300);
         
         stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+		stage.initOwner(parentStage);
+        
         stage.setResizable(false);
         stage.setTitle("Show more");
         stage.setScene(scene);
@@ -161,11 +165,10 @@ public class ShowMore implements EventHandler<ActionEvent> {
         Label place = new Label ("Place");
         Label room = new Label ("Room");
         Label alarm = new Label ("Alarm");
-        Label myParticipation = new Label ("My participance");
         
         
         VBox leftBox = new VBox();
-        leftBox.getChildren().addAll(title,owner,start,end,description,place,room,alarm,myParticipation);
+        leftBox.getChildren().addAll(title,owner,start,end,description,place,room,alarm);
         
         return leftBox;
     }
