@@ -1,12 +1,11 @@
 TODO
 
-HTML-kalenderen bør støtte at man deselecter eventer, altså klikker et sted der det ikke er noen event. Callbacken bør da gi eventID -1 f.eks. så Calender-klassen skjønner at ingen eventer er markert.
-
-Nytt krav (se itslearning): Inviter eksterne kontakter til møtet via e-post.
-
 Skal det komme opp en alarm på det angitte tidspunktet? 
 
 Romreservasjoner. For å finne ut om rom R er opptatt: bla gjennom alle events som bruker rom R, og se om start og slutttid for eventene overlapper. Overlapper --> Rom R ikke ledig. 
 
-Notification-vindu nederst på skjermen. Skal vi droppe dette? Fargen på eventkalenderen indikerer om noe er forandret.
+Fargeforklaring
 
+Participant skal kunne slette avtalen sin så den ikke vises lenger.
+
+Tekstfelt som viser hvem du er logget inn som.

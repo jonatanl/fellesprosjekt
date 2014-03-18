@@ -37,7 +37,11 @@ public class ParticipantCell extends ListCell<Object> {
 					else if (ep.getResponse().equals(EventParticipant.notGoing)){
 						l.setTextFill(Color.RED);
 					}
-				} else {
+					else if (ep.getResponse().equals("")){
+						l.setTextFill(Color.ORANGE);	
+					}
+				} 
+				else{
 					l.setTextFill(Color.ORANGE);
 				}
 			}
