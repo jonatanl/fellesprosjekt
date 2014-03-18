@@ -318,7 +318,6 @@ public class Calendar extends CalendarLists {
                     }
             	}
             	//participitationStatusAll
-            	ArrayList<EventParticipant> par = new ArrayList<EventParticipant>();
             	for (EventParticipant ep: eventParticipants){
             		if (ep.getEventId() == event.getEventId()){
             			if (ep.getResponse() == null){
