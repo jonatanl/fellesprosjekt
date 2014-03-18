@@ -43,7 +43,7 @@ public class EditOwner implements EventHandler<ActionEvent>{
 	private ComboBox<Room> roomList;
 	
 	private ToggleGroup participationGroup;
-	private Button confirm, cancel, addPerson, removePerson;
+	private Button confirm, cancel, addPerson, removePerson, inviteParticipants;
 	private RadioButton going, notGoing;
 	private ListView<Object> allPersonListView, chosenPersonListView;
 	private Event eventModel;
@@ -120,6 +120,8 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		grid.add(getFields(), 2, 1);
 		grid.add(getListViewBox(), 3, 1);
 		//grid.add(getButtons(), 1, 2);
+	
+		//grid.add(vb, 2,1);
 		
 		grid.setHgap(15);
         grid.setVgap(15);
@@ -168,7 +170,18 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		roomList = new ComboBox<>();
 		roomList.setMinWidth(200);
 		
-		box.getChildren().addAll(t_title,t_date,t_start,t_stop,t_description,t_place,roomList);
+		VBox vb = new VBox();
+		inviteParticipants = new Button("Invite Externals");
+		inviteParticipants.setOnAction(this);
+		Label l = new Label(" ");
+		l.setMinHeight(153);
+		vb.getChildren().addAll(l, inviteParticipants);
+		
+		
+		
+	
+		
+		box.getChildren().addAll(t_title,t_date,t_start,t_stop,t_description,t_place,roomList, vb);
 		box.setPadding(new Insets(10,0,0,0));
 		box.setSpacing(3);
 		
@@ -409,7 +422,11 @@ public class EditOwner implements EventHandler<ActionEvent>{
 
 	@Override
 	public void handle(ActionEvent event) {
-		if(event.getSource() == cancel){
+		if (event.getSource() == inviteParticipants) {
+			new SendMail(thisStage, eventModel);
+		}
+		
+		else if(event.getSource() == cancel){
 			thisStage.close();			
 		}
 		else if(event.getSource() == confirm && isValid()){
@@ -558,6 +575,13 @@ public class EditOwner implements EventHandler<ActionEvent>{
 			}
 		}
 		
+		updateModels();
+		
+		
+		
+	}
+	
+	public void updateModels() {
 		boolean eventIsChanged = false;
 		if (!eventModel.getEventName().equals(t_title.getText())){
 			eventModel.setEventName(t_title.getText());
@@ -591,7 +615,6 @@ public class EditOwner implements EventHandler<ActionEvent>{
 			persistency.changeEvent(eventModel);
 			calendar.changeEvent(eventModel.getEventId(), eventModel);
 		}
-		
 		
 	}
 	

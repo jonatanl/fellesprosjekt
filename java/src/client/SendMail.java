@@ -134,7 +134,9 @@ public class SendMail implements EventHandler<ActionEvent> {
 		}
 		else if(actionEvent.getSource() == removeButton){
             if(!receivers.isEmpty())
-			    receivers.remove(addedPersonsView.getFocusModel().getFocusedIndex());
+            	if (addedPersonsView.getFocusModel().getFocusedIndex() != -1) {
+            		receivers.remove(addedPersonsView.getFocusModel().getFocusedIndex());            		
+            	}
             if(receivers.isEmpty())
                 sendButton.setDisable(true);
         }
