@@ -20,7 +20,13 @@ import javafx.stage.Stage;
 import util.DateHelper;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import javax.swing.JOptionPane;
+import javax.swing.JDialog;
 
 //Main class of the calendar system. 
 public class Calendar extends CalendarLists {
@@ -31,6 +37,8 @@ public class Calendar extends CalendarLists {
 	private Event selectedEvent;
 
 	private PersistencyInterface persistency;
+	
+	public Timer alarmTimer;
 
 	// Visible elements
 	private Text title;
@@ -171,6 +179,63 @@ public class Calendar extends CalendarLists {
 		stage.show();
 		updateNotifications();
         updateWebScene();
+        
+        // Alarm timer
+        alarmTimer = new Timer();
+        
+        TimerTask tt = new TimerTask() {
+			
+			@SuppressWarnings("deprecation")
+			@Override
+			public void run() {
+				// Find relevant participants
+				ArrayList<EventParticipant> relevantParticipants = new ArrayList<EventParticipant>();
+				for (EventParticipant ep: eventParticipants){
+					if (ep.getUserId() == loggedInUser.getUserId()){
+						relevantParticipants.add(ep);
+					}
+				}
+				
+				// Find attatched alarms
+				ArrayList<Alarm> relevantAlarms = new ArrayList<Alarm>();
+				for (EventParticipant ep: relevantParticipants){
+					if (ep.getAlarmId() > 0){
+						Alarm a = findAlarm(ep.getAlarmId());
+						if (a != null){
+							Date now = new Date();
+							Date aDate = a.getTime();
+							Event event = findEvent(ep.getEventId());
+							
+							/*
+							if (now.getMonth() == aDate.getMonth() && 
+									now.getDate() == aDate.getDate() &&
+									now.getHours() >= aDate.getHours() &&
+									now.getMinutes() >= aDate.getMinutes() &&
+									
+									now.getHours() < event.getStartTime().getHours() &&
+									now.getMinutes() < event.getStartTime().getMinutes()
+									){
+								
+								
+								String info = "Remember the event '" + event.getEventName() + "' at " + DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_GUI);
+								JOptionPane.showMessageDialog(null, info, "Alarm", JOptionPane.INFORMATION_MESSAGE);
+							}*/
+							
+							if (now.getTime() >= aDate.getTime() &&
+									now.getTime() < event.getStartTime().getTime()){
+								String info = "Remember the event '" + event.getEventName() + "' at " + DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_GUI);
+								JOptionPane.showMessageDialog(null, info, "Alarm", JOptionPane.INFORMATION_MESSAGE);
+							}
+						}
+					}
+				}
+				
+			    
+				
+				// Display alarm
+			}
+		};
+        alarmTimer.schedule(tt , 1, 1000 * 4);
 	}
 	
 	public Notifications getNotifications(){

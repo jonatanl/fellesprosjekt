@@ -142,6 +142,7 @@ public class Buttons extends VBox implements EventHandler<ActionEvent> {
 					selectedEvent.getEventId(), calendar.getLoggedInUser().getUserId());
 		}
 		else if (buttonEvent.getSource() == b_logout){
+			calendar.alarmTimer.cancel();
 			calendar.getStage().close();
 			
 			Login login = new Login(calendar, calendar.getPersistency());
