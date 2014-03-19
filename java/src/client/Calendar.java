@@ -247,7 +247,7 @@ public class Calendar extends CalendarLists {
 				// Display alarm
 			}
 		};
-        alarmTimer.schedule(tt , 1, 1000 * 4);
+        alarmTimer.schedule(tt , 1, 1000 * 60);
 	}
 	
 	public Notifications getNotifications(){
