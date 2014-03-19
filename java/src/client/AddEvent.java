@@ -4,6 +4,7 @@ import interfaces.PersistencyInterface;
 
 import java.util.*;
 
+import org.joda.time.Interval;
 import util.DateHelper;
 import util.Time;
 import Models.Event;
@@ -187,7 +188,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     	ArrayList<Room> goodRooms = new ArrayList<Room>();
     	
     	for (Room r:freeRooms){
-    		if (r.getCapacity() >= nParticipants)
+            if (r.getCapacity() >= nParticipants)
     			goodRooms.add(r);
 
     	}
@@ -199,14 +200,18 @@ public class AddEvent implements EventHandler<ActionEvent> {
     }
 
     private ArrayList<Room> getFreeRooms(){
+        // This doesn't work properly. You are still able to pick occupied rooms.
         setModel();
         ArrayList<Room> freeRooms = new ArrayList<>();
         for (Room r : rooms){
             boolean isOverlapping = false;
+
             for(Event e : events){
                 if (r.getId() == e.getEventId()){
-                    if (eventModel.getStartTime().before(e.getEndTime()) &&
-                            e.getStartTime().before(eventModel.getEndTime())){
+                    Interval intervalModel = new Interval(eventModel.getStartTime().getTime(), eventModel.getEndTime().getTime());
+                    Interval intervalEvent = new Interval(e.getStartTime().getTime(), e.getEndTime().getTime());
+
+                    if (intervalModel.overlaps(intervalEvent)){
                         isOverlapping = true;
                         break;
                     }
@@ -322,6 +327,7 @@ public class AddEvent implements EventHandler<ActionEvent> {
     			removePerson.setDisable(true);
     		}
     		addPerson.setDisable(false);
+            updateRoomComboBox();
     	}
         else if (actionEvent.getSource() == inviteParticipants){
             setModel();

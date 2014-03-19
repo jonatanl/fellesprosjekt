@@ -22,8 +22,6 @@ import util.DateHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.mail.Part;
-
 //Main class of the calendar system. 
 public class Calendar extends CalendarLists {
 
