@@ -218,21 +218,6 @@ public class Calendar extends CalendarLists {
 							Date aDate = a.getTime();
 							Event event = findEvent(ep.getEventId());
 							
-							/*
-							if (now.getMonth() == aDate.getMonth() && 
-									now.getDate() == aDate.getDate() &&
-									now.getHours() >= aDate.getHours() &&
-									now.getMinutes() >= aDate.getMinutes() &&
-									
-									now.getHours() < event.getStartTime().getHours() &&
-									now.getMinutes() < event.getStartTime().getMinutes()
-									){
-								
-								
-								String info = "Remember the event '" + event.getEventName() + "' at " + DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_GUI);
-								JOptionPane.showMessageDialog(null, info, "Alarm", JOptionPane.INFORMATION_MESSAGE);
-							}*/
-							
 							if (now.getTime() >= aDate.getTime() &&
 									now.getTime() < event.getStartTime().getTime()){
 								String info = "Remember the event '" + event.getEventName() + "' at " + DateHelper.convertToString(event.getStartTime(), DateHelper.FORMAT_GUI);
