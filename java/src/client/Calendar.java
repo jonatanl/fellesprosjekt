@@ -12,6 +12,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -157,6 +159,15 @@ public class Calendar extends CalendarLists {
         //userListView.getSelectionModel().select(loggedInUser);
         
         //notifications = new Notifications();
+        //Image image = new Image("/libs/description.png");
+        Image image = new Image(getClass().getResourceAsStream("/description.png"));
+        
+        ImageView iv = new ImageView(image);
+        iv.setFitWidth(750);
+        iv.setFitHeight(70);
+        
+        //image.toString();
+        
 
         GridPane root = new GridPane();
         root.setAlignment(Pos.CENTER);
@@ -169,6 +180,7 @@ public class Calendar extends CalendarLists {
         root.add(t_LoggedInUsername, 2, 0);
         root.add(buttons, 0, 1);
         root.add(calendarView.getContentForScene(), 1, 1);
+        root.add(iv, 1, 0);
         root.add(userListView, 2, 1);
         //root.add(notifications, 0,3);
 
