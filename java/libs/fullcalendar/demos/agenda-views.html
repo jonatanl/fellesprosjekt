@@ -77,7 +77,7 @@
 			});
 
 			//addEvent('33', 'lol', 'March 14, 2014 12:00:00', 'March 14, 2014 13:00:00', '1', 'true', 'true', 'true');
-			function createEventSourceObject(id, title, startDate, endDate, ownerId, changed, attending, myEvent) {
+			function createEventSourceObject(id, title, startDate, endDate, ownerId, changed, attending, myEvent, status) {
 				
 				var event = [{
 								id: id,
@@ -92,6 +92,7 @@
 				event[0].attending = attending;
 				event[0].myEvent = myEvent;
 				event[0].userId = userId;
+				event[0].status = status;
 
 				event[0] = normalStyle(event[0]);
 
@@ -99,6 +100,8 @@
 					event[0] = notMyEventStyle(event[0]);
 
 				} else {
+					event[0] = chooseTextColorOnStatus(event[0]);
+
 					if (ownerId == userId) {
 						event[0] = ownerIdStyle(event[0]);
 					}
@@ -111,13 +114,13 @@
 						event[0] = attendingStyle(event[0]);
 					}
 				}
-
+				
 				return event;
 			}
 
 
-			function addEvent(id, title, startDate, endDate, ownerId, changed, attending, myEvent) {
-				var newEvent = createEventSourceObject(id, title, startDate, endDate, ownerId, changed, attending, myEvent);
+			function addEvent(id, title, startDate, endDate, ownerId, changed, attending, myEvent, status) {
+				var newEvent = createEventSourceObject(id, title, startDate, endDate, ownerId, changed, attending, myEvent, status);
 				$('#calendar').fullCalendar('addEventSource', newEvent);
 			}
 			
@@ -131,12 +134,12 @@
 			}
 
 			function attendingStyle(event) {
-				event.borderColor = '#63AD4E';
+				event.borderColor = '#02C402';
 				return event;
 			}
 
 			function changedStyle(event) {
-				event.backgroundColor = '#AD8F4E';
+				event.backgroundColor = '#FCA9C6';
 				return event;
 			}
 
@@ -147,12 +150,26 @@
 			}
 
 			function ownerIdStyle(event) {
-				event.backgroundColor = '#AD5D4E';
+				event.backgroundColor = '#FCDAA9';
 				return event;
 			}
 
 			function normalStyle(event) {
-				event.backgroundColor = '#4E9EAD';
+				event.backgroundColor = '#A9CBFC';
+				event.borderColor = '#D12C34'
+				return event;
+			}
+
+			function chooseTextColorOnStatus(event) {
+				if (event.status == 'red') {
+					event.textColor = '#D12C34';
+				} else if (event.status == 'yellow') {
+					event.textColor = '#FFB412';
+				} else if (event.status == 'green') {
+					event.textColor = '#02C402';
+				} else {
+					event.textColor = '';
+				}
 				return event;
 			}
 

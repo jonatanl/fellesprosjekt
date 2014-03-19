@@ -34,6 +34,7 @@ public class Calendar extends CalendarLists {
 
 	// Visible elements
 	private Text title;
+	private Text t_LoggedInUsername;
 	private Buttons buttons;
 	private CalendarView calendarView;
 	private Notifications notifications;
@@ -116,6 +117,9 @@ public class Calendar extends CalendarLists {
 
         title = new Text("Skalender");
         title.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+        t_LoggedInUsername = new Text();
+        t_LoggedInUsername.setText("Logged in as " + loggedInUser.getUsername());
+        t_LoggedInUsername.setFont(Font.font("Tahoma", FontWeight.NORMAL, 18));
         buttons = new Buttons(this);
         calendarView = new CalendarView(this);
         calendarView.setUserId(loggedInUser.getUserId());
@@ -154,6 +158,7 @@ public class Calendar extends CalendarLists {
 
         root.setAlignment(Pos.CENTER);
         root.add(title, 0, 0, 2, 1);
+        root.add(t_LoggedInUsername, 2, 0);
         root.add(buttons, 0, 1);
         root.add(calendarView.getContentForScene(), 1, 1);
         root.add(userListView, 2, 1);
@@ -235,14 +240,15 @@ public class Calendar extends CalendarLists {
 		newEventInfo.setEventId(eventId);
 		
 		// Update isPendingChange on all the OTHER participants.
-				for (EventParticipant epOther: eventParticipants){
-					if (epOther.getEventId() == eventId && 
-							(epOther.getUserId() != loggedInUser.getUserId())
-							){
-						epOther.setPendingChange(true);
-						persistency.changeEventParticipantResponse(epOther);
-					}
-				}
+		for (EventParticipant epOther: eventParticipants){
+			if (epOther.getEventId() == eventId && 
+					(epOther.getUserId() != loggedInUser.getUserId())
+					){
+				epOther.setPendingChange(true);
+				persistency.changeEventParticipantResponse(epOther);
+			}
+		}
+		updateWebScene();	
 	}
 	
 	public void changeEventParticipantResponse(int eventId, int userId,
@@ -261,6 +267,7 @@ public class Calendar extends CalendarLists {
 				persistency.changeEventParticipantResponse(epOther);
 			}
 		}
+        updateWebScene();
 	}
 	
 	// Draws the webScene over again. 
@@ -316,7 +323,6 @@ public class Calendar extends CalendarLists {
                     }
             	}
             	//participitationStatusAll
-            	ArrayList<EventParticipant> par = new ArrayList<EventParticipant>();
             	for (EventParticipant ep: eventParticipants){
             		if (ep.getEventId() == event.getEventId()){
             			if (ep.getResponse() == null){

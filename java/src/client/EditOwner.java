@@ -75,8 +75,8 @@ public class EditOwner implements EventHandler<ActionEvent>{
 	
 	public EditOwner(Event event, Stage parentStage, ArrayList<Room> rooms, ArrayList<User> users, ArrayList<Group> groups, ArrayList<EventParticipant> currentParticipants, PersistencyInterface persistency, Calendar calendar) {
 		try {
-			noRoom = new Room();
-			noRoom.setAdress("No Room");
+			//noRoom = new Room();
+			//noRoom.setAdress("not chosen");
 			this.calendar = calendar;
 			this.parentStage = parentStage;
 			this.rooms = rooms;
@@ -162,13 +162,15 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		VBox box = new VBox();
 		
 		t_title = new TextField();
+		t_title.setMinWidth(240);
 		t_date = new TextField();
 		t_start = new TextField();
 		t_stop = new TextField();
 		t_description = new TextField();
 		t_place = new TextField();
 		roomList = new ComboBox<>();
-		roomList.setMinWidth(200);
+		roomList.setMinWidth(210);
+		roomList.setVisibleRowCount(6);
 		
 		VBox vb = new VBox();
 		inviteParticipants = new Button("Invite Externals");
@@ -208,7 +210,7 @@ public class EditOwner implements EventHandler<ActionEvent>{
     	}
     	sortedList.addAll(goodRooms);
     	sortedList.addAll(badRooms);
-    	sortedList.add(noRoom);
+    	//sortedList.add(noRoom);
 
     	ObservableList<Room> sortedObservableList = FXCollections.observableArrayList(sortedList);
     	
@@ -416,6 +418,20 @@ public class EditOwner implements EventHandler<ActionEvent>{
     		t_stop.setPromptText("hh:ss");
     		hasFailed = true;
     	}
+    	
+    	if (!hasFailed) {
+    		int startTimeMinutes = Integer.parseInt(t_start.getText().substring(3, 5));
+    		int stopTimeMinutes = Integer.parseInt(t_stop.getText().substring(3, 5));
+    		int startTimeHours = Integer.parseInt(t_start.getText().substring(0, 2));
+    		int stopTimeHours = Integer.parseInt(t_stop.getText().substring(0, 2));
+    		System.out.println("startH: " + startTimeHours + "\n" + "startM: " + startTimeMinutes);
+    		if  ((startTimeHours > stopTimeHours) || (startTimeHours == stopTimeHours && startTimeMinutes >= stopTimeMinutes)) {
+    			t_start.setText("");
+    			t_start.setPromptText("Start time cannot be >= stop time. (hh:ss)");
+    			hasFailed = true;
+    		}    		
+    	}
+    	
     	return !hasFailed;
 	}
 	
@@ -431,10 +447,11 @@ public class EditOwner implements EventHandler<ActionEvent>{
 		}
 		else if(event.getSource() == confirm && isValid()){
 			System.out.println("Send update");
+			if (isValid()) {
+				updateEvent();				
+				thisStage.close();
+			}
 			
-			updateEvent();
-			
-			thisStage.close();
 		}
 		
 		else if(event.getSource() == addPerson){
