@@ -269,6 +269,7 @@ public class Calendar extends CalendarLists {
 				persistency.changeEventParticipantResponse(epOther);
 			}
 		}
+        updateWebScene();
 	}
 	
 	// Draws the webScene over again. 
